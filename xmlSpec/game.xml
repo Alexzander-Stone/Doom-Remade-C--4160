@@ -36,6 +36,12 @@
   <alpha>0</alpha>
 </font>
 
+<Player>
+    <movementSpeed>5</movementSpeed>
+    <xLocation>50</xLocation>
+    <yLocation>50</yLocation>
+</Player>
+
 <SpinningStar>
   <file>assets/spinstar.png</file>
   <startLoc x="50" y="140"/>

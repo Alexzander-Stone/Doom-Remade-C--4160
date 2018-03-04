@@ -10,6 +10,8 @@
 #include "engine.h"
 #include "frameGenerator.h"
 
+#include <SDL2/SDL.h>
+
 Engine::~Engine() { 
   delete star;
   delete spinningStar;
@@ -34,12 +36,18 @@ Engine::Engine() :
 }
 
 void Engine::draw() const {
+  SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
   world.draw();
 
-  star->draw();
-  spinningStar->draw();
+  //star->draw();
+  //spinningStar->draw();
+  SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+  SDL_RenderDrawLine(renderer, 20, 20, 100, 100);
 
-  viewport.draw();
+
+
+
+  //viewport.draw();
   SDL_RenderPresent(renderer);
 
 }
@@ -75,6 +83,19 @@ void Engine::play() {
       keystate = SDL_GetKeyboardState(NULL);
       if (event.type ==  SDL_QUIT) { done = true; break; }
       if(event.type == SDL_KEYDOWN) {
+        if(keystate[SDL_SCANCODE_S] && keystate[SDL_SCANCODE_D])
+        {
+          //playerY++;
+          //playerX++;
+        }
+        else if(keystate[SDL_SCANCODE_D]){
+          //playerX++;
+        }
+        else if(keystate[SDL_SCANCODE_S])
+        {
+          //playerY++;
+        }
+        
         if (keystate[SDL_SCANCODE_ESCAPE] || keystate[SDL_SCANCODE_Q]) {
           done = true;
           break;
