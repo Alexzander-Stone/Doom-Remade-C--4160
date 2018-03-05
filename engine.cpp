@@ -21,6 +21,7 @@ Engine::~Engine() {
 Engine::Engine() :
   rc( RenderContext::getInstance() ),
   io( IoMod::getInstance() ),
+  player( Player::getInstance() ),
   clock( Clock::getInstance() ),
   renderer( rc->getRenderer() ),
   world("back", Gamedata::getInstance().getXmlInt("back/factor") ),
@@ -39,10 +40,12 @@ void Engine::draw() const {
   SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
   world.draw();
 
+  // Player character.
+  player.draw();
+
   //star->draw();
   //spinningStar->draw();
-  SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-  SDL_RenderDrawLine(renderer, 20, 20, 100, 100);
+  
 
 
 
@@ -85,15 +88,15 @@ void Engine::play() {
       if(event.type == SDL_KEYDOWN) {
         if(keystate[SDL_SCANCODE_S] && keystate[SDL_SCANCODE_D])
         {
-          //playerY++;
-          //playerX++;
+          player.verticalDownMove();
+          player.horizontalRightMove();
         }
         else if(keystate[SDL_SCANCODE_D]){
-          //playerX++;
+          player.horizontalRightMove();
         }
         else if(keystate[SDL_SCANCODE_S])
         {
-          //playerY++;
+          player.verticalDownMove();
         }
         
         if (keystate[SDL_SCANCODE_ESCAPE] || keystate[SDL_SCANCODE_Q]) {

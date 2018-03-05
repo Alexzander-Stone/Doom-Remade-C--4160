@@ -17,6 +17,7 @@ public:
 private:
   const RenderContext* rc;
   const IoMod& io;
+  Player& player;
   Clock& clock;
 
   SDL_Renderer * const renderer;
