@@ -99,6 +99,15 @@ void Engine::play() {
           player.verticalDownMove();
         }
         
+        if(keystate[SDL_SCANCODE_C])
+        {
+            player.rotateLeft();
+        }
+        else if(keystate[SDL_SCANCODE_E])
+        {
+            player.rotateRight();
+        }
+
         if (keystate[SDL_SCANCODE_ESCAPE] || keystate[SDL_SCANCODE_Q]) {
           done = true;
           break;

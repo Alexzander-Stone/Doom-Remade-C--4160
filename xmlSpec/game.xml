@@ -40,6 +40,8 @@
     <movementSpeed>5</movementSpeed>
     <xLocation>50</xLocation>
     <yLocation>50</yLocation>
+    <theta>0</theta>
+    <radius>50</radius>
 </Player>
 
 <SpinningStar>
