@@ -86,29 +86,28 @@ void Engine::play() {
       keystate = SDL_GetKeyboardState(NULL);
       if (event.type ==  SDL_QUIT) { done = true; break; }
       if(event.type == SDL_KEYDOWN) {
-        if(keystate[SDL_SCANCODE_S] && keystate[SDL_SCANCODE_D])
-        {
-          player.verticalDownMove();
-          player.horizontalRightMove();
-        }
-        else if(keystate[SDL_SCANCODE_D]){
-          player.horizontalRightMove();
+        if(keystate[SDL_SCANCODE_D]){
+            player.horizontalRightMove();
         }
         else if(keystate[SDL_SCANCODE_S])
         {
-          player.verticalDownMove();
+            player.verticalUpMove();
+        }
+        else if(keystate[SDL_SCANCODE_W])
+        {
+            player.verticalDownMove();
         }
         
-        if(keystate[SDL_SCANCODE_C])
+        if(keystate[SDL_SCANCODE_E])
         {
             player.rotateLeft();
         }
-        else if(keystate[SDL_SCANCODE_E])
+        else if(keystate[SDL_SCANCODE_Q])
         {
             player.rotateRight();
         }
 
-        if (keystate[SDL_SCANCODE_ESCAPE] || keystate[SDL_SCANCODE_Q]) {
+        if (keystate[SDL_SCANCODE_ESCAPE] ) {
           done = true;
           break;
         }

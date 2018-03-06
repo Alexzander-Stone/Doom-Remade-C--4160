@@ -74,12 +74,14 @@ void Player::horizontalRightMove()
 }
 void Player::verticalUpMove()
 {
-    y_location -= Gamedata::getInstance().getXmlInt(name + "/movementSpeed");
+    x_location -= ((x_fov+x_location)-x_location)/5;
+    y_location -= ((y_fov+y_location)-y_location)/5;
+
 }
 void Player::verticalDownMove()
 {
-    x_location += cos( theta * (3.14159265/180) );
-    y_location += sin( theta * (3.14159265/180) );
+    x_location += ((x_fov+x_location)-x_location)/5;
+    y_location += ((y_fov+y_location)-y_location)/5;
 }
 
 // Rotations
