@@ -1,9 +1,9 @@
 #include <iostream>
 #include "world.h"
-#include "renderContext.h"
+#include "imageFactory.h"
 
 World::World(const std::string& name, int fact) : 
-  image( RenderContext::getInstance()->getImage(name) ),
+  image( ImageFactory::getInstance()->getImage(name) ),
   factor(fact),
     worldWidth( Gamedata::getInstance().getXmlInt("world/width") ),
     imageWidth( image->getWidth() ),

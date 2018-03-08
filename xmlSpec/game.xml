@@ -22,7 +22,7 @@
 </world>
 
 <back>
-  <file>assets/checkerboard.bmp</file>
+  <file>assets/bigstarrysky.png</file>
   <factor>1</factor>
   <transparency>false</transparency>
 </back>
@@ -31,18 +31,10 @@
   <file>fonts/arial.ttf</file>
   <size>24</size>
   <red>255</red>
-  <green>0</green>
+  <green>255</green>
   <blue>0</blue>
   <alpha>0</alpha>
 </font>
-
-<Player>
-    <movementSpeed>5</movementSpeed>
-    <xLocation>50</xLocation>
-    <yLocation>50</yLocation>
-    <theta>0</theta>
-    <radius>50</radius>
-</Player>
 
 <SpinningStar>
   <file>assets/spinstar.png</file>

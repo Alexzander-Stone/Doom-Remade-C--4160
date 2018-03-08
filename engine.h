@@ -5,7 +5,8 @@
 #include "clock.h"
 #include "world.h"
 #include "viewport.h"
-#include "player.h"
+
+class Player;
 
 class Engine {
 public:
@@ -17,7 +18,6 @@ public:
 private:
   const RenderContext* rc;
   const IoMod& io;
-  Player& player;
   Clock& clock;
 
   SDL_Renderer * const renderer;
@@ -25,7 +25,7 @@ private:
   Viewport& viewport;
 
   Drawable* star;
-  Drawable* spinningStar;
+  Player*   player;
   int currentSprite;
 
   bool makeVideo;

@@ -1,6 +1,6 @@
 #include "multisprite.h"
 #include "gamedata.h"
-#include "renderContext.h"
+#include "imageFactory.h"
 
 void MultiSprite::advanceFrame(Uint32 ticks) {
 	timeSinceLastFrame += ticks;
@@ -17,7 +17,7 @@ MultiSprite::MultiSprite( const std::string& name) :
            Vector2f(Gamedata::getInstance().getXmlInt(name+"/speedX"),
                     Gamedata::getInstance().getXmlInt(name+"/speedY"))
            ),
-  images( RenderContext::getInstance()->getImages(name) ),
+  images( ImageFactory::getInstance()->getImages(name) ),
 
   currentFrame(0),
   numberOfFrames( Gamedata::getInstance().getXmlInt(name+"/frames") ),

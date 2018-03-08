@@ -3,7 +3,7 @@
 #include <functional>
 #include "sprite.h"
 #include "gamedata.h"
-#include "renderContext.h"
+#include "imageFactory.h"
 
 Vector2f Sprite::makeVelocity(int vx, int vy) const {
   float newvx = Gamedata::getInstance().getRandFloat(vx-50,vx+50);;
@@ -30,7 +30,7 @@ Sprite::Sprite(const std::string& name) :
                     Gamedata::getInstance().getXmlInt(name+"/speedX"), 
                     Gamedata::getInstance().getXmlInt(name+"/speedY")) 
            ),
-  image( RenderContext::getInstance()->getImage(name) ),
+  image( ImageFactory::getInstance()->getImage(name) ),
   worldWidth(Gamedata::getInstance().getXmlInt("world/width")),
   worldHeight(Gamedata::getInstance().getXmlInt("world/height"))
 { }

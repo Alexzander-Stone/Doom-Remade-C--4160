@@ -9,68 +9,56 @@
 #include "gamedata.h"
 #include "engine.h"
 #include "frameGenerator.h"
-
-#include <SDL2/SDL.h>
+#include "player.h"
 
 Engine::~Engine() { 
   delete star;
-  delete spinningStar;
+  delete player;
   std::cout << "Terminating program" << std::endl;
 }
 
 Engine::Engine() :
   rc( RenderContext::getInstance() ),
   io( IoMod::getInstance() ),
-  player( Player::getInstance() ),
   clock( Clock::getInstance() ),
   renderer( rc->getRenderer() ),
   world("back", Gamedata::getInstance().getXmlInt("back/factor") ),
   viewport( Viewport::getInstance() ),
   star(new Sprite("YellowStar")),
-  spinningStar(new MultiSprite("SpinningStar")),
-  currentSprite(0),
+  player(new Player("SpinningStar")),
+  currentSprite(1),
   makeVideo( false )
 {
-  
-  Viewport::getInstance().setObjectToTrack(star);
+  Viewport::getInstance().setObjectToTrack(player->getPlayer());
   std::cout << "Loading complete" << std::endl;
-}
-
-void Engine::draw() const {
-  SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
-  world.draw();
-
-  // Player character.
-  player.draw();
-
-  //star->draw();
-  //spinningStar->draw();
-  
-
-
-
-
-  //viewport.draw();
-  SDL_RenderPresent(renderer);
-
-}
-
-void Engine::update(Uint32 ticks) {
-  star->update(ticks);
-  spinningStar->update(ticks);
-  world.update();
-  viewport.update(); // always update viewport last
 }
 
 void Engine::switchSprite(){
   ++currentSprite;
   currentSprite = currentSprite % 2;
   if ( currentSprite ) {
-    Viewport::getInstance().setObjectToTrack(spinningStar);
+    Viewport::getInstance().setObjectToTrack(player->getPlayer());
   }
   else {
     Viewport::getInstance().setObjectToTrack(star);
   }
+}
+
+void Engine::draw() const {
+  world.draw();
+
+  star->draw();
+  player->draw();
+
+  viewport.draw();
+  SDL_RenderPresent(renderer);
+}
+
+void Engine::update(Uint32 ticks) {
+  star->update(ticks);
+  player->update(ticks);
+  world.update();
+  viewport.update(); // always update viewport last
 }
 
 void Engine::play() {
@@ -86,28 +74,7 @@ void Engine::play() {
       keystate = SDL_GetKeyboardState(NULL);
       if (event.type ==  SDL_QUIT) { done = true; break; }
       if(event.type == SDL_KEYDOWN) {
-        if(keystate[SDL_SCANCODE_D]){
-            player.horizontalRightMove();
-        }
-        else if(keystate[SDL_SCANCODE_S])
-        {
-            player.verticalUpMove();
-        }
-        else if(keystate[SDL_SCANCODE_W])
-        {
-            player.verticalDownMove();
-        }
-        
-        if(keystate[SDL_SCANCODE_E])
-        {
-            player.rotateLeft();
-        }
-        else if(keystate[SDL_SCANCODE_Q])
-        {
-            player.rotateRight();
-        }
-
-        if (keystate[SDL_SCANCODE_ESCAPE] ) {
+        if (keystate[SDL_SCANCODE_ESCAPE]) {
           done = true;
           break;
         }
@@ -134,6 +101,24 @@ void Engine::play() {
     ticks = clock.getElapsedTicks();
     if ( ticks > 0 ) {
       clock.incrFrame();
+      if (keystate[SDL_SCANCODE_A]) {
+        static_cast<Player*>(player)->left();
+      }
+      if (keystate[SDL_SCANCODE_D]) {
+        static_cast<Player*>(player)->right();
+      }
+      if (keystate[SDL_SCANCODE_W]) {
+        static_cast<Player*>(player)->up();
+      }
+      if (keystate[SDL_SCANCODE_S]) {
+        static_cast<Player*>(player)->down();
+      }
+      if(keystate[SDL_SCANCODE_Q]){
+        static_cast<Player*>(player)->rotateLeft();
+      }
+      if(keystate[SDL_SCANCODE_E]){
+        static_cast<Player*>(player)->rotateRight();
+      }
       draw();
       update(ticks);
       if ( makeVideo ) {

@@ -1,34 +1,59 @@
-#include <SDL2/SDL.h>
+#ifndef PLAYER__H
+#define PLAYER__H
+#include <SDL.h>
 #include <string>
+#include <vector>
+#include <cmath>
+
+#include "multisprite.h"
 
 class Player {
 public:
-  static Player& getInstance();
-  Player& operator=(const Player&);
-
-  // Movement options
-  void horizontalLeftMove();
-  void horizontalRightMove();
-  void verticalUpMove();
-  void verticalDownMove();
-  // Rotation options
-  void rotateLeft();
-  void rotateRight();
-  
-  // Drawing
-  void draw();
-
-private:
-  std::string name;
-  int x_location;
-  int y_location;
-  double x_fov;
-  double y_fov;
-  int theta;
-  int rotation_rad;
-  SDL_Renderer * renderer; 
-
   Player(const std::string&);
   Player(const Player&);
-  Player();
+
+  void draw() const { player.draw(); }
+  void update(Uint32 ticks);
+  const MultiSprite* getPlayer() const { return &player; }
+
+  const std::string& getName() const { return player.getName(); }
+  int getX() const { return player.getX(); }
+  int getY() const { return player.getY(); }
+  double getX_Fov() const { return x_fov; }
+  double getY_Fov() const { return y_fov; }
+  const Image* getImage() const { 
+    return player.getImage();
+  }
+  int getScaledWidth()  const { 
+    return player.getScaledWidth();
+  } 
+  int getScaledHeight()  const { 
+    return player.getScaledHeight();
+  } 
+  const SDL_Surface* getSurface() const { 
+    return player.getSurface();
+  }
+
+  // Translation options.
+  void right();
+  void left();
+  void up();
+  void down();
+
+  // Rotation Options.
+  void rotateLeft();
+  void rotateRight();
+
+  // Stop movement of player.
+  void stop();
+
+private:
+  MultiSprite player;
+  Vector2f initialVelocity;
+  int worldWidth;
+  int worldHeight;
+  // Rotation values.
+  double x_fov, y_fov;
+  int theta, rotation_radius; 
 };
+#endif
