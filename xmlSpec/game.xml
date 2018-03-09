@@ -38,14 +38,20 @@
 
 <SpinningStar>
   <file>assets/spinstar.png</file>
-  <startLoc x="50" y="140"/>
+  <startLoc x="300" y="400"/>
   <frames>4</frames>
   <imageWidth>32</imageWidth>
   <imageHeight>32</imageHeight>
-  <frameInterval>50</frameInterval>
-  <speedX>200</speedX>
-  <speedY>200</speedY>
+  <frameInterval>500</frameInterval>
+  <speedX>500</speedX>
+  <speedY>500</speedY>
   <transparency>false</transparency>
+  <xFovStart>0</xFovStart>
+  <yFovStart>1</yFovStart>
+  <directionStart>90</directionStart>
+  <rotationRadius>1</rotationRadius>
+  <momentumSlowdown>.9</momentumSlowdown>
+  <thetaIncrement>5</thetaIncrement>
 </SpinningStar>
 
 <YellowStar>
