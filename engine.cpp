@@ -119,6 +119,7 @@ void Engine::play() {
       if(keystate[SDL_SCANCODE_E]){
         static_cast<Player*>(player)->rotateRight();
       }
+      
       draw();
       update(ticks);
       if ( makeVideo ) {

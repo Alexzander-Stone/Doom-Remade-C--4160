@@ -32,16 +32,16 @@ void Player::left()  {
 void Player::up()    { 
   if ( player.getY() + y_fov > 0) {
     player.setVelocityY( -initialVelocity[1] * x_fov);
-    player.setVelocityX( -initialVelocity[0] * y_fov);
+    player.setVelocityX( -initialVelocity[0] * -y_fov);
   }
 } 
 void Player::down()  { 
   if ( player.getY() + y_fov < worldHeight-getScaledHeight()) {
     player.setVelocityY( initialVelocity[1] * x_fov);
-    player.setVelocityX( initialVelocity[0] * y_fov);
+    player.setVelocityX( initialVelocity[0] * -y_fov);
   }
 }
-void Player::rotateRight() {
+void Player::rotateLeft() {
     // Wrap the theta around when reaching -1.
     theta -= 2;
     if(theta < 0) {
@@ -53,7 +53,7 @@ void Player::rotateRight() {
     // DEBUG.
     std::cout << "X_fov is " << x_fov << " and Y_fov is " << y_fov << std::endl;
 }
-void Player::rotateLeft() {
+void Player::rotateRight() {
     // Wrap the theta around when reaching 360.
     theta += 2;
     if(theta >= 360) {
