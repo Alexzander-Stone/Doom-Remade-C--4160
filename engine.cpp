@@ -4,16 +4,24 @@
 #include <string>
 #include <random>
 #include <iomanip>
-#include "sprite.h"
+#include "smartSprite.h"
 #include "multisprite.h"
 #include "gamedata.h"
 #include "engine.h"
 #include "frameGenerator.h"
 #include "player.h"
+#include "collisionStrategy.h"
 
 Engine::~Engine() { 
-  delete star;
   delete player;
+  for( Drawable* drawings : sprites )
+  {
+      delete drawings;
+  }
+  for( CollisionStrategy* strategy : strategies )
+  {
+      delete strategy;
+  }
   std::cout << "Terminating program" << std::endl;
 }
 
@@ -24,37 +32,60 @@ Engine::Engine() :
   renderer( rc->getRenderer() ),
   world("back", Gamedata::getInstance().getXmlInt("back/factor") ),
   viewport( Viewport::getInstance() ),
-  star(new Sprite("YellowStar")),
   player(new Player("SpinningStar")),
-  currentSprite(1),
-  makeVideo( false )
+  sprites(),
+  strategies(),
+  currentStrategy(0),
+  collision( false ),
+  makeVideo( false ),
+  currentSprite(1)
 {
+  // Wall sprites.
+  int wallCount = Gamedata::getInstance().getXmlInt("Wall/numberOfWalls");
+  sprites.reserve( wallCount );
+
+  Vector2f pos = player->getPosition();
+  int w = player->getScaledWidth();
+  int h = player->getScaledHeight();
+  for ( int i = 0; i < wallCount; i++ ){
+      sprites.push_back( new SmartSprite("YellowStar", pos, w, h) );
+      player->attach( sprites[i] );
+  }
+
+  // Collision strategies ( rect, pixel, distance(midpoint) ).
+  strategies.push_back( new RectangularCollisionStrategy );
+  strategies.push_back( new PerPixelCollisionStrategy );
+  strategies.push_back( new MidPointCollisionStrategy );
+
   Viewport::getInstance().setObjectToTrack(player->getPlayer());
   std::cout << "Loading complete" << std::endl;
-}
-
-void Engine::switchSprite(){
-  ++currentSprite;
-  currentSprite = currentSprite % 2;
-  if ( currentSprite ) {
-    Viewport::getInstance().setObjectToTrack(player->getPlayer());
-  }
-  else {
-    Viewport::getInstance().setObjectToTrack(star);
-  }
 }
 
 void Engine::draw() const {
   world.draw();
 
-  star->draw();
   player->draw();
 
   viewport.draw();
   SDL_RenderPresent(renderer);
 }
 
+// Collision Detection.
+void Engine::checkForCollisions(){
+    auto it = sprites.begin();
+
+    // Search through all the sprites to determine if collision has occurred.
+    while( it != sprites.end() ){
+        // Check for collision between player and object.
+        if( strategies[currentStrategy]->execute(*player, **it) ){
+            // Collision has been detected, bounce off wall.
+        }
+        ++it;
+    }
+}
+
 void Engine::update(Uint32 ticks) {
+  checkForCollisions();
   star->update(ticks);
   player->update(ticks);
   world.update();
@@ -81,9 +112,6 @@ void Engine::play() {
         if ( keystate[SDL_SCANCODE_P] ) {
           if ( clock.isPaused() ) clock.unpause();
           else clock.pause();
-        }
-        if ( keystate[SDL_SCANCODE_T] ) {
-          switchSprite();
         }
         if (keystate[SDL_SCANCODE_F4] && !makeVideo) {
           std::cout << "Initiating frame capture" << std::endl;

@@ -28,28 +28,20 @@ void Player::stop() {
 // Vertical goes from x_fov = 1 (top) to x_fov = -1 (bottom).
 // Horizontal goes form y_fov = 1 (left) to y_fov = -1 (right).
 void Player::right() { 
-  if ( player.getX() + x_fov < worldWidth-getScaledWidth()) {
-    player.setVelocityX(initialVelocity[0] * x_fov);
-    player.setVelocityY(initialVelocity[1] * y_fov);
-  }
+  player.setVelocityX(initialVelocity[0] * x_fov);
+  player.setVelocityY(initialVelocity[1] * y_fov);
 } 
 void Player::left()  { 
-  if ( player.getX() + x_fov > 0) {
-    player.setVelocityX(-initialVelocity[0] * x_fov);
-    player.setVelocityY(-initialVelocity[1] * y_fov);
-  }
+  player.setVelocityX(-initialVelocity[0] * x_fov);
+  player.setVelocityY(-initialVelocity[1] * y_fov);
 } 
 void Player::up()    { 
-  if ( player.getY() + y_fov > 0) {
-    player.setVelocityY( -initialVelocity[1] * x_fov);
-    player.setVelocityX( -initialVelocity[0] * -y_fov);
-  }
+  player.setVelocityY( -initialVelocity[1] * x_fov);
+  player.setVelocityX( -initialVelocity[0] * -y_fov);
 } 
 void Player::down()  { 
-  if ( player.getY() + y_fov < worldHeight-getScaledHeight()) {
-    player.setVelocityY( initialVelocity[1] * x_fov);
-    player.setVelocityX( initialVelocity[0] * -y_fov);
-  }
+  player.setVelocityY( initialVelocity[1] * x_fov);
+  player.setVelocityX( initialVelocity[0] * -y_fov);
 }
 void Player::rotateLeft() {
     // Wrap the theta around when reaching -1.

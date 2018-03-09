@@ -7,13 +7,15 @@
 #include "viewport.h"
 
 class Player;
+class CollisionStrategy;
+class SmartSprite;
+class SubjectSprite;
 
 class Engine {
 public:
   Engine ();
   ~Engine ();
   void play();
-  void switchSprite();
 
 private:
   const RenderContext* rc;
@@ -24,17 +26,22 @@ private:
   World world;
   Viewport& viewport;
 
-  Drawable* star;
   Player*   player;
-  int currentSprite;
+  // Collision variables.
+  std::vector<Drawable*> sprites;
+  std::vector<CollisionStrategy*> strategies;
+  int currentStrategy;
+  bool collision;
 
   bool makeVideo;
-
+ 
+  int currentSprite;
   void draw() const;
   void update(Uint32);
 
   Engine(const Engine&);
   Engine& operator=(const Engine&);
   void printScales() const;
+
   void checkForCollisions();
 };
