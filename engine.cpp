@@ -113,10 +113,10 @@ void Engine::play() {
       if (keystate[SDL_SCANCODE_S]) {
         static_cast<Player*>(player)->down();
       }
-      if(keystate[SDL_SCANCODE_Q]){
+      if(keystate[SDL_SCANCODE_LEFT]){
         static_cast<Player*>(player)->rotateLeft();
       }
-      if(keystate[SDL_SCANCODE_E]){
+      if(keystate[SDL_SCANCODE_RIGHT]){
         static_cast<Player*>(player)->rotateRight();
       }
       

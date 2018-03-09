@@ -13,10 +13,15 @@ Player::Player( const std::string& name) :
   rotation_radius(1)
 { }
 
-void Player::stop() { 
-  player.setVelocity( Vector2f(0, 0) );
+void Player::stop() {
+  // Momentum, slow down speed each tick.
+  player.setVelocity( Vector2f(.9*player.getVelocityX(), 
+                               .9*player.getVelocityY()) );
 }
 
+// Use y_fov and x_fov to determine how diaggonal movement works.
+// Vertical goes from x_fov = 1 (top) to x_fov = -1 (bottom).
+// Horizontal goes form y_fov = 1 (left) to y_fov = -1 (right).
 void Player::right() { 
   if ( player.getX() + x_fov < worldWidth-getScaledWidth()) {
     player.setVelocityX(initialVelocity[0] * x_fov);

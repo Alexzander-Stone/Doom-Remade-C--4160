@@ -19,8 +19,6 @@ public:
   const std::string& getName() const { return player.getName(); }
   int getX() const { return player.getX(); }
   int getY() const { return player.getY(); }
-  double getX_Fov() const { return x_fov; }
-  double getY_Fov() const { return y_fov; }
   const Image* getImage() const { 
     return player.getImage();
   }
