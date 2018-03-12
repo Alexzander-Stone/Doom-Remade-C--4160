@@ -56,6 +56,7 @@ public:
 private:
   MultiSprite player;
   Vector2f initialVelocity;
+  int amtToIncreaseVelocity;
   int worldWidth;
   int worldHeight;
   // Rotation values.
