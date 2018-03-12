@@ -42,6 +42,11 @@ public:
   void rotateLeft();
   void rotateRight();
 
+  // Get sprite info (pos, velo, etc.)
+  const MultiSprite& getSpriteInfo() const{
+      return player;
+  }
+
   // Stop movement of player.
   void stop();
 

@@ -6,7 +6,7 @@
 #include "renderContext.h"
 
 void RectangularCollisionStrategy::draw() const {
-  IOmod::
+  IoMod::
   getInstance().writeText("Strategy: Rectangular", 500, 30);
 }
 
@@ -36,7 +36,7 @@ distance(float x1, float y1, float x2, float y2) const {
 }
 
 void MidPointCollisionStrategy::draw() const {
-  IOmod::
+  IoMod::
   getInstance().writeText("Strategy: Distance", 500, 30);
 }
 
@@ -58,7 +58,7 @@ bool MidPointCollisionStrategy::execute(
 
 
 void PerPixelCollisionStrategy::draw() const {
-  IOmod::
+  IoMod::
   getInstance().writeText("Strategy: Per-Pixel ", 500, 30);
 }
 

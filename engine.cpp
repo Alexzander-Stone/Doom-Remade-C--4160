@@ -44,12 +44,12 @@ Engine::Engine() :
   int wallCount = Gamedata::getInstance().getXmlInt("Wall/numberOfWalls");
   sprites.reserve( wallCount );
 
-  Vector2f pos = player->getPosition();
+  Vector2f pos = player->getSpriteInfo().getPosition();
   int w = player->getScaledWidth();
   int h = player->getScaledHeight();
   for ( int i = 0; i < wallCount; i++ ){
       sprites.push_back( new SmartSprite("YellowStar", pos, w, h) );
-      player->attach( sprites[i] );
+      //player->getSpriteInfo().attach( sprites[i] );
   }
 
   // Collision strategies ( rect, pixel, distance(midpoint) ).
@@ -77,7 +77,7 @@ void Engine::checkForCollisions(){
     // Search through all the sprites to determine if collision has occurred.
     while( it != sprites.end() ){
         // Check for collision between player and object.
-        if( strategies[currentStrategy]->execute(*player, **it) ){
+        if( strategies[currentStrategy]->execute(player->getSpriteInfo(), **it) ){
             // Collision has been detected, bounce off wall.
         }
         ++it;
@@ -86,7 +86,6 @@ void Engine::checkForCollisions(){
 
 void Engine::update(Uint32 ticks) {
   checkForCollisions();
-  star->update(ticks);
   player->update(ticks);
   world.update();
   viewport.update(); // always update viewport last

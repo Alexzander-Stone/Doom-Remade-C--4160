@@ -36,6 +36,11 @@
   <alpha>0</alpha>
 </font>
 
+<Wall>
+    <numberOfWalls>10</numberOfWalls>
+</Wall>
+
+
 <SpinningStar>
   <file>assets/spinstar.png</file>
   <startLoc x="300" y="400"/>
@@ -60,6 +65,7 @@
   <speedX>300</speedX>
   <speedY>300</speedY>
   <transparency>false</transparency>
+  <safeDistance>20</safeDistance>
 </YellowStar>
 
 </GameData>

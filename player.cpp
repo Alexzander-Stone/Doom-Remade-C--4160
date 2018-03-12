@@ -74,3 +74,4 @@ void Player::update(Uint32 ticks) {
   player.update(ticks);
   stop();
 }
+
