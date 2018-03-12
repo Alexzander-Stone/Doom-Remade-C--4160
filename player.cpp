@@ -76,5 +76,7 @@ void Player::update(Uint32 ticks) {
 }
 
 void Player::collisionDetected(){
-    stop();
+    // Bounce player back towards opposite direction.
+    player.setVelocityX( player.getVelocityX() * -.9 );   
+    player.setVelocityY( player.getVelocityY() * -.9 );
 }
