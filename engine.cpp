@@ -11,6 +11,7 @@
 #include "frameGenerator.h"
 #include "player.h"
 #include "collisionStrategy.h"
+#include "vector2f.h"
 
 Engine::~Engine() { 
   delete player;
@@ -44,7 +45,7 @@ Engine::Engine() :
   int wallCount = Gamedata::getInstance().getXmlInt("Wall/numberOfWalls");
   sprites.reserve( wallCount );
 
-  Vector2f pos = player->getSpriteInfo().getPosition();
+  Vector2f pos(50, 50);
   int w = player->getScaledWidth();
   int h = player->getScaledHeight();
   for ( int i = 0; i < wallCount; i++ ){
@@ -64,6 +65,12 @@ Engine::Engine() :
 void Engine::draw() const {
   world.draw();
 
+  // Draw all sprites in container.
+  for( auto& it : sprites )
+  {
+    it->draw();
+  }
+
   player->draw();
 
   viewport.draw();
@@ -78,7 +85,7 @@ void Engine::checkForCollisions(){
     while( it != sprites.end() ){
         // Check for collision between player and object.
         if( strategies[currentStrategy]->execute(player->getSpriteInfo(), **it) ){
-            // Collision has been detected, bounce off wall.
+            player->collisionDetected();
         }
         ++it;
     }

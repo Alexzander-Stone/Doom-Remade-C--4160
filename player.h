@@ -47,6 +47,9 @@ public:
       return player;
   }
 
+  // Collision reaction.
+  void collisionDetected();
+
   // Stop movement of player.
   void stop();
 

@@ -75,3 +75,6 @@ void Player::update(Uint32 ticks) {
   stop();
 }
 
+void Player::collisionDetected(){
+    stop();
+}
