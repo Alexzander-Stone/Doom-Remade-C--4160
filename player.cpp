@@ -4,8 +4,8 @@
 
 Player::Player( const std::string& name) :
   player(name),
-  initialVelocity(player.getVelocity()),
-  amtToIncreaseVelocity(player.getVelocityX() / 10),
+  maxVelocity(Gamedata::getInstance().getXmlInt(name + "/maxSpeed")),
+  amtToIncreaseVelocity(Gamedata::getInstance().getXmlInt(name+ "/incSpeed")),
   worldWidth(Gamedata::getInstance().getXmlInt("world/width")),
   worldHeight(Gamedata::getInstance().getXmlInt("world/height")),
   x_fov(Gamedata::getInstance().getXmlInt(name + "/xFovStart")),
@@ -34,10 +34,10 @@ void Player::right() {
   player.setVelocityY( player.getVelocityY() + amtToIncreaseVelocity * y_fov );
   
   // Create a max speed
-  if( player.getVelocityX() > initialVelocity[0] * x_fov )
-    player.setVelocityX( initialVelocity[0] * x_fov );
-  if( player.getVelocityY() > initialVelocity[1] * y_fov )
-    player.setVelocityY( initialVelocity[1] * y_fov );
+  if( player.getVelocityX() > maxVelocity * x_fov )
+    player.setVelocityX( maxVelocity * x_fov );
+  if( player.getVelocityY() > maxVelocity * y_fov )
+    player.setVelocityY( maxVelocity * y_fov );
 } 
 void Player::left()  { 
   // Add to the current speed of the player.
@@ -45,10 +45,10 @@ void Player::left()  {
   player.setVelocityY( player.getVelocityY() - amtToIncreaseVelocity * y_fov );
   
   // Create a max speed
-  if( player.getVelocityX() < -initialVelocity[0] * x_fov )
-    player.setVelocityX( -initialVelocity[0] * x_fov );
-  if( player.getVelocityY() < -initialVelocity[1] * y_fov )
-    player.setVelocityY( -initialVelocity[1] * y_fov );
+  if( player.getVelocityX() < -maxVelocity * x_fov )
+    player.setVelocityX( -maxVelocity * x_fov );
+  if( player.getVelocityY() < -maxVelocity * y_fov )
+    player.setVelocityY( -maxVelocity * y_fov );
 } 
 void Player::up()    { 
   // Add to the current speed of the player.
@@ -56,10 +56,10 @@ void Player::up()    {
   player.setVelocityY( player.getVelocityY() - amtToIncreaseVelocity * x_fov );
   
   // Create a max speed
-  if( player.getVelocityX() > -initialVelocity[0] * -y_fov )
-    player.setVelocityX( -initialVelocity[0] * -y_fov );
-  if( player.getVelocityY() < -initialVelocity[1] * x_fov )
-    player.setVelocityY( -initialVelocity[1] * x_fov );
+  if( player.getVelocityX() > -maxVelocity * -y_fov )
+    player.setVelocityX( -maxVelocity * -y_fov );
+  if( player.getVelocityY() < -maxVelocity * x_fov )
+    player.setVelocityY( -maxVelocity * x_fov );
 } 
 void Player::down()  { 
   // Add to the current speed of the player.
@@ -67,11 +67,13 @@ void Player::down()  {
   player.setVelocityY( player.getVelocityY() + amtToIncreaseVelocity * x_fov );
   
   // Create a max speed
-  if( player.getVelocityX() < initialVelocity[0] * -y_fov )
-    player.setVelocityX( initialVelocity[0] * -y_fov );
-  if( player.getVelocityY() > initialVelocity[1] * x_fov )
-    player.setVelocityY( initialVelocity[1] * x_fov );
+  if( player.getVelocityX() < maxVelocity * -y_fov )
+    player.setVelocityX( maxVelocity * -y_fov );
+  if( player.getVelocityY() > maxVelocity * x_fov )
+    player.setVelocityY( maxVelocity * x_fov );
 }
+
+// When determining the vector, make sure to normalize it.
 void Player::rotateLeft() {
     // Wrap the theta around when reaching -1.
     theta -= Gamedata::getInstance().getXmlInt(player.getName() + 
@@ -79,28 +81,44 @@ void Player::rotateLeft() {
     if(theta < 0) {
         theta += 360;
     }
-    x_fov = rotation_radius*cos(theta * (3.14159265/180));
-    y_fov = rotation_radius*sin(theta * (3.14159265/180));
+    double not_normalized_x= cos(theta * (3.14/180));
+    double not_normalized_y = sin(theta * (3.14/180));
     
-    // DEBUG.
-    std::cout << "X_fov is " << x_fov << " and Y_fov is " << y_fov << std::endl;
+    // Check to see if the values are negative, need to preserve the negative if so.
+    if(not_normalized_x >= 0)
+	x_fov = rotation_radius * pow(not_normalized_x, 2);
+    else
+	x_fov = -1 * rotation_radius * pow(not_normalized_x, 2);
+    if(not_normalized_y >= 0)
+	y_fov = rotation_radius * pow(not_normalized_y, 2);
+    else
+	y_fov = -1 * rotation_radius * pow(not_normalized_y, 2);
 }
 void Player::rotateRight() {
     // Wrap the theta around when reaching 360.
     theta += Gamedata::getInstance().getXmlInt(player.getName() + 
              "/thetaIncrement");
-    if(theta >= 360) {
-        theta -= 359;
+    if(theta > 359) {
+        theta -= 360;
     }
-    x_fov = rotation_radius*cos(theta * (3.14159265/180));
-    y_fov = rotation_radius*sin(theta * (3.14159265/180));
+    double not_normalized_x= cos(theta * (3.14/180));
+    double not_normalized_y = sin(theta * (3.14/180));
+    
 
-    // DEBUG.
-    std::cout << "X_fov is " << x_fov << " and Y_fov is " << y_fov << std::endl;
+    // Check to see if the values are negative, need to preserve the negative if so.
+    if(not_normalized_x >= 0)
+	x_fov = rotation_radius * pow(not_normalized_x, 2);
+    else
+	x_fov = -1 * rotation_radius * pow(not_normalized_x, 2);
+
+    if(not_normalized_y >= 0)
+	y_fov = rotation_radius * pow(not_normalized_y, 2);
+    else
+	y_fov = -1 * rotation_radius * pow(not_normalized_y, 2);
+
 }
 
 void Player::update(Uint32 ticks) {
-  std::cout << "PlayerX is : " << player.getX() << "and PlayerY is: " << player.getY() << std::endl; 
   player.update(ticks);
   stop();
 }

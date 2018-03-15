@@ -48,8 +48,10 @@
   <imageWidth>32</imageWidth>
   <imageHeight>32</imageHeight>
   <frameInterval>500</frameInterval>
-  <speedX>500</speedX>
-  <speedY>500</speedY>
+  <speedY>0</speedY>
+  <speedX>0</speedX>
+  <maxSpeed>500</maxSpeed>
+  <incSpeed>50</incSpeed>
   <transparency>false</transparency>
   <xFovStart>0</xFovStart>
   <yFovStart>1</yFovStart>

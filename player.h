@@ -47,6 +47,11 @@ public:
       return player;
   }
 
+  // Getter for rotation value (theta)
+  const int& getRotation() const{
+    return theta;
+  };
+
   // Collision reaction.
   void collisionDetected();
 
@@ -55,7 +60,7 @@ public:
 
 private:
   MultiSprite player;
-  Vector2f initialVelocity;
+  int maxVelocity;
   int amtToIncreaseVelocity;
   int worldWidth;
   int worldHeight;
