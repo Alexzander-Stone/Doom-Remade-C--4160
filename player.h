@@ -59,6 +59,8 @@ public:
   void stop();
 
 private:
+  enum PlayerState { NORMAL, BOUNCE };
+  
   MultiSprite player;
   int maxVelocity;
   int amtToIncreaseVelocity;
@@ -67,5 +69,9 @@ private:
   // Rotation values.
   double x_fov, y_fov;
   int theta, rotation_radius; 
+  // State machine.
+  PlayerState current_state;
+  // Bounce Timer.
+  Uint32 bounce_timer;
 };
 #endif

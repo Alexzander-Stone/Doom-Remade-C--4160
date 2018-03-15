@@ -59,6 +59,10 @@
   <rotationRadius>1</rotationRadius>
   <momentumSlowdown>.9</momentumSlowdown>
   <thetaIncrement>5</thetaIncrement>
+  <Bounce>
+    <incSpeed>0</incSpeed>
+    <changeVel>-.95</changeVel>
+  </Bounce>
 </SpinningStar>
 
 <YellowStar>

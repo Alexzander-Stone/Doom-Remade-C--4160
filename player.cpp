@@ -11,7 +11,9 @@ Player::Player( const std::string& name) :
   x_fov(Gamedata::getInstance().getXmlInt(name + "/xFovStart")),
   y_fov(Gamedata::getInstance().getXmlInt(name + "/yFovStart")),
   theta(Gamedata::getInstance().getXmlInt(name + "/directionStart")),
-  rotation_radius(Gamedata::getInstance().getXmlInt(name + "/rotationRadius"))
+  rotation_radius(Gamedata::getInstance().getXmlInt(name + "/rotationRadius")),
+  current_state(NORMAL),
+  bounce_timer(0)
 { }
 
 void Player::stop() {
@@ -119,12 +121,35 @@ void Player::rotateRight() {
 }
 
 void Player::update(Uint32 ticks) {
+  // Bouncing timer when colliding with wall.
+  if(current_state == BOUNCE && 
+     bounce_timer >= static_cast<Uint32>(100 * Gamedata::getInstance().getXmlInt("period"))
+    ) 
+  {
+    amtToIncreaseVelocity = Gamedata::getInstance().getXmlInt(player.getName()+ "/incSpeed");
+    current_state = NORMAL; 
+  }
+  else if(current_state == BOUNCE)
+  {
+    bounce_timer += ticks;
+  }
+
   player.update(ticks);
   stop();
 }
 
 void Player::collisionDetected(){
     // Bounce player back towards opposite direction.
-    player.setVelocityX( player.getVelocityX() * -.9 );   
-    player.setVelocityY( player.getVelocityY() * -.9 );
+    if(current_state == BOUNCE){
+	
+    }
+    else {
+    std::cout << "yes" << std::endl;
+    // Change state of player to BOUNCE mode.
+    current_state = BOUNCE;
+    bounce_timer = 0;  
+    amtToIncreaseVelocity = Gamedata::getInstance().getXmlInt(player.getName() + "/Bounce/incSpeed");
+    player.setVelocityX( player.getVelocityX() * Gamedata::getInstance().getXmlFloat(player.getName() + "/Bounce/changeVel") );   
+    player.setVelocityY( player.getVelocityY() * Gamedata::getInstance().getXmlFloat(player.getName() + "/Bounce/changeVel") );
+    }   
 }
