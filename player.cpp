@@ -130,33 +130,69 @@ void Player::collisionDetected(){
 		{
 			int collision_obj_x = (*it)->getX();
 			int collision_obj_y = (*it)->getY();
-			// Player is to the right of the collided object.
-			while ( player.getX() < collision_obj_x + (*it)->getScaledWidth() + 2 && 
-	     			  player.getX() > collision_obj_x + (*it)->getScaledWidth()/2 )
-			{
-				player.setX( player.getX() + 1 );
-			}
-			// Player is to the left of the collided object.
-			while ( player.getX() + getScaledWidth() < collision_obj_x + (*it)->getScaledWidth()/2 &&
-							player.getX() + getScaledWidth() > collision_obj_x - 2)
-			{
-				player.setX( player.getX() - 1 );
-			}
 
-			// Player is towards the bottom of the collided object.
-			while ( player.getY() < collision_obj_y + (*it)->getScaledHeight() + 2 &&
-							player.getY() > collision_obj_y + (*it)->getScaledHeight()/2 )
-			{
-				player.setY( player.getY() + 1 );
+			if(x_fov != 0 && y_fov != 0 ) {
+				// Player is to the right of the collided object.
+				while ( player.getX() < collision_obj_x + (*it)->getScaledWidth() + 2 && 
+	     				  player.getX() > collision_obj_x + (*it)->getScaledWidth()/2 )
+				{
+					player.setX( player.getX() + .1 );
+				}
+				// Player is to the left of the collided object.
+				while ( player.getX() + getScaledWidth() < collision_obj_x + (*it)->getScaledWidth()/2 &&
+								player.getX() + getScaledWidth() > collision_obj_x - 2)
+
+				{
+					player.setX( player.getX() - .1 );
+				}
+
+				// Player is towards the bottom of the collided object.
+				while ( player.getY() < collision_obj_y + (*it)->getScaledHeight() + 2 &&
+								player.getY() > collision_obj_y + (*it)->getScaledHeight()/2 )
+				{
+					player.setY( player.getY() + .1 );
+				}
+				// Player is towards the top of the collided object.
+				while ( player.getY() + getScaledHeight() < collision_obj_y + (*it)->getScaledHeight()/2 &&
+								player.getY() + getScaledHeight() > collision_obj_y - 2 )
+				{
+					player.setY( player.getY() - .1 );
+				}
+				// Update player with new coordinates.
+				++it;
 			}
-			// Player is towards the top of the collided object.
-			while ( player.getY() + getScaledHeight() < collision_obj_y + (*it)->getScaledHeight()/2 &&
-							player.getY() + getScaledHeight() > collision_obj_y - 2 )
-			{
-				player.setY( player.getY() - 1 );
+			else if( y_fov == 0 ) {
+				// Player is towards the bottom of the collided object.
+				while ( player.getY() < collision_obj_y + (*it)->getScaledHeight() + 2 &&
+								player.getY() > collision_obj_y + (*it)->getScaledHeight()/2 )
+				{
+					player.setY( player.getY() + .1 );
+				}
+				// Player is towards the top of the collided object.
+				while ( player.getY() + getScaledHeight() < collision_obj_y + (*it)->getScaledHeight()/2 &&
+								player.getY() + getScaledHeight() > collision_obj_y - 2 )
+				{
+					player.setY( player.getY() - .1 );
+				}
+				// Update player with new coordinates.
+				++it;
 			}
-			// Update player with new coordinates.
-			++it;
+			else {
+				// Player is to the right of the collided object.
+				while ( player.getX() < collision_obj_x + (*it)->getScaledWidth() + 2 && 
+	     				  player.getX() > collision_obj_x + (*it)->getScaledWidth()/2 )
+				{
+					player.setX( player.getX() + .1 );
+				}
+				// Player is to the left of the collided object.
+				while ( player.getX() + getScaledWidth() < collision_obj_x + (*it)->getScaledWidth()/2 &&
+								player.getX() + getScaledWidth() > collision_obj_x - 2)
+
+				{
+					player.setX( player.getX() - .1 );
+				}
+				++it;
+			}
 		}
 		player.getObservers().erase( player.getObservers().begin(), 
 																 player.getObservers().end() 
