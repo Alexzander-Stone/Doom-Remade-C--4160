@@ -106,6 +106,8 @@ void Engine::checkForCollisions(){
 void Engine::update(Uint32 ticks) {
   checkForCollisions();
   player->update(ticks);
+
+  checkForCollisions();
   world.update();
   viewport.update(); // always update viewport last
 }
