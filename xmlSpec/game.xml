@@ -50,7 +50,7 @@
   <frameInterval>500</frameInterval>
   <speedY>0</speedY>
   <speedX>0</speedX>
-  <maxSpeed>500</maxSpeed>
+  <maxSpeed>250</maxSpeed>
   <incSpeed>50</incSpeed>
   <transparency>false</transparency>
   <xFovStart>0</xFovStart>

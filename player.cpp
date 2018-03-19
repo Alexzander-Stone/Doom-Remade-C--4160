@@ -23,8 +23,9 @@ void Player::stop() {
         Gamedata::getInstance().getXmlFloat(player.getName() + 
         "/momentumSlowdown") * player.getVelocityX(), 
         Gamedata::getInstance().getXmlFloat(player.getName() + 
-        "/momentumSlowdown") * player.getVelocityY()) 
-    );
+        "/momentumSlowdown") * player.getVelocityY()
+		) 
+  );
 }
 
 // Use y_fov and x_fov to determine how diaggonal movement works.
@@ -106,32 +107,69 @@ void Player::rotateRight() {
 
 void Player::update(Uint32 ticks) {
   // Bouncing timer when colliding with wall.
-  if(current_state == BOUNCE && 
-     bounce_timer >= static_cast<Uint32>(20 * Gamedata::getInstance().getXmlInt("period"))
-    ) 
+	if( current_state == BOUNCE && bounce_timer >= static_cast<Uint32>( 30 * Gamedata::getInstance().getXmlInt("period") ) ) 
   {
     amtToIncreaseVelocity = Gamedata::getInstance().getXmlInt(player.getName()+ "/incSpeed");
     current_state = NORMAL; 
   }
-  else if(current_state == BOUNCE)
-  {
-    bounce_timer += ticks;
-  }
+	else if ( current_state == BOUNCE ){
+		bounce_timer += ticks;
+	}
 
   player.update(ticks);
   stop();
 }
 
 void Player::collisionDetected(){
+		// Check to see if the object is within the left/right and top/bottom range
+		// of the object. This will determine where to place the object.
+		// Detach the collision object once the player is in a valid state (outside
+		// the wall).
+		std::list<SmartSprite*>::iterator it = player.getObservers().begin();
+		while( it != player.getObservers().end() )
+		{
+			int collision_obj_x = (*it)->getX();
+			int collision_obj_y = (*it)->getY();
+			// Player is to the right of the collided object.
+			while ( player.getX() < collision_obj_x + (*it)->getScaledWidth() + 2 && 
+	     			  player.getX() > collision_obj_x + (*it)->getScaledWidth()/2 )
+			{
+				player.setX( player.getX() + 1 );
+			}
+			// Player is to the left of the collided object.
+			while ( player.getX() < collision_obj_x + (*it)->getScaledWidth()/2 &&
+							player.getX() > collision_obj_x - 2)
+			{
+				player.setX( player.getX() - 1 );
+			}
+
+			// Player is towards the bottom of the collided object.
+			while ( player.getY() < collision_obj_y + (*it)->getScaledHeight() + 2 &&
+							player.getY() > collision_obj_y + (*it)->getScaledHeight()/2 )
+			{
+				player.setY( player.getY() + 1 );
+			}
+			// Player is towards the top of the collided object.
+			while ( player.getY() < collision_obj_y + (*it)->getScaledHeight()/2 &&
+							player.getY() > collision_obj_y - 2 )
+			{
+				player.setY( player.getY() - 1 );
+			}
+			// Update player with new coordinates.
+			++it;
+		}
+		player.getObservers().erase( player.getObservers().begin(), 
+																 player.getObservers().end() 
+															 );
+
+		// Use the direction that the momentum is traveling towards.
     // Bounce player back towards opposite direction.
-    if(current_state == BOUNCE){
-	
-    }
-    else {
-    	// Change state of player to BOUNCE mode.
+    // Change state of player to BOUNCE mode.
+    if ( current_state == NORMAL ){
     	current_state = BOUNCE;
     	bounce_timer = 0;  
-    	amtToIncreaseVelocity = Gamedata::getInstance().getXmlInt(player.getName() + "/Bounce/incSpeed");
+    	amtToIncreaseVelocity = Gamedata::getInstance().getXmlInt(player.getName() + 
+															"/Bounce/incSpeed");
 			float bounceVelX = player.getVelocityX() * 
 											 Gamedata::getInstance().getXmlFloat(player.getName() + "/Bounce/changeVel");
 			float bounceVelY = player.getVelocityY() * 

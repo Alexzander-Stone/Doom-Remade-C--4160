@@ -17,10 +17,10 @@ void SmartSprite::goUp()    { setVelocityY( -fabs(getVelocityY()) ); }
 void SmartSprite::goDown()  { setVelocityY( fabs(getVelocityY()) );  }
 
 
-SmartSprite::SmartSprite(const std::string& name, const Vector2f& pos, 
-  int w, int h) :
-  Sprite(name),
-  playerPos(pos),
+SmartSprite::SmartSprite(const std::string& name, const Vector2f& playerPos, 
+  const int w, const int h, const Vector2f& spritePos) :
+  Sprite( name, spritePos, Vector2f(0, 0), ImageFactory::getInstance()->getImage(name) ),
+  playerPos(playerPos),
   playerWidth(w),
   playerHeight(h),
   currentMode(NORMAL),

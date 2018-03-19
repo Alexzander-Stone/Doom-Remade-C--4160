@@ -28,7 +28,7 @@ private:
 
   Player*   player;
   // Collision variables.
-  std::vector<Drawable*> sprites;
+  std::vector<SmartSprite*> sprites;
   std::vector<CollisionStrategy*> strategies;
   int currentStrategy;
   bool collision;

@@ -16,6 +16,7 @@ public:
   void update(Uint32 ticks);
   void attach( SmartSprite* o ) { observers.push_back(o); } 
   void detach( SmartSprite* o );
+	std::list<SmartSprite*>& getObservers() { return observers; } 
 
 protected:
   std::list<SmartSprite*> observers;

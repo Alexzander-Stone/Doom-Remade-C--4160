@@ -5,7 +5,7 @@
 
 class SmartSprite : public Sprite {
 public:
-  SmartSprite(const std::string&, const Vector2f& pos, int w, int h);
+  SmartSprite(const std::string&, const Vector2f&, const int, const int, const Vector2f&);
   SmartSprite(const SmartSprite&);
   virtual ~SmartSprite() { } 
 
@@ -19,6 +19,8 @@ private:
   int playerHeight;
   MODE currentMode;
   float safeDistance;
+	// Spawn location for sprite.
+	
 
   void goLeft();
   void goRight();

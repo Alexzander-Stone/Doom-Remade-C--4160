@@ -5,7 +5,8 @@
 #include <vector>
 #include <cmath>
 
-#include "multisprite.h"
+#include "subjectSprite.h"
+#include "smartSprite.h"
 
 class Player {
 public:
@@ -14,7 +15,7 @@ public:
 
   void draw() const { player.draw(); }
   void update(Uint32 ticks);
-  const MultiSprite* getPlayer() const { return &player; }
+  const SubjectSprite* getPlayer() const { return &player; }
 
   const std::string& getName() const { return player.getName(); }
   int getX() const { return player.getX(); }
@@ -43,7 +44,7 @@ public:
   void rotateRight();
 
   // Get sprite info (pos, velo, etc.)
-  const MultiSprite& getSpriteInfo() const{
+  SubjectSprite& getSpriteInfo() {
       return player;
   }
 
@@ -61,7 +62,7 @@ public:
 private:
   enum PlayerState { NORMAL, BOUNCE };
   
-  MultiSprite player;
+  SubjectSprite player;
   int maxVelocity;
   int amtToIncreaseVelocity;
   int worldWidth;

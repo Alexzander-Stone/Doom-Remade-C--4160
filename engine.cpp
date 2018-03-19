@@ -45,12 +45,12 @@ Engine::Engine() :
   int wallCount = Gamedata::getInstance().getXmlInt("Wall/numberOfWalls");
   sprites.reserve( wallCount );
 
-  Vector2f pos(50, 50);
+  Vector2f playerPos(0, 0);
   int w = player->getScaledWidth();
   int h = player->getScaledHeight();
   for ( int i = 0; i < wallCount; i++ ){
-      sprites.push_back( new SmartSprite("YellowStar", pos, w, h) );
-      //player->getSpriteInfo().attach( sprites[i] );
+			Vector2f spritePos(50 + i*w, 100);
+      sprites.push_back( new SmartSprite("YellowStar", playerPos, w, h, spritePos) );
   }
 
   // Collision strategies ( rect, pixel, distance(midpoint) ).
@@ -79,16 +79,29 @@ void Engine::draw() const {
 
 // Collision Detection.
 void Engine::checkForCollisions(){
-    auto it = sprites.begin();
+		bool collisionDetected = true;
 
-    // Search through all the sprites to determine if collision has occurred.
-    while( it != sprites.end() ){
+		// Check until all collisions have been removed.
+		while( collisionDetected == true ) {
+    	// Search through all the sprites to determine if collision has occurred.
+    	auto it = sprites.begin();
+			collisionDetected = false;
+			int currentSprite = 0;
+    	while( it != sprites.end() ){
         // Check for collision between player and object.
         if( strategies[currentStrategy]->execute(player->getSpriteInfo(), **it) ){
-            player->collisionDetected();
-        }
-        ++it;
-    }
+      		player->getSpriteInfo().attach( sprites[currentSprite] );
+					collisionDetected = true;
+      	}
+      	++it;
+				++currentSprite;
+   		}
+			if( collisionDetected == true){
+      	player->collisionDetected();
+				std::cout << "no" << std::endl;
+			}
+		}
+
 }
 
 void Engine::update(Uint32 ticks) {
