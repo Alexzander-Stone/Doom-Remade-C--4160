@@ -98,7 +98,6 @@ void Engine::checkForCollisions(){
    		}
 			if( collisionDetected == true){
       	player->collisionDetected();
-				std::cout << "no" << std::endl;
 			}
 		}
 
