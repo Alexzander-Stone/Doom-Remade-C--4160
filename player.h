@@ -59,6 +59,10 @@ public:
   // Stop movement of player.
   void stop();
 
+	// Momentum direction.
+	double getMomentumVelocityX() const;
+	double getMomentumVelocityY() const;
+
 private:
   enum PlayerState { NORMAL, BOUNCE };
   
@@ -74,5 +78,9 @@ private:
   PlayerState current_state;
   // Bounce Timer.
   Uint32 bounce_timer;
+	// Previous coordinates.
+	double previous_x; 
+	double previous_y;
+
 };
 #endif

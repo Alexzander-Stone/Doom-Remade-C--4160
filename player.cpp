@@ -13,7 +13,9 @@ Player::Player( const std::string& name) :
   theta(Gamedata::getInstance().getXmlInt(name + "/directionStart")),
   rotation_radius(Gamedata::getInstance().getXmlInt(name + "/rotationRadius")),
   current_state(NORMAL),
-  bounce_timer(0)
+  bounce_timer(0),
+	previous_x(0),
+	previous_y(0)
 { }
 
 void Player::stop() {
@@ -116,6 +118,8 @@ void Player::update(Uint32 ticks) {
 		bounce_timer += ticks;
 	}
 
+	previous_y = player.getY();
+	previous_x = player.getX();
   player.update(ticks);
   stop();
 }
@@ -130,31 +134,39 @@ void Player::collisionDetected(){
 		{
 			int collision_obj_x = (*it)->getX();
 			int collision_obj_y = (*it)->getY();
+			double currentX = player.getX();
+			double currentY = player.getY();
+			double momentumX = getMomentumVelocityX();
+			double momentumY = getMomentumVelocityY();
 			
 			// Fov determines which direction to move the player in response to the collision. 
 			// Can add checks for x_fov and y_fov for optimization 
 			if( x_fov != 0 && y_fov != 0 ) {
-				while ( ( player.getX() < collision_obj_x + (*it)->getScaledWidth() + 2 && 
-	     				    player.getX() + getScaledWidth() > collision_obj_x - 2) 
+				while ( ( currentX < collision_obj_x + (*it)->getScaledWidth() + 2 && 
+	     				    currentX + getScaledWidth() > collision_obj_x - 2) 
 								&& 
-								( player.getY() < collision_obj_y + (*it)->getScaledHeight() + 2 &&
-									player.getY() + getScaledHeight() > collision_obj_y - 2 )
+								( currentY < collision_obj_y + (*it)->getScaledHeight() + 2 &&
+									currentY + getScaledHeight() > collision_obj_y - 2 )
 							) {
-					player.setX( player.getX() + .1*y_fov );
-					player.setY( player.getY() + .1*x_fov );
+					currentX = currentX + 1*momentumX;
+					currentY = currentY + 1*momentumY;
 				}
+				player.setX(currentX);
+				player.setY(currentY);
 			}
-			else if( x_fov != 0) {
+			else if( y_fov == 0) {
 				while ( player.getY() < collision_obj_y + (*it)->getScaledHeight() + 2 &&
 								player.getY() + getScaledHeight() > collision_obj_y - 2 ) {
-					player.setY( player.getY() + .1*x_fov );
+					currentY = currentY + 1*momentumY;
 				}
+				player.setY(currentY);
 			}		
 			else {
 				while ( player.getX() < collision_obj_x + (*it)->getScaledWidth() + 2 && 
 	     				  player.getX() + getScaledWidth() > collision_obj_x - 2 ) {
-					player.setX( player.getX() + .1*y_fov );
+					currentX = currentX + 1*momentumX;
 				}
+				player.setX(currentX);
 			}
 			it++;
 		}
@@ -177,4 +189,28 @@ void Player::collisionDetected(){
     	player.setVelocityX( bounceVelX );   
     	player.setVelocityY( bounceVelY );
     }   
+}
+
+// Determine the x value of the player's momentum.
+double Player::getMomentumVelocityX() const {
+	double deltaX = player.getX() - previous_x;
+	double absoluteDeltaX = abs( player.getX() ) + abs( previous_x );
+	double absoluteDeltaY = abs( player.getY() ) + abs( previous_y );
+	double result = ( absoluteDeltaX ) / (absoluteDeltaX + absoluteDeltaY);
+	if(deltaX < 0)
+		result *= -1;
+
+  return result;
+}
+
+// Determine the y value of the player's momentum.
+double Player::getMomentumVelocityY() const {
+	double deltaY = player.getY() - previous_y;
+	double absoluteDeltaX = abs( player.getX() ) + abs( previous_x );
+	double absoluteDeltaY = abs( player.getY() ) + abs( previous_y );
+	double result = ( absoluteDeltaY ) / (absoluteDeltaX + absoluteDeltaY);
+	if(deltaY < 0)
+		result *= -1;
+
+	return result;
 }
