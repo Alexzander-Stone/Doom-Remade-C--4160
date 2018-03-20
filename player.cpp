@@ -148,8 +148,8 @@ void Player::collisionDetected(){
 								( currentY < collision_obj_y + (*it)->getScaledHeight() + 2 &&
 									currentY + getScaledHeight() > collision_obj_y - 2 )
 							) {
-					currentX = currentX + 1*momentumX;
-					currentY = currentY + 1*momentumY;
+					currentX = currentX - 1*momentumX;
+					currentY = currentY - 1*momentumY;
 				}
 				player.setX(currentX);
 				player.setY(currentY);
@@ -157,14 +157,14 @@ void Player::collisionDetected(){
 			else if( y_fov == 0) {
 				while ( player.getY() < collision_obj_y + (*it)->getScaledHeight() + 2 &&
 								player.getY() + getScaledHeight() > collision_obj_y - 2 ) {
-					currentY = currentY + 1*momentumY;
+					currentY = currentY - 1*momentumY;
 				}
 				player.setY(currentY);
 			}		
 			else {
 				while ( player.getX() < collision_obj_x + (*it)->getScaledWidth() + 2 && 
 	     				  player.getX() + getScaledWidth() > collision_obj_x - 2 ) {
-					currentX = currentX + 1*momentumX;
+					currentX = currentX - 1*momentumX;
 				}
 				player.setX(currentX);
 			}
