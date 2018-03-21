@@ -138,8 +138,8 @@ void Player::collisionDetected(){
 		std::list<SmartSprite*>::iterator it = player.getObservers().begin();
 		while( it != player.getObservers().end() )
 		{
-			int collision_obj_x = (*it)->getX();
-			int collision_obj_y = (*it)->getY();
+			double collision_obj_x = (*it)->getX();
+			double collision_obj_y = (*it)->getY();
 			double currentX = player.getX();
 			double currentY = player.getY();
 						
@@ -152,8 +152,8 @@ void Player::collisionDetected(){
 								( currentY < collision_obj_y + (*it)->getScaledHeight() + 2 &&
 									currentY + getScaledHeight() > collision_obj_y - 2 )
 							) {
-					currentX = currentX + .01 * (-momentumX);
-					currentY = currentY + .01 * (-momentumY);
+					currentX = static_cast<int>( currentX + 1 * (-momentumX) ) + 1;
+					currentY = static_cast<int>( currentY + 1 * (-momentumY) ) + 1;
 				}
 				player.setX(currentX);
 				player.setY(currentY);
@@ -161,22 +161,22 @@ void Player::collisionDetected(){
 			else if( y_fov == 0) {
 				while ( currentY < collision_obj_y + (*it)->getScaledHeight() + 2 &&
 								currentY + getScaledHeight() > collision_obj_y - 2 ) {
-					currentY = currentY - .01*momentumY;
+					currentY = currentY - 1*momentumY;
 				}
 				player.setY(currentY);
 			}		
 			else {
 				while ( currentX < collision_obj_x + (*it)->getScaledWidth() + 2 && 
 	     				  currentX + getScaledWidth() > collision_obj_x - 2 ) {
-					currentX = currentX - .01*momentumX;
+					currentX = currentX - 1*momentumX;
 				}
 				player.setX(currentX);
 			}
-			if( !( currentX < collision_obj_x + (*it)->getScaledWidth() + 2 && 
-	     				    currentX + getScaledWidth() > collision_obj_x - 2) )
-				xFinished = true;
-			else
+			if( currentX < collision_obj_x + (*it)->getScaledWidth() + 2 && 
+	     				    currentX + getScaledWidth() > collision_obj_x - 2 )
 				xFinished = false;
+			else
+				xFinished = true;
 
 			it++;			
 		}
