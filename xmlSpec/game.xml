@@ -61,7 +61,7 @@
   <thetaIncrement>5</thetaIncrement>
   <Bounce>
     <incSpeed>10</incSpeed>
-    <changeVel>-.95</changeVel>
+    <changeVel>.95</changeVel>
   </Bounce>
 </SpinningStar>
 

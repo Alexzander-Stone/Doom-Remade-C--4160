@@ -43,7 +43,7 @@ Engine::Engine() :
 {
   // Wall sprites.
   int wallCount = Gamedata::getInstance().getXmlInt("Wall/numberOfWalls");
-  sprites.reserve( wallCount );
+  sprites.reserve( wallCount*2 );
 
   Vector2f playerPos(0, 0);
   int w = player->getScaledWidth();
@@ -52,6 +52,11 @@ Engine::Engine() :
 			Vector2f spritePos(50 + i*w, 100);
       sprites.push_back( new SmartSprite("YellowStar", playerPos, w, h, spritePos) );
   }
+	// Corner wall
+	Vector2f spritePos(100, 500);
+  sprites.push_back( new SmartSprite("YellowStar", playerPos, w, h, spritePos) );
+	Vector2f spritePos2(50, 450);
+  sprites.push_back( new SmartSprite("YellowStar", playerPos, w, h, spritePos2) );
 
   // Collision strategies ( rect, pixel, distance(midpoint) ).
   strategies.push_back( new RectangularCollisionStrategy );
@@ -104,7 +109,6 @@ void Engine::checkForCollisions(){
 }
 
 void Engine::update(Uint32 ticks) {
-  checkForCollisions();
   player->update(ticks);
   checkForCollisions();
   world.update();
