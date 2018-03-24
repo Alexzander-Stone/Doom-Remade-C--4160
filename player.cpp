@@ -156,13 +156,13 @@ void Player::collisionDetected(){
 					currentY = currentY + 1 * (-momentumY) ;
 				}
 				if(momentumY >= 0)
-					player.setY(static_cast<int>( currentY ) - 1);
+					player.setY(round( currentY ) );
 				else
-					player.setY(static_cast<int>( currentY ) + 1);
+					player.setY(round( currentY ) );
 				if(momentumX >= 0)
-					player.setX(static_cast<int>( currentX ) - 1);
+					player.setX(round( currentX ) );
 				else
-					player.setX(static_cast<int>( currentX ) + 1);
+					player.setX(round( currentX ) );
 			}
 			else if( momentumX == 0) {
 				while ( currentY < collision_obj_y + (*it)->getScaledHeight() + 2 &&
@@ -170,9 +170,9 @@ void Player::collisionDetected(){
 					currentY = currentY + 1*(-momentumY);
 				}
 				if(momentumY >= 0)
-					player.setY(static_cast<int>( currentY ) - 1);
+					player.setY(round( currentY ) );
 				else
-					player.setY(static_cast<int>( currentY ) + 1);
+					player.setY(round( currentY ) );
 			}		
 			else if( momentumY == 0) {
 				while ( currentX < collision_obj_x + (*it)->getScaledWidth() + 2 && 
@@ -180,9 +180,9 @@ void Player::collisionDetected(){
 					currentX = currentX + 1*(-momentumX);
 				}
 				if(momentumX >= 0)
-					player.setX(static_cast<int>( currentX ) - 1);
+					player.setX(round(currentX ) );
 				else
-					player.setX(static_cast<int>( currentX ) + 1);
+					player.setX(round(currentX ) );
 			}
 			if( currentX < collision_obj_x + (*it)->getScaledWidth() + 2 && 
 	     				    currentX + getScaledWidth() > collision_obj_x - 2 )
