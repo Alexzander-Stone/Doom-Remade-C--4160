@@ -18,8 +18,8 @@ public:
   const SubjectSprite* getPlayer() const { return &player; }
 
   const std::string& getName() const { return player.getName(); }
-  int getX() const { return player.getX(); }
-  int getY() const { return player.getY(); }
+  float getX() const { return player.getX(); }
+  float getY() const { return player.getY(); }
   const Image* getImage() const { 
     return player.getImage();
   }

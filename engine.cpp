@@ -171,8 +171,8 @@ void Engine::play() {
         static_cast<Player*>(player)->rotateRight();
       }
       
-      draw();
       update(ticks);
+      draw();
       if ( makeVideo ) {
         frameGen.makeFrame();
       }

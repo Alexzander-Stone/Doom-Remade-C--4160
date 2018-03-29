@@ -60,8 +60,8 @@
   <momentumSlowdown>.9</momentumSlowdown>
   <thetaIncrement>5</thetaIncrement>
   <Bounce>
-    <incSpeed>10</incSpeed>
-    <changeVel>.95</changeVel>
+    <incSpeed>1</incSpeed>
+    <changeVel>.1</changeVel>
   </Bounce>
 </SpinningStar>
 

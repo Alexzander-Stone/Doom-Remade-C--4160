@@ -14,8 +14,8 @@ Player::Player( const std::string& name) :
   rotation_radius(Gamedata::getInstance().getXmlInt(name + "/rotationRadius")),
   current_state(NORMAL),
   bounce_timer(0),
-	previous_x(0),
-	previous_y(0)
+  previous_x(0),
+  previous_y(0)
 { }
 
 void Player::stop() {
@@ -130,7 +130,6 @@ void Player::collisionDetected(){
 		// Detach the collision object once the player is in a valid state (outside
 		// the wall).
 	
-std::cout << "yo yo" << std::endl;
 	
 		// Keep track of which wall the player encountered.
 		bool xFinished = false;			
@@ -148,43 +147,41 @@ std::cout << "yo yo" << std::endl;
 			// Momentum direction determines which direction to move the player in response 
 			// to the collision. 
 			if( momentumX != 0 && momentumY != 0 ) {
-				while ( ( currentX < collision_obj_x + (*it)->getScaledWidth() + 2 && 
-	     				  currentX + getScaledWidth() > collision_obj_x - 2) 
+				while ( ( currentX < collision_obj_x + (*it)->getScaledWidth() + 1 && 
+	     				  currentX + getScaledWidth() > collision_obj_x - 1) 
 					&& 
-					( currentY < collision_obj_y + (*it)->getScaledHeight() + 2 &&
-					  currentY + getScaledHeight() > collision_obj_y - 2 )
+					( currentY < collision_obj_y + (*it)->getScaledHeight() + 1 &&
+					  currentY + getScaledHeight() > collision_obj_y - 1 )
 				      ) {
 					currentX = currentX + 1 * (-momentumX) ;
 					currentY = currentY + 1 * (-momentumY) ;
 				}
-					player.setY(round( currentY ) );
-					player.setX(round( currentX ) );
+					player.setY( currentY );
+					player.setX( currentX );
 			}
 			else if( momentumX == 0) {
-				while ( currentY < collision_obj_y + (*it)->getScaledHeight() + 2 &&
-								currentY + getScaledHeight() > collision_obj_y - 2 ) {
+				while ( currentY < collision_obj_y + (*it)->getScaledHeight() + 1 &&
+								currentY + getScaledHeight() > collision_obj_y - 1 ) {
 					currentY = currentY + 1*(-momentumY);
 				}
 					player.setY( currentY );
 			}		
 			else if( momentumY == 0) {
-				while ( currentX < collision_obj_x + (*it)->getScaledWidth() + 2 && 
-	     				  currentX + getScaledWidth() > collision_obj_x - 2 ) {
+				while ( currentX < collision_obj_x + (*it)->getScaledWidth() + 1 && 
+	     				  currentX + getScaledWidth() > collision_obj_x - 1 ) {
 					currentX = currentX + 1*(-momentumX);
 				}
-					player.setX(round(currentX ) );
+					player.setX( currentX );
 			}
-			if( currentX < collision_obj_x + (*it)->getScaledWidth() + 2 && 
-	     				    currentX + getScaledWidth() > collision_obj_x - 2 )
+			if( currentX < collision_obj_x + (*it)->getScaledWidth() + 1 && 
+	     				    currentX + getScaledWidth() > collision_obj_x - 1 )
 				xFinished = false;
 			else
 				xFinished = true;
 
 			it++;			
 		}
-		player.getObservers().erase( player.getObservers().begin(), 
-																 player.getObservers().end() 
-															 );
+		player.getObservers().erase( player.getObservers().begin(), player.getObservers().end() );
 
 		// Use the direction that the momentum is traveling towards.
     // Bounce player back towards opposite direction.
@@ -192,26 +189,22 @@ std::cout << "yo yo" << std::endl;
     if ( current_state == NORMAL ){
     	current_state = BOUNCE;
     	bounce_timer = 0;  
-    	amtToIncreaseVelocity = Gamedata::getInstance().getXmlInt(player.getName() + 
-															"/Bounce/incSpeed");
-			float bounceVelX = player.getVelocityX() *  
-											 Gamedata::getInstance().getXmlFloat(player.getName() + "/Bounce/changeVel");
-			float bounceVelY = player.getVelocityY() * 
-											 Gamedata::getInstance().getXmlFloat(player.getName() + "/Bounce/changeVel");
+    	amtToIncreaseVelocity = Gamedata::getInstance().getXmlInt(player.getName() + "/Bounce/incSpeed");
+	float bounceVelX = player.getVelocityX() *  
+						    Gamedata::getInstance().getXmlFloat(player.getName() + "/Bounce/changeVel");
+	float bounceVelY = player.getVelocityY() * 
+						    Gamedata::getInstance().getXmlFloat(player.getName() + "/Bounce/changeVel");
 			
-			// Player has hit a horizontal wall. Otherwise, vertical wall.
-			if( xFinished == false) {
-				bounceVelY *= -1;
-			}
-			else {
-				bounceVelX *= -1;
-			}
+	// Player has hit a horizontal wall. Otherwise, vertical wall.
+	if( xFinished == false) {
+	    bounceVelY *= -1;
+	}
+	else {
+	    bounceVelX *= -1;
+	}
     	player.setVelocityX( bounceVelX );   
     	player.setVelocityY( bounceVelY );
     }   
-
-    // Redraw player.
-    player.draw();
 }
 
 // Determine the x value of the player's momentum.
