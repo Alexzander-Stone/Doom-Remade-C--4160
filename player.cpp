@@ -62,8 +62,8 @@ void Player::rotateLeft() {
     if(theta < 0) {
       theta += 360;
     }
-    double not_normalized_x= cos(theta * (3.14/180));
-    double not_normalized_y = sin(theta * (3.14/180));
+    float not_normalized_x= cos(theta * (3.14/180));
+    float not_normalized_y = sin(theta * (3.14/180));
     
     // Check to see if the values are negative, need to preserve the negative if so.
     if(not_normalized_x >= 0){
@@ -87,8 +87,8 @@ void Player::rotateRight() {
     if(theta > 359) {
     	theta -= 360;
     }
-    double not_normalized_x= cos(theta * (3.14/180));
-    double not_normalized_y = sin(theta * (3.14/180));
+    float not_normalized_x= cos(theta * (3.14/180));
+    float not_normalized_y = sin(theta * (3.14/180));
     
 
     // Check to see if the values are negative, need to preserve the negative if so.
@@ -109,17 +109,17 @@ void Player::rotateRight() {
 
 void Player::update(Uint32 ticks) {
   // Bouncing timer when colliding with wall.
-	if( current_state == BOUNCE && bounce_timer >= static_cast<Uint32>( 5 * Gamedata::getInstance().getXmlInt("period") ) ) 
+  if( current_state == BOUNCE && bounce_timer >= static_cast<Uint32>( 5 * Gamedata::getInstance().getXmlInt("period") ) ) 
   {
     amtToIncreaseVelocity = Gamedata::getInstance().getXmlInt(player.getName()+ "/incSpeed");
     current_state = NORMAL; 
   }
-	else if ( current_state == BOUNCE ){
-		bounce_timer += ticks;
-	}
+  else if ( current_state == BOUNCE ){
+  bounce_timer += ticks;
+  }
 
-	previous_y = player.getY();
-	previous_x = player.getX();
+  previous_y = player.getY();
+  previous_x = player.getX();
   player.update(ticks);
   stop();
 }
@@ -129,39 +129,35 @@ void Player::collisionDetected(){
 		// of the object. This will determine where to place the object.
 		// Detach the collision object once the player is in a valid state (outside
 		// the wall).
-		
+	
+std::cout << "yo yo" << std::endl;
+	
 		// Keep track of which wall the player encountered.
 		bool xFinished = false;			
-		double momentumX = getMomentumVelocityX();
-		double momentumY = getMomentumVelocityY();
+		float momentumX = getMomentumVelocityX();
+		float momentumY = getMomentumVelocityY();
 
 		std::list<SmartSprite*>::iterator it = player.getObservers().begin();
 		while( it != player.getObservers().end() )
 		{
-			double collision_obj_x = (*it)->getX();
-			double collision_obj_y = (*it)->getY();
-			double currentX = player.getX();
-			double currentY = player.getY();
+			float collision_obj_x = (*it)->getX();
+			float collision_obj_y = (*it)->getY();
+			float currentX = player.getX();
+			float currentY = player.getY();
 						
 			// Momentum direction determines which direction to move the player in response 
 			// to the collision. 
 			if( momentumX != 0 && momentumY != 0 ) {
 				while ( ( currentX < collision_obj_x + (*it)->getScaledWidth() + 2 && 
-	     				    currentX + getScaledWidth() > collision_obj_x - 2) 
-								&& 
-								( currentY < collision_obj_y + (*it)->getScaledHeight() + 2 &&
-									currentY + getScaledHeight() > collision_obj_y - 2 )
-							) {
+	     				  currentX + getScaledWidth() > collision_obj_x - 2) 
+					&& 
+					( currentY < collision_obj_y + (*it)->getScaledHeight() + 2 &&
+					  currentY + getScaledHeight() > collision_obj_y - 2 )
+				      ) {
 					currentX = currentX + 1 * (-momentumX) ;
 					currentY = currentY + 1 * (-momentumY) ;
 				}
-				if(momentumY >= 0)
 					player.setY(round( currentY ) );
-				else
-					player.setY(round( currentY ) );
-				if(momentumX >= 0)
-					player.setX(round( currentX ) );
-				else
 					player.setX(round( currentX ) );
 			}
 			else if( momentumX == 0) {
@@ -169,19 +165,13 @@ void Player::collisionDetected(){
 								currentY + getScaledHeight() > collision_obj_y - 2 ) {
 					currentY = currentY + 1*(-momentumY);
 				}
-				if(momentumY >= 0)
-					player.setY(round( currentY ) );
-				else
-					player.setY(round( currentY ) );
+					player.setY( currentY );
 			}		
 			else if( momentumY == 0) {
 				while ( currentX < collision_obj_x + (*it)->getScaledWidth() + 2 && 
 	     				  currentX + getScaledWidth() > collision_obj_x - 2 ) {
 					currentX = currentX + 1*(-momentumX);
 				}
-				if(momentumX >= 0)
-					player.setX(round(currentX ) );
-				else
 					player.setX(round(currentX ) );
 			}
 			if( currentX < collision_obj_x + (*it)->getScaledWidth() + 2 && 
@@ -220,26 +210,26 @@ void Player::collisionDetected(){
     	player.setVelocityY( bounceVelY );
     }   
 
-		// Redraw player.
-		player.draw();
+    // Redraw player.
+    player.draw();
 }
 
 // Determine the x value of the player's momentum.
-double Player::getMomentumVelocityX() const {
-	double deltaX = player.getX() - previous_x;
-	double absoluteDeltaX = abs( player.getX() - previous_x );
-	double absoluteDeltaY = abs( player.getY() - previous_y );
-	double result = ( deltaX ) / (absoluteDeltaX + absoluteDeltaY);
+float Player::getMomentumVelocityX() const {
+	float deltaX = player.getX() - previous_x;
+	float absoluteDeltaX = fabs( player.getX()  - previous_x );
+	float absoluteDeltaY = fabs(  player.getY() - previous_y );
+	float result = ( deltaX ) / (absoluteDeltaX + absoluteDeltaY);
 
   return result;
 }
 
 // Determine the y value of the player's momentum.
-double Player::getMomentumVelocityY() const {
-	double deltaY = player.getY() - previous_y;
-	double absoluteDeltaX = abs( player.getX() - previous_x );
-	double absoluteDeltaY = abs( player.getY() - previous_y );
-	double result = ( deltaY ) / (absoluteDeltaX + absoluteDeltaY);
+float Player::getMomentumVelocityY() const {
+	float deltaY = player.getY()  - previous_y;
+	float absoluteDeltaX = fabs( player.getX() - previous_x );
+	float absoluteDeltaY = fabs( player.getY() - previous_y );
+	float result = ( deltaY ) / (absoluteDeltaX + absoluteDeltaY);
 
-	return result;
+    return result;
 }

@@ -60,8 +60,8 @@ public:
   void stop();
 
 	// Momentum direction.
-	double getMomentumVelocityX() const;
-	double getMomentumVelocityY() const;
+	float getMomentumVelocityX() const;
+	float getMomentumVelocityY() const;
 
 private:
   enum PlayerState { NORMAL, BOUNCE };
@@ -72,15 +72,15 @@ private:
   int worldWidth;
   int worldHeight;
   // Rotation values.
-  double x_fov, y_fov;
+  float x_fov, y_fov;
   int theta, rotation_radius; 
   // State machine.
   PlayerState current_state;
   // Bounce Timer.
   Uint32 bounce_timer;
-	// Previous coordinates.
-	double previous_x; 
-	double previous_y;
+  // Previous coordinates.
+  float previous_x; 
+  float previous_y;
 
 };
 #endif
