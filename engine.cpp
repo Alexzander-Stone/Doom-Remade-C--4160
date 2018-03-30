@@ -45,19 +45,23 @@ Engine::Engine() :
   int wallCount = Gamedata::getInstance().getXmlInt("Wall/numberOfWalls");
   sprites.reserve( wallCount*2 );
 
-  Vector2f playerPos(0, 0);
+  Vector2f playerPos(150, 600);
   int w = player->getScaledWidth();
   int h = player->getScaledHeight();
   for ( int i = 0; i < wallCount; i++ ){
 			Vector2f spritePos(50 + i*w, 100);
       sprites.push_back( new SmartSprite("YellowStar", playerPos, w, h, spritePos) );
   }
-	// Corner wall
-	Vector2f spritePos(100, 500);
+  // Corner wall
+  Vector2f spritePos(100, 500);
   sprites.push_back( new SmartSprite("YellowStar", playerPos, w, h, spritePos) );
-	Vector2f spritePos2(50, 450);
-  sprites.push_back( new SmartSprite("YellowStar", playerPos, w, h, spritePos2) );
-
+  Vector2f spritePos2(100, 500);
+  sprites.push_back( new SmartSprite("VerticalWall", playerPos, w, h, spritePos2) );
+  Vector2f spritePos3(100, 1012);
+  sprites.push_back( new SmartSprite("YellowStar", playerPos, w, h, spritePos3) );
+  Vector2f spritePos4(612, 500);
+  sprites.push_back( new SmartSprite("VerticalWall", playerPos, w, h, spritePos4) );
+  
   // Collision strategies ( rect, pixel, distance(midpoint) ).
   strategies.push_back( new RectangularCollisionStrategy );
   strategies.push_back( new PerPixelCollisionStrategy );

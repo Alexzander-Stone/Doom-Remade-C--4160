@@ -43,7 +43,7 @@
 
 <SpinningStar>
   <file>assets/spinstar.png</file>
-  <startLoc x="300" y="400"/>
+  <startLoc x="300" y="700"/>
   <frames>4</frames>
   <imageWidth>32</imageWidth>
   <imageHeight>32</imageHeight>
@@ -68,10 +68,19 @@
 <YellowStar>
   <file>assets/yellowstar32.png</file>
   <startLoc x="227" y="240"/>
-  <speedX>300</speedX>
-  <speedY>300</speedY>
+  <speedX>0</speedX>
+  <speedY>0</speedY>
   <transparency>false</transparency>
   <safeDistance>20</safeDistance>
 </YellowStar>
+
+<VerticalWall>
+  <file>assets/verticalWall.png</file>
+  <startLoc x="227" y="240"/>
+  <speedX>0</speedX>
+  <speedY>0</speedY>
+  <transparency>false</transparency>
+  <safeDistance>20</safeDistance>
+</VerticalWall>
 
 </GameData>

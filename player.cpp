@@ -146,7 +146,7 @@ void Player::collisionDetected(){
 						
     // Momentum direction determines which direction to move the player in response 
     // to the collision. 
-    if( momentumX != 0 && momentumY != 0 ) {
+    if( (*it)->getName() == "YellowStar") {
       while ( ( currentX < collision_obj_x + (*it)->getScaledWidth() + 1 && 
 	        currentX + getScaledWidth() > collision_obj_x - 1) 
 	      && 
@@ -157,14 +157,7 @@ void Player::collisionDetected(){
       }
       player.setY( currentY );
     }
-    else if( momentumX == 0) {
-      while ( currentY < collision_obj_y + (*it)->getScaledHeight() + 1 &&
-	      currentY + getScaledHeight() > collision_obj_y - 1 ) {
-	currentY = currentY + 1*(-momentumY);
-      }
-      player.setY( currentY );
-    }		
-    else if( momentumY == 0) {
+    else if( (*it)->getName() == "VerticalWall" ) {
       while ( currentX < collision_obj_x + (*it)->getScaledWidth() + 1 && 
 	      currentX + getScaledWidth() > collision_obj_x - 1 ) {
 	currentX = currentX + 1*(-momentumX);
