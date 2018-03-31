@@ -22,7 +22,7 @@ void Player::stop() {
   // Momentum, slow down speed each tick.
   player.setVelocity( 
     Vector2f(
-        Gamedata::getInstance().getXmlFloat(player.getName() + 
+    Gamedata::getInstance().getXmlFloat(player.getName() + 
         "/momentumSlowdown") * player.getVelocityX(), 
         Gamedata::getInstance().getXmlFloat(player.getName() + 
         "/momentumSlowdown") * player.getVelocityY()
@@ -141,31 +141,39 @@ void Player::collisionDetected(){
   while( it != player.getObservers().end() ) {
     float collision_obj_x = (*it)->getX();
     float collision_obj_y = (*it)->getY();
-    float currentX = player.getX();
-    float currentY = player.getY();
-						
+    double currentX = player.getX();
+    double currentY = player.getY();
+   
+
+    if(currentX == static_cast<int> (currentX))
+    {
+      std::cout << "obj x " << currentX << std::endl;
+      std::cout << "col right y " << collision_obj_x + (*it)->getScaledHeight() + 1 << " and col right x " << collision_obj_x - 1 << std::endl;
+    }
+    if(currentY == static_cast<int> (currentY))
+    {
+      std::cout << "obj y " << currentY << std::endl;
+      std::cout << "col right y " << collision_obj_y + (*it)->getScaledHeight() + 1 << " and col right y " << collision_obj_y - 1 << std::endl;
+    }
+
     // Momentum direction determines which direction to move the player in response 
     // to the collision. 
     if( (*it)->getName() == "YellowStar") {
-      while ( ( currentX < collision_obj_x + (*it)->getScaledWidth() + 1 && 
-	        currentX + getScaledWidth() > collision_obj_x - 1) 
-	      && 
-	      ( currentY < collision_obj_y + (*it)->getScaledHeight() + 1 &&
-		currentY + getScaledHeight() > collision_obj_y - 1 )
-      ) {
-	currentY = currentY + 1 * (-momentumY) ;
+      while ( currentY <= collision_obj_y + (*it)->getScaledHeight() + 1.001 &&
+		          currentY + getScaledHeight() >= collision_obj_y - 1.001 ) {
+	      currentY += -momentumY;
       }
       player.setY( currentY );
     }
     else if( (*it)->getName() == "VerticalWall" ) {
-      while ( currentX < collision_obj_x + (*it)->getScaledWidth() + 1 && 
-	      currentX + getScaledWidth() > collision_obj_x - 1 ) {
-	currentX = currentX + 1*(-momentumX);
+      while ( currentX <= collision_obj_x + (*it)->getScaledWidth() + 1.001 && 
+	            currentX + getScaledWidth() >= collision_obj_x - 1.001 ) {
+	      currentX += -momentumX ;
       }
       player.setX( currentX );
     }
-    if( currentX < collision_obj_x + (*it)->getScaledWidth() + 1 && 
-	currentX + getScaledWidth() > collision_obj_x - 1 )
+    if( currentX <= collision_obj_x + (*it)->getScaledWidth() + 1.00001 && 
+	      currentX + getScaledWidth() >= collision_obj_x - 1.00001 )
       xFinished = false;
     else
       xFinished = true;
@@ -185,7 +193,7 @@ void Player::collisionDetected(){
 			
     // Player has hit a horizontal wall. Otherwise, vertical wall.
     if( xFinished == false) {	    
-    bounceVelY *= -1;
+      bounceVelY *= -1;
     }
     else {
       bounceVelX *= -1;

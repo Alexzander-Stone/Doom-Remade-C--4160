@@ -94,20 +94,20 @@ void Engine::checkForCollisions(){
     while( collisionDetected == true ) {
     	// Search through all the sprites to determine if collision has occurred.
     	auto it = sprites.begin();
-	collisionDetected = false;
-	int currentSprite = 0;
+	    collisionDetected = false;
+	    int currentSprite = 0;
     	while( it != sprites.end() ){
 	    // Check for collision between player and object.
 	    if( strategies[currentStrategy]->execute(player->getSpriteInfo(), **it) ){
-      		player->getSpriteInfo().attach( sprites[currentSprite] );
-		collisionDetected = true;
+      	player->getSpriteInfo().attach( sprites[currentSprite] );
+		    collisionDetected = true;
 	    }
 	    ++it;
 	    ++currentSprite;
-	}
-	if( collisionDetected == true){
-      	player->collisionDetected();
-	}
+	    }
+	    if( collisionDetected == true){
+        player->collisionDetected();
+	    }
     }
 
 }
