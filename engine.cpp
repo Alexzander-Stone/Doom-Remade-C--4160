@@ -33,7 +33,7 @@ Engine::Engine() :
   renderer( rc->getRenderer() ),
   world("back", Gamedata::getInstance().getXmlInt("back/factor") ),
   viewport( Viewport::getInstance() ),
-  player(new Player("SpinningStar")),
+  player(new Player("DoomGuy")),
   sprites(),
   strategies(),
   currentStrategy(0),
@@ -49,18 +49,18 @@ Engine::Engine() :
   int w = player->getScaledWidth();
   int h = player->getScaledHeight();
   for ( int i = 0; i < wallCount; i++ ){
-			Vector2f spritePos(50 + i*w, 100);
-      sprites.push_back( new SmartSprite("YellowStar", playerPos, w, h, spritePos) );
+      Vector2f spritePos(50 + i*w, 100);
+      sprites.push_back( new SmartSprite("Wall/Horizontal", playerPos, w, h, spritePos) );
   }
   // Corner wall
   Vector2f spritePos(100, 500);
-  sprites.push_back( new SmartSprite("YellowStar", playerPos, w, h, spritePos) );
+  sprites.push_back( new SmartSprite("Wall/Horizontal", playerPos, w, h, spritePos) );
   Vector2f spritePos2(100, 500);
-  sprites.push_back( new SmartSprite("VerticalWall", playerPos, w, h, spritePos2) );
+  sprites.push_back( new SmartSprite("Wall/Vertical", playerPos, w, h, spritePos2) );
   Vector2f spritePos3(100, 1012);
-  sprites.push_back( new SmartSprite("YellowStar", playerPos, w, h, spritePos3) );
+  sprites.push_back( new SmartSprite("Wall/Horizontal", playerPos, w, h, spritePos3) );
   Vector2f spritePos4(612, 500);
-  sprites.push_back( new SmartSprite("VerticalWall", playerPos, w, h, spritePos4) );
+  sprites.push_back( new SmartSprite("Wall/Vertical", playerPos, w, h, spritePos4) );
   
   // Collision strategies ( rect, pixel, distance(midpoint) ).
   strategies.push_back( new RectangularCollisionStrategy );

@@ -38,10 +38,27 @@
 
 <Wall>
     <numberOfWalls>10</numberOfWalls>
+    <Horizontal>
+	<file>assets/horizontalWall.png</file>
+	<startLoc x="0" y="0"/>
+	<speedX>0</speedX>
+	<speedY>0</speedY>
+	<transparency>false</transparency>
+	<safeDistance>20</safeDistance>
+    </Horizontal>
+    
+    <Vertical>
+	<file>assets/verticalWall.png</file>
+	<startLoc x="0" y="0"/>
+	<speedX>0</speedX>
+	<speedY>0</speedY>
+	<transparency>false</transparency>
+	<safeDistance>20</safeDistance>
+    </Vertical>
 </Wall>
 
 
-<SpinningStar>
+<DoomGuy>
   <file>assets/spinstar.png</file>
   <startLoc x="300" y="700"/>
   <frames>4</frames>
@@ -63,24 +80,8 @@
     <incSpeed>50</incSpeed>
     <changeVel>.8</changeVel>
   </Bounce>
-</SpinningStar>
+</DoomGuy>
 
-<YellowStar>
-  <file>assets/yellowstar32.png</file>
-  <startLoc x="227" y="240"/>
-  <speedX>0</speedX>
-  <speedY>0</speedY>
-  <transparency>false</transparency>
-  <safeDistance>20</safeDistance>
-</YellowStar>
 
-<VerticalWall>
-  <file>assets/verticalWall.png</file>
-  <startLoc x="227" y="240"/>
-  <speedX>0</speedX>
-  <speedY>0</speedY>
-  <transparency>false</transparency>
-  <safeDistance>20</safeDistance>
-</VerticalWall>
 
 </GameData>
