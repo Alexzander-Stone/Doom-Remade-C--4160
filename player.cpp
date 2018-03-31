@@ -141,35 +141,26 @@ void Player::collisionDetected(){
   while( it != player.getObservers().end() ) {
     float collision_obj_x = (*it)->getX();
     float collision_obj_y = (*it)->getY();
-    double currentX = player.getX();
-    double currentY = player.getY();
+    float currentX = player.getX();
+    float currentY = player.getY();
+    double currentIncrement = 0;
    
-
-    if(currentX == static_cast<int> (currentX))
-    {
-      std::cout << "obj x " << currentX << std::endl;
-      std::cout << "col right y " << collision_obj_x + (*it)->getScaledHeight() + 1 << " and col right x " << collision_obj_x - 1 << std::endl;
-    }
-    if(currentY == static_cast<int> (currentY))
-    {
-      std::cout << "obj y " << currentY << std::endl;
-      std::cout << "col right y " << collision_obj_y + (*it)->getScaledHeight() + 1 << " and col right y " << collision_obj_y - 1 << std::endl;
-    }
-
     // Momentum direction determines which direction to move the player in response 
     // to the collision. 
     if( (*it)->getName() == "YellowStar") {
-      while ( currentY <= collision_obj_y + (*it)->getScaledHeight() + 1.001 &&
-		          currentY + getScaledHeight() >= collision_obj_y - 1.001 ) {
-	      currentY += -momentumY;
+      while ( currentY + currentIncrement <= collision_obj_y + (*it)->getScaledHeight() + 1.001 &&
+		          currentY + currentIncrement + getScaledHeight() >= collision_obj_y - 1.001 ) {
+	      currentIncrement += -momentumY;
       }
+      currentY += currentIncrement;
       player.setY( currentY );
     }
     else if( (*it)->getName() == "VerticalWall" ) {
-      while ( currentX <= collision_obj_x + (*it)->getScaledWidth() + 1.001 && 
-	            currentX + getScaledWidth() >= collision_obj_x - 1.001 ) {
-	      currentX += -momentumX ;
+      while ( currentX + currentIncrement <= collision_obj_x + (*it)->getScaledWidth() + 1.001 && 
+	            currentX + getScaledWidth() + currentIncrement >= collision_obj_x - 1.001 ) {
+	      currentIncrement += -momentumX ;
       }
+      currentX += currentIncrement;
       player.setX( currentX );
     }
     if( currentX <= collision_obj_x + (*it)->getScaledWidth() + 1.00001 && 
