@@ -64,7 +64,7 @@
   <frames>4</frames>
   <imageWidth>32</imageWidth>
   <imageHeight>32</imageHeight>
-  <frameInterval>500</frameInterval>
+  <frameInterval>2000</frameInterval>
   <speedY>0</speedY>
   <speedX>0</speedX>
   <maxSpeed>250</maxSpeed>
