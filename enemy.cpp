@@ -1,9 +1,9 @@
-#include "player.h"
+#include "enemy.h"
 #include "gamedata.h"
 
 
-Player::Player( const std::string& name) :
-  player(name),
+Enemy::Enemy( const std::string& name) :
+  enemy(name),
   maxVelocity(Gamedata::getInstance().getXmlInt(name + "/maxSpeed")),
   amtToIncreaseVelocity(Gamedata::getInstance().getXmlInt(name+ "/incSpeed")),
   worldWidth(Gamedata::getInstance().getXmlInt("world/width")),
@@ -18,14 +18,14 @@ Player::Player( const std::string& name) :
   previous_y(0)
 { }
 
-void Player::stop() {
+void Enemy::stop() {
   // Momentum, slow down speed each tick.
-  player.setVelocity( 
+  enemy.setVelocity( 
     Vector2f(
-    Gamedata::getInstance().getXmlFloat(player.getName() + 
-        "/momentumSlowdown") * player.getVelocityX(), 
-        Gamedata::getInstance().getXmlFloat(player.getName() + 
-        "/momentumSlowdown") * player.getVelocityY()
+    Gamedata::getInstance().getXmlFloat(enemy.getName() + 
+        "/momentumSlowdown") * enemy.getVelocityX(), 
+        Gamedata::getInstance().getXmlFloat(enemy.getName() + 
+        "/momentumSlowdown") * enemy.getVelocityY()
 		) 
   );
 }
@@ -33,31 +33,31 @@ void Player::stop() {
 // Use y_fov and x_fov to determine how diaggonal movement works.
 // Vertical goes from x_fov = 1 (top) to x_fov = -1 (bottom).
 // Horizontal goes form y_fov = 1 (left) to y_fov = -1 (right).
-void Player::right() { 
-  // Add to the current speed of the player.
-  player.setVelocityX( player.getVelocityX() + amtToIncreaseVelocity * x_fov );
-  player.setVelocityY( player.getVelocityY() + amtToIncreaseVelocity * y_fov );
+void Enemy::right() { 
+  // Add to the current speed of the enemy.
+  enemy.setVelocityX( enemy.getVelocityX() + amtToIncreaseVelocity * x_fov );
+  enemy.setVelocityY( enemy.getVelocityY() + amtToIncreaseVelocity * y_fov );
 } 
-void Player::left()  { 
-  // Add to the current speed of the player.
-  player.setVelocityX( player.getVelocityX() - amtToIncreaseVelocity * x_fov );
-  player.setVelocityY( player.getVelocityY() - amtToIncreaseVelocity * y_fov );
+void Enemy::left()  { 
+  // Add to the current speed of the enemy.
+  enemy.setVelocityX( enemy.getVelocityX() - amtToIncreaseVelocity * x_fov );
+  enemy.setVelocityY( enemy.getVelocityY() - amtToIncreaseVelocity * y_fov );
 } 
-void Player::up()    { 
-  // Add to the current speed of the player.
-  player.setVelocityX( player.getVelocityX() - amtToIncreaseVelocity * -y_fov );
-  player.setVelocityY( player.getVelocityY() - amtToIncreaseVelocity * x_fov );
+void Enemy::up()    { 
+  // Add to the current speed of the enemy.
+  enemy.setVelocityX( enemy.getVelocityX() - amtToIncreaseVelocity * -y_fov );
+  enemy.setVelocityY( enemy.getVelocityY() - amtToIncreaseVelocity * x_fov );
 } 
-void Player::down()  { 
-  // Add to the current speed of the player.
-  player.setVelocityX( player.getVelocityX() + amtToIncreaseVelocity * -y_fov );
-  player.setVelocityY( player.getVelocityY() + amtToIncreaseVelocity * x_fov );
+void Enemy::down()  { 
+  // Add to the current speed of the enemy.
+  enemy.setVelocityX( enemy.getVelocityX() + amtToIncreaseVelocity * -y_fov );
+  enemy.setVelocityY( enemy.getVelocityY() + amtToIncreaseVelocity * x_fov );
 }
 
 // When determining the vector, make sure to normalize it.
-void Player::rotateLeft() {
+void Enemy::rotateLeft() {
     // Wrap the theta around when reaching -1.
-    theta -= Gamedata::getInstance().getXmlInt(player.getName() + 
+    theta -= Gamedata::getInstance().getXmlInt(enemy.getName() + 
              "/thetaIncrement");
     if(theta < 0) {
       theta += 360;
@@ -80,9 +80,9 @@ void Player::rotateLeft() {
       y_fov = -1 * rotation_radius * pow(not_normalized_y, 2);
     }
 }
-void Player::rotateRight() {
+void Enemy::rotateRight() {
     // Wrap the theta around when reaching 360.
-    theta += Gamedata::getInstance().getXmlInt(player.getName() + 
+    theta += Gamedata::getInstance().getXmlInt(enemy.getName() + 
              "/thetaIncrement");
     if(theta > 359) {
     	theta -= 360;
@@ -107,11 +107,11 @@ void Player::rotateRight() {
     }
 }
 
-void Player::update(Uint32 ticks) {
+void Enemy::update(Uint32 ticks) {
   // Bouncing timer when colliding with wall.
   if( current_state == BOUNCE && bounce_timer >= static_cast<Uint32>( 10 * Gamedata::getInstance().getXmlInt("period") ) 
       && 
-      ( fabs(player.getVelocityX() ) +fabs(player.getVelocityY()) > 450 ) 
+      ( fabs(enemy.getVelocityX() ) +fabs(enemy.getVelocityY()) > 450 ) 
     ) {
     current_state = NORMAL; 
   }
@@ -119,33 +119,33 @@ void Player::update(Uint32 ticks) {
     bounce_timer += ticks;
   }
   
-  previous_y = player.getY();
-  previous_x = player.getX();
-  player.update(ticks);
+  previous_y = enemy.getY();
+  previous_x = enemy.getX();
+  enemy.update(ticks);
   stop();
 }
 
-void Player::collisionDetected(){
+void Enemy::collisionDetected(){
   // Check to see if the object is within the left/right and top/bottom range
   // of the object. This will determine where to place the object.
-  // Detach the collision object once the player is in a valid state (outside
+  // Detach the collision object once the enemy is in a valid state (outside
   // the wall).
 	
 	
-  // Keep track of which wall the player encountered.
+  // Keep track of which wall the enemy encountered.
   bool xFinished = false;			
   float momentumX = getMomentumVelocityX();
   float momentumY = getMomentumVelocityY();
 
-  std::list<SmartSprite*>::iterator it = player.getObservers().begin();
-  while( it != player.getObservers().end() ) {
+  std::list<SmartSprite*>::iterator it = enemy.getObservers().begin();
+  while( it != enemy.getObservers().end() ) {
     float collision_obj_x = (*it)->getX();
     float collision_obj_y = (*it)->getY();
-    float currentX = player.getX();
-    float currentY = player.getY();
+    float currentX = enemy.getX();
+    float currentY = enemy.getY();
     float currentIncrement = 0;
    
-    // Momentum direction determines which direction to move the player in response 
+    // Momentum direction determines which direction to move the enemy in response 
     // to the collision. 
     if( (*it)->getName() == "Wall/Horizontal") {
       while ( currentY + currentIncrement <= collision_obj_y + (*it)->getScaledHeight() + 1.001 &&
@@ -153,7 +153,7 @@ void Player::collisionDetected(){
 	      currentIncrement += -momentumY;
       }
       currentY += currentIncrement;
-      player.setY( currentY );
+      enemy.setY( currentY );
     }
     else if( (*it)->getName() == "Wall/Vertical" ) {
       while ( currentX + currentIncrement <= collision_obj_x + (*it)->getScaledWidth() + 1.001 && 
@@ -161,7 +161,7 @@ void Player::collisionDetected(){
 	      currentIncrement += -momentumX ;
       }
       currentX += currentIncrement;
-      player.setX( currentX );
+      enemy.setX( currentX );
     }
     if( currentX <= collision_obj_x + (*it)->getScaledWidth() + 1.00001 && 
 	      currentX + getScaledWidth() >= collision_obj_x - 1.00001 )
@@ -171,52 +171,52 @@ void Player::collisionDetected(){
 
     it++;			
   }
-  player.getObservers().erase( player.getObservers().begin(), player.getObservers().end() );
+  enemy.getObservers().erase( enemy.getObservers().begin(), enemy.getObservers().end() );
 
   // Use the direction that the momentum is traveling towards.
-  // Bounce player back towards opposite direction.
-  // Change state of player to BOUNCE mode.
+  // Bounce enemy back towards opposite direction.
+  // Change state of enemy to BOUNCE mode.
   if ( current_state == NORMAL ){
     current_state = BOUNCE;
     bounce_timer = 0;  
-    float bounceVelX = player.getVelocityX() * Gamedata::getInstance().getXmlFloat(player.getName() + "/Bounce/changeVel");
-    float bounceVelY = player.getVelocityY() * Gamedata::getInstance().getXmlFloat(player.getName() + "/Bounce/changeVel");
+    float bounceVelX = enemy.getVelocityX() * Gamedata::getInstance().getXmlFloat(enemy.getName() + "/Bounce/changeVel");
+    float bounceVelY = enemy.getVelocityY() * Gamedata::getInstance().getXmlFloat(enemy.getName() + "/Bounce/changeVel");
 			
-    // Player has hit a horizontal wall. Otherwise, vertical wall.
+    // Enemy has hit a horizontal wall. Otherwise, vertical wall.
     if( xFinished == false) {	    
       bounceVelY *= -1;
     }
     else {
       bounceVelX *= -1;
     }
-    player.setVelocityX( bounceVelX );   
-    player.setVelocityY( bounceVelY );
+    enemy.setVelocityX( bounceVelX );   
+    enemy.setVelocityY( bounceVelY );
   }   
   // Still decrement speed whenever running into wall.
   else{
-    float slowVelX = player.getVelocityX() * Gamedata::getInstance().getXmlFloat(player.getName() + "/Bounce/changeVel");
-    float slowVelY = player.getVelocityY() * Gamedata::getInstance().getXmlFloat(player.getName() + "/Bounce/changeVel");
+    float slowVelX = enemy.getVelocityX() * Gamedata::getInstance().getXmlFloat(enemy.getName() + "/Bounce/changeVel");
+    float slowVelY = enemy.getVelocityY() * Gamedata::getInstance().getXmlFloat(enemy.getName() + "/Bounce/changeVel");
 			
-    player.setVelocityX( slowVelX );   
-    player.setVelocityY( slowVelY );
+    enemy.setVelocityX( slowVelX );   
+    enemy.setVelocityY( slowVelY );
   }
 }
 
-// Determine the x value of the player's momentum.
-float Player::getMomentumVelocityX() const {
-  float deltaX = player.getX() - previous_x;
-  float absoluteDeltaX = fabs( player.getX()  - previous_x );
-  float absoluteDeltaY = fabs(  player.getY() - previous_y );
+// Determine the x value of the enemy's momentum.
+float Enemy::getMomentumVelocityX() const {
+  float deltaX = enemy.getX() - previous_x;
+  float absoluteDeltaX = fabs( enemy.getX()  - previous_x );
+  float absoluteDeltaY = fabs(  enemy.getY() - previous_y );
   float result = ( deltaX ) / (absoluteDeltaX + absoluteDeltaY);
 
   return result;
 }
 
-// Determine the y value of the player's momentum.
-float Player::getMomentumVelocityY() const {
-  float deltaY = player.getY()  - previous_y;
-  float absoluteDeltaX = fabs( player.getX() - previous_x );
-  float absoluteDeltaY = fabs( player.getY() - previous_y );
+// Determine the y value of the enemy's momentum.
+float Enemy::getMomentumVelocityY() const {
+  float deltaY = enemy.getY()  - previous_y;
+  float absoluteDeltaX = fabs( enemy.getX() - previous_x );
+  float absoluteDeltaY = fabs( enemy.getY() - previous_y );
   float result = ( deltaY ) / (absoluteDeltaX + absoluteDeltaY);
 
   return result;

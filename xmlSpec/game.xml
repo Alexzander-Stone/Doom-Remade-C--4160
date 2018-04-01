@@ -82,6 +82,28 @@
   </Bounce>
 </DoomGuy>
 
-
+<Pinkie>
+  <file>assets/spinstar.png</file>
+  <startLoc x="400" y="800"/>
+  <frames>1</frames>
+  <imageWidth>32</imageWidth>
+  <imageHeight>32</imageHeight>
+  <frameInterval>2000</frameInterval>
+  <speedY>0</speedY>
+  <speedX>0</speedX>
+  <maxSpeed>150</maxSpeed>
+  <incSpeed>25</incSpeed>
+  <transparency>false</transparency>
+  <xFovStart>0</xFovStart>
+  <yFovStart>1</yFovStart>
+  <directionStart>90</directionStart>
+  <rotationRadius>1</rotationRadius>
+  <momentumSlowdown>.9</momentumSlowdown>
+  <thetaIncrement>5</thetaIncrement>
+  <Bounce>
+    <incSpeed>50</incSpeed>
+    <changeVel>.8</changeVel>
+  </Bounce>
+</Pinkie>
 
 </GameData>

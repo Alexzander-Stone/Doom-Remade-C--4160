@@ -25,6 +25,7 @@ OBJS = \
 	smartSprite.o \
 	collisionStrategy.o \
 	subjectSprite.o \
+	wallCollidable.o \
 	main.o
 EXEC = run
 
