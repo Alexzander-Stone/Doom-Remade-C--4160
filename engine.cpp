@@ -10,6 +10,7 @@
 #include "engine.h"
 #include "frameGenerator.h"
 #include "player.h"
+#include "wallCollidable.h"
 #include "collisionStrategy.h"
 #include "vector2f.h"
 
@@ -67,7 +68,7 @@ Engine::Engine() :
   strategies.push_back( new PerPixelCollisionStrategy );
   strategies.push_back( new MidPointCollisionStrategy );
 
-  Viewport::getInstance().setObjectToTrack(player->getPlayer());
+  Viewport::getInstance().setObjectToTrack(player->getSpriteInfo());
   std::cout << "Loading complete" << std::endl;
 }
 
@@ -111,8 +112,8 @@ void Engine::checkForCollisions(){
 	    int currentSprite = 0;
     	while( it != sprites.end() ){
 	    // Check for collision between player and object.
-	    if( strategies[currentStrategy]->execute(player->getSpriteInfo(), **it) ){
-	      player->getSpriteInfo().attach( sprites[currentSprite] );
+	    if( strategies[currentStrategy]->execute(*player->getSpriteInfo(), **it) ){
+	      player->getSpriteInfo()->attach( sprites[currentSprite] );
 	      collisionDetected = true;
 	    }
 	    ++it;

@@ -3,7 +3,7 @@
 
 
 Player::Player( const std::string& name) :
-  player(name),
+  WallCollidable(name), // Pass parent constructor the name.
   maxVelocity(Gamedata::getInstance().getXmlInt(name + "/maxSpeed")),
   amtToIncreaseVelocity(Gamedata::getInstance().getXmlInt(name+ "/incSpeed")),
   worldWidth(Gamedata::getInstance().getXmlInt("world/width")),
@@ -11,22 +11,18 @@ Player::Player( const std::string& name) :
   x_fov(Gamedata::getInstance().getXmlInt(name + "/xFovStart")),
   y_fov(Gamedata::getInstance().getXmlInt(name + "/yFovStart")),
   theta(Gamedata::getInstance().getXmlInt(name + "/directionStart")),
-  rotation_radius(Gamedata::getInstance().getXmlInt(name + "/rotationRadius")),
-  current_state(NORMAL),
-  bounce_timer(0),
-  previous_x(0),
-  previous_y(0)
+  rotation_radius(Gamedata::getInstance().getXmlInt(name + "/rotationRadius"))
 { }
 
 void Player::stop() {
   // Momentum, slow down speed each tick.
-  player.setVelocity( 
+  getSpriteInfo()->setVelocity( 
     Vector2f(
-    Gamedata::getInstance().getXmlFloat(player.getName() + 
-        "/momentumSlowdown") * player.getVelocityX(), 
-        Gamedata::getInstance().getXmlFloat(player.getName() + 
-        "/momentumSlowdown") * player.getVelocityY()
-		) 
+	Gamedata::getInstance().getXmlFloat(getName() + 
+        "/momentumSlowdown") * getSpriteInfo()->getVelocityX(), 
+        Gamedata::getInstance().getXmlFloat(getName() + 
+        "/momentumSlowdown") * getSpriteInfo()->getVelocityY()
+    ) 
   );
 }
 
@@ -34,30 +30,30 @@ void Player::stop() {
 // Vertical goes from x_fov = 1 (top) to x_fov = -1 (bottom).
 // Horizontal goes form y_fov = 1 (left) to y_fov = -1 (right).
 void Player::right() { 
-  // Add to the current speed of the player.
-  player.setVelocityX( player.getVelocityX() + amtToIncreaseVelocity * x_fov );
-  player.setVelocityY( player.getVelocityY() + amtToIncreaseVelocity * y_fov );
+  // Add to the current speed of the getSpriteInfo()->
+  getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() + amtToIncreaseVelocity * x_fov );
+  getSpriteInfo()->setVelocityY( getSpriteInfo()->getVelocityY() + amtToIncreaseVelocity * y_fov );
 } 
 void Player::left()  { 
-  // Add to the current speed of the player.
-  player.setVelocityX( player.getVelocityX() - amtToIncreaseVelocity * x_fov );
-  player.setVelocityY( player.getVelocityY() - amtToIncreaseVelocity * y_fov );
+  // Add to the current speed of the getSpriteInfo()->
+  getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() - amtToIncreaseVelocity * x_fov );
+  getSpriteInfo()->setVelocityY( getSpriteInfo()->getVelocityY() - amtToIncreaseVelocity * y_fov );
 } 
 void Player::up()    { 
-  // Add to the current speed of the player.
-  player.setVelocityX( player.getVelocityX() - amtToIncreaseVelocity * -y_fov );
-  player.setVelocityY( player.getVelocityY() - amtToIncreaseVelocity * x_fov );
+  // Add to the current speed of the getSpriteInfo()->
+  getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() - amtToIncreaseVelocity * -y_fov );
+  getSpriteInfo()->setVelocityY( getSpriteInfo()->getVelocityY() - amtToIncreaseVelocity * x_fov );
 } 
 void Player::down()  { 
-  // Add to the current speed of the player.
-  player.setVelocityX( player.getVelocityX() + amtToIncreaseVelocity * -y_fov );
-  player.setVelocityY( player.getVelocityY() + amtToIncreaseVelocity * x_fov );
+  // Add to the current speed of the getSpriteInfo()->
+  getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() + amtToIncreaseVelocity * -y_fov );
+  getSpriteInfo()->setVelocityY( getSpriteInfo()->getVelocityY() + amtToIncreaseVelocity * x_fov );
 }
 
 // When determining the vector, make sure to normalize it.
 void Player::rotateLeft() {
     // Wrap the theta around when reaching -1.
-    theta -= Gamedata::getInstance().getXmlInt(player.getName() + 
+    theta -= Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + 
              "/thetaIncrement");
     if(theta < 0) {
       theta += 360;
@@ -82,7 +78,7 @@ void Player::rotateLeft() {
 }
 void Player::rotateRight() {
     // Wrap the theta around when reaching 360.
-    theta += Gamedata::getInstance().getXmlInt(player.getName() + 
+    theta += Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + 
              "/thetaIncrement");
     if(theta > 359) {
     	theta -= 360;
@@ -109,115 +105,19 @@ void Player::rotateRight() {
 
 void Player::update(Uint32 ticks) {
   // Bouncing timer when colliding with wall.
-  if( current_state == BOUNCE && bounce_timer >= static_cast<Uint32>( 10 * Gamedata::getInstance().getXmlInt("period") ) 
+  if( getState() == 1 && getBounceTimer() >= static_cast<Uint32>( 10 * Gamedata::getInstance().getXmlInt("period") ) 
       && 
-      ( fabs(player.getVelocityX() ) +fabs(player.getVelocityY()) > 450 ) 
-    ) {
-    current_state = NORMAL; 
+      ( fabs(getSpriteInfo()->getVelocityX() ) +fabs(getSpriteInfo()->getVelocityY()) > 450 ) 
+    ) 
+  {
+    setState(0); 
   }
-  else if ( current_state == BOUNCE ){
-    bounce_timer += ticks;
+  else if ( getState() == 1 ){
+    setBounceTimer(ticks);
   }
   
-  previous_y = player.getY();
-  previous_x = player.getX();
-  player.update(ticks);
+  setPreviousY(getSpriteInfo()->getY());
+  setPreviousX(getSpriteInfo()->getX());
+  getSpriteInfo()->update(ticks);
   stop();
-}
-
-void Player::collisionDetected(){
-  // Check to see if the object is within the left/right and top/bottom range
-  // of the object. This will determine where to place the object.
-  // Detach the collision object once the player is in a valid state (outside
-  // the wall).
-	
-	
-  // Keep track of which wall the player encountered.
-  bool xFinished = false;			
-  float momentumX = getMomentumVelocityX();
-  float momentumY = getMomentumVelocityY();
-
-  std::list<SmartSprite*>::iterator it = player.getObservers().begin();
-  while( it != player.getObservers().end() ) {
-    float collision_obj_x = (*it)->getX();
-    float collision_obj_y = (*it)->getY();
-    float currentX = player.getX();
-    float currentY = player.getY();
-    float currentIncrement = 0;
-   
-    // Momentum direction determines which direction to move the player in response 
-    // to the collision. 
-    if( (*it)->getName() == "Wall/Horizontal") {
-      while ( currentY + currentIncrement <= collision_obj_y + (*it)->getScaledHeight() + 1.001 &&
-		          currentY + currentIncrement + getScaledHeight() >= collision_obj_y - 1.001 ) {
-	      currentIncrement += -momentumY;
-      }
-      currentY += currentIncrement;
-      player.setY( currentY );
-    }
-    else if( (*it)->getName() == "Wall/Vertical" ) {
-      while ( currentX + currentIncrement <= collision_obj_x + (*it)->getScaledWidth() + 1.001 && 
-	            currentX + getScaledWidth() + currentIncrement >= collision_obj_x - 1.001 ) {
-	      currentIncrement += -momentumX ;
-      }
-      currentX += currentIncrement;
-      player.setX( currentX );
-    }
-    if( currentX <= collision_obj_x + (*it)->getScaledWidth() + 1.00001 && 
-	      currentX + getScaledWidth() >= collision_obj_x - 1.00001 )
-      xFinished = false;
-    else
-      xFinished = true;
-
-    it++;			
-  }
-  player.getObservers().erase( player.getObservers().begin(), player.getObservers().end() );
-
-  // Use the direction that the momentum is traveling towards.
-  // Bounce player back towards opposite direction.
-  // Change state of player to BOUNCE mode.
-  if ( current_state == NORMAL ){
-    current_state = BOUNCE;
-    bounce_timer = 0;  
-    float bounceVelX = player.getVelocityX() * Gamedata::getInstance().getXmlFloat(player.getName() + "/Bounce/changeVel");
-    float bounceVelY = player.getVelocityY() * Gamedata::getInstance().getXmlFloat(player.getName() + "/Bounce/changeVel");
-			
-    // Player has hit a horizontal wall. Otherwise, vertical wall.
-    if( xFinished == false) {	    
-      bounceVelY *= -1;
-    }
-    else {
-      bounceVelX *= -1;
-    }
-    player.setVelocityX( bounceVelX );   
-    player.setVelocityY( bounceVelY );
-  }   
-  // Still decrement speed whenever running into wall.
-  else{
-    float slowVelX = player.getVelocityX() * Gamedata::getInstance().getXmlFloat(player.getName() + "/Bounce/changeVel");
-    float slowVelY = player.getVelocityY() * Gamedata::getInstance().getXmlFloat(player.getName() + "/Bounce/changeVel");
-			
-    player.setVelocityX( slowVelX );   
-    player.setVelocityY( slowVelY );
-  }
-}
-
-// Determine the x value of the player's momentum.
-float Player::getMomentumVelocityX() const {
-  float deltaX = player.getX() - previous_x;
-  float absoluteDeltaX = fabs( player.getX()  - previous_x );
-  float absoluteDeltaY = fabs(  player.getY() - previous_y );
-  float result = ( deltaX ) / (absoluteDeltaX + absoluteDeltaY);
-
-  return result;
-}
-
-// Determine the y value of the player's momentum.
-float Player::getMomentumVelocityY() const {
-  float deltaY = player.getY()  - previous_y;
-  float absoluteDeltaX = fabs( player.getX() - previous_x );
-  float absoluteDeltaY = fabs( player.getY() - previous_y );
-  float result = ( deltaY ) / (absoluteDeltaX + absoluteDeltaY);
-
-  return result;
 }

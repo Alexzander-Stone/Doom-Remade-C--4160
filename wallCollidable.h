@@ -13,11 +13,6 @@ public:
   WallCollidable(const std::string&);
   WallCollidable(const WallCollidable&);
 
-  const SubjectSprite* getWallCollidable() const { return &collidableSprite; }
-
-  const std::string& getName() const { return collidableSprite.getName(); }
-  float getX() const { return collidableSprite.getX(); }
-  float getY() const { return collidableSprite.getY(); }
   const Image* getImage() const { 
     return collidableSprite.getImage();
   }
@@ -32,13 +27,59 @@ public:
   }
 
   // Get sprite info (pos, velo, etc.)
-  SubjectSprite& getSpriteInfo() {
-      return collidableSprite;
+  SubjectSprite* getSpriteInfo() {
+      return &collidableSprite;
+  }
+  // Get sprite info (pos, velo, etc.)
+  const SubjectSprite* getSpriteInfo() const {
+      return &collidableSprite;
+  }
+
+  // Normal = 0, Bounce = 1
+  int getState() {
+    switch(current_state){
+      case NORMAL: return 0;
+	           break;
+      case BOUNCE: return 1;
+		   break;
+      default: std::cout << "Error in state change" << std::endl;
+	       return -1;
+	       break;
+    }
+  }
+  void setState(int newState) {
+    switch(newState){
+      case 0: current_state = NORMAL;
+	      break;
+      case 1: current_state = BOUNCE;
+	      break;
+      default: std::cout << "Error in state change" << std::endl;
+	       break;
+    }
+  }
+
+  Uint32 getBounceTimer() {
+    return bounce_timer;
+  }
+  void setBounceTimer(Uint32 incTime) {
+    bounce_timer += incTime;
+  }
+
+  float getPreviousX(){
+    return previous_x;
+  }
+  float getPreviousY(){
+    return previous_y;
+  }
+  void setPreviousX(float x){
+    previous_x = x;
+  }
+  void setPreviousY(float y){
+    previous_y = y;
   }
 
   // Collision reaction.
   void collisionDetected();
-
 
   // Momentum direction.
   float getMomentumVelocityX() const;
@@ -55,6 +96,5 @@ private:
   // Previous coordinates.
   float previous_x; 
   float previous_y;
-
 };
 #endif
