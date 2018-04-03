@@ -62,6 +62,11 @@ Engine::Engine() :
   sprites.push_back( new SmartSprite("Wall/Vertical", placeholderPlayerPos, w, h, spritePos2) );
   sprites.push_back( new SmartSprite("Wall/Horizontal", placeholderPlayerPos, w, h, spritePos3) );
   sprites.push_back( new SmartSprite("Wall/Vertical", placeholderPlayerPos, w, h, spritePos4) );
+
+  // Enemies, attach to observor in player.
+  Vector2f pinkiePos(50, 50);
+  sprites.push_back( new Enemy("Pinkie/file", placeholderPlayerPos, w, h, pinkiePos) );
+  player->attach(  )
   
   // Collision strategies ( rect, pixel, distance(midpoint) ).
   strategies.push_back( new RectangularCollisionStrategy );
