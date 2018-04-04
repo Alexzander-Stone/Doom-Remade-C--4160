@@ -12,6 +12,10 @@ class WallCollidable {
 public:
   WallCollidable(const std::string&);
   WallCollidable(const WallCollidable&);
+  virtual ~WallCollidable(){}
+
+  virtual void draw() const = 0;
+  virtual void update(Uint32 ticks) = 0;
 
   const Image* getImage() const { 
     return collidableSprite.getImage();

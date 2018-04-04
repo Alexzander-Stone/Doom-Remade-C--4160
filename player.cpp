@@ -11,7 +11,8 @@ Player::Player( const std::string& name) :
   x_fov(Gamedata::getInstance().getXmlInt(name + "/xFovStart")),
   y_fov(Gamedata::getInstance().getXmlInt(name + "/yFovStart")),
   theta(Gamedata::getInstance().getXmlInt(name + "/directionStart")),
-  rotation_radius(Gamedata::getInstance().getXmlInt(name + "/rotationRadius"))
+  rotation_radius(Gamedata::getInstance().getXmlInt(name + "/rotationRadius")),
+  observers()
 { }
 
 void Player::stop() {
@@ -103,6 +104,18 @@ void Player::rotateRight() {
     }
 }
 
+void Player::detach( Enemy* e ){
+  std::list<Enemy*>::iterator itr = observers.begin();
+  while( itr != observers.end() )
+  {
+    if( *itr == e ){
+      itr = observers.erase(itr);
+      return;
+    }
+    ++itr;
+  }
+}
+
 void Player::update(Uint32 ticks) {
   // Bouncing timer when colliding with wall.
   if( getState() == 1 && getBounceTimer() >= static_cast<Uint32>( 10 * Gamedata::getInstance().getXmlInt("period") ) 
@@ -120,4 +133,12 @@ void Player::update(Uint32 ticks) {
   setPreviousX(getSpriteInfo()->getX());
   getSpriteInfo()->update(ticks);
   stop();
+
+  // Update observers with new x and y coordinates.
+  std::list<Enemy*>::iterator itr = observers.begin();
+  while( itr != observers.end() )
+  {
+    (*itr)->setPlayerPos( getSpriteInfo()->getPosition() );
+    itr++;
+  } 
 }

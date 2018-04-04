@@ -1,8 +1,7 @@
 #include "enemy.h"
 #include "gamedata.h"
 
-
-Enemy::Enemy( const std::string& name) :
+Enemy::Enemy( const std::string& name, const Vector2f& pos) :
   WallCollidable(name), // Pass parent constructor the name.
   maxVelocity(Gamedata::getInstance().getXmlInt(name + "/maxSpeed")),
   amtToIncreaseVelocity(Gamedata::getInstance().getXmlInt(name+ "/incSpeed")),
@@ -11,7 +10,8 @@ Enemy::Enemy( const std::string& name) :
   x_fov(Gamedata::getInstance().getXmlInt(name + "/xFovStart")),
   y_fov(Gamedata::getInstance().getXmlInt(name + "/yFovStart")),
   theta(Gamedata::getInstance().getXmlInt(name + "/directionStart")),
-  rotation_radius(Gamedata::getInstance().getXmlInt(name + "/rotationRadius"))
+  rotation_radius(Gamedata::getInstance().getXmlInt(name + "/rotationRadius")),
+  playerPos(pos)
 { }
 
 void Enemy::stop() {
@@ -115,7 +115,25 @@ void Enemy::update(Uint32 ticks) {
   else if ( getState() == 1 ){
     setBounceTimer(ticks);
   }
-  
+
+  // Use player's position/angle to determine which way to rotate the enemy.
+  // Tie this to tick rate in future.
+  Vector2f player_direction = playerPos - getSpriteInfo()->getVelocity();
+  player_direction.normalize();
+  Vector2f p_direction_abs(fabs(player_direction[0]), fabs(player_direction[1]));
+  Vector2f player_pos_abs(fabs( getMomentumVelocityX() ), fabs( getMomentumVelocityY() ) );
+  float angleBetweenVectors = acos( ( player_direction.dot(playerPos) ) / (p_direction_abs.dot( player_pos_abs )) ); 
+
+std::cout << player_direction << " and player position is " << playerPos << std::endl;
+
+  if(angleBetweenVectors > 3.14159){
+    rotateLeft();
+  }
+  else if(angleBetweenVectors < 3.14159){
+    rotateRight();
+  }
+  up();  
+
   setPreviousY(getSpriteInfo()->getY());
   setPreviousX(getSpriteInfo()->getX());
   getSpriteInfo()->update(ticks);

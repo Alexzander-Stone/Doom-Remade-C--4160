@@ -11,11 +11,15 @@
 
 class Enemy : public WallCollidable {
 public:
-  Enemy(const std::string&);
+  Enemy(const std::string&, const Vector2f& pos);
   Enemy(const Enemy&);
+  virtual ~Enemy(){}
 
-  void draw() { getSpriteInfo()->draw(); }
+  void draw() const { getSpriteInfo()->draw(); }
   void update(Uint32 ticks);
+
+  // Observor setter.
+  void setPlayerPos(const Vector2f& p) { playerPos = p; }
 
   const std::string& getName() const { return getSpriteInfo()->getName(); }
   float getX() const { return getSpriteInfo()->getX(); }
@@ -48,5 +52,7 @@ private:
   // Rotation values.
   float x_fov, y_fov;
   int theta, rotation_radius; 
+  // Observer- player position.
+  Vector2f playerPos; 
 };
 #endif

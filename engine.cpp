@@ -15,7 +15,6 @@
 #include "vector2f.h"
 
 Engine::~Engine() { 
-  delete player;
   for( Drawable* drawings : sprites )
   {
       delete drawings;
@@ -23,6 +22,10 @@ Engine::~Engine() {
   for( CollisionStrategy* strategy : strategies )
   {
       delete strategy;
+  }
+  for( WallCollidable* collide : collidables )
+  {
+      delete collide;
   }
   std::cout << "Terminating program" << std::endl;
 }
@@ -34,21 +37,29 @@ Engine::Engine() :
   renderer( rc->getRenderer() ),
   world("back", Gamedata::getInstance().getXmlInt("back/factor") ),
   viewport( Viewport::getInstance() ),
-  player(new Player("DoomGuy")),
   sprites(),
   strategies(),
+  collidables(),
   currentStrategy(0),
   collision( false ),
   makeVideo( false ),
   currentSprite(1)
 {
+  // Objects that can collide with walls.
+  collidables.reserve(10);
+  collidables.push_back(new Player("DoomGuy"));
+
+  // Enemies, attach to observor in collidables[0].
+  Vector2f placeholderPlayerPos(50, 50);
+  collidables.push_back( new Enemy("Pinkie", placeholderPlayerPos) );
+  static_cast<Player*>(collidables[0])->attach( static_cast<Enemy*>( *(collidables.end() - 1) ) );
+
   // Wall sprites.
   int wallCount = Gamedata::getInstance().getXmlInt("Wall/numberOfWalls");
   sprites.reserve( wallCount*2 );
 
-  Vector2f placeholderPlayerPos(0, 0);
-  int w = player->getScaledWidth();
-  int h = player->getScaledHeight();
+  int w = static_cast<Player*>(collidables[0])->getSpriteInfo()->getScaledWidth();
+  int h = static_cast<Player*>(collidables[0])->getSpriteInfo()->getScaledHeight();
   for ( int i = 0; i < wallCount; i++ ){
       Vector2f spritePos(50 + i*w, 100);
       sprites.push_back( new SmartSprite("Wall/Horizontal", placeholderPlayerPos, w, h, spritePos) );
@@ -63,17 +74,12 @@ Engine::Engine() :
   sprites.push_back( new SmartSprite("Wall/Horizontal", placeholderPlayerPos, w, h, spritePos3) );
   sprites.push_back( new SmartSprite("Wall/Vertical", placeholderPlayerPos, w, h, spritePos4) );
 
-  // Enemies, attach to observor in player.
-  Vector2f pinkiePos(50, 50);
-  sprites.push_back( new Enemy("Pinkie/file", placeholderPlayerPos, w, h, pinkiePos) );
-  player->attach(  )
-  
   // Collision strategies ( rect, pixel, distance(midpoint) ).
   strategies.push_back( new RectangularCollisionStrategy );
   strategies.push_back( new PerPixelCollisionStrategy );
   strategies.push_back( new MidPointCollisionStrategy );
 
-  Viewport::getInstance().setObjectToTrack(player->getSpriteInfo());
+  Viewport::getInstance().setObjectToTrack(collidables[0]->getSpriteInfo());
   std::cout << "Loading complete" << std::endl;
 }
 
@@ -85,8 +91,10 @@ void Engine::draw() const {
   {
     it->draw();
   }
-
-  player->draw();
+  for( auto& it : collidables )
+  {
+    it->draw();
+  }
   viewport.draw();
 
   // Screen height and width for drawing.
@@ -107,32 +115,38 @@ void Engine::draw() const {
 
 // Collision Detection.
 void Engine::checkForCollisions(){
-    bool collisionDetected = true;
+    std::vector<WallCollidable*>::iterator colItr = collidables.begin();
+    while( colItr != collidables.end() ){
+      bool collisionDetected = true;
 
-    // Check until all collisions have been removed.
-    while( collisionDetected == true ) {
-    	// Search through all the sprites to determine if collision has occurred.
-    	auto it = sprites.begin();
-	    collisionDetected = false;
-	    int currentSprite = 0;
-    	while( it != sprites.end() ){
-	    // Check for collision between player and object.
-	    if( strategies[currentStrategy]->execute(*player->getSpriteInfo(), **it) ){
-	      player->getSpriteInfo()->attach( sprites[currentSprite] );
-	      collisionDetected = true;
-	    }
-	    ++it;
-	    ++currentSprite;
-	}
-	if( collisionDetected == true){
-      	    player->collisionDetected();
-	}
+      // Check until all collisions have been removed.
+      while( collisionDetected == true ) {
+	  // Search through all the sprites to determine if collision has occurred.
+	  auto it = sprites.begin();
+	      collisionDetected = false;
+	      int currentSprite = 0;
+	  while( it != sprites.end() ){
+	      // Check for collision between collidables[0] and object.
+	      if( strategies[currentStrategy]->execute( *(*colItr)->getSpriteInfo(), **it) ){
+		(*colItr)->getSpriteInfo()->attach( sprites[currentSprite] );
+		collisionDetected = true;
+	      }
+	      ++it;
+	      ++currentSprite;
+	  }
+	  if( collisionDetected == true){
+	     (*colItr)->collisionDetected();
+	  }
+      }
+      colItr++;
     }
-
 }
 
 void Engine::update(Uint32 ticks) {
-  player->update(ticks);
+  for(auto& it : collidables)
+  {
+    it->update(ticks);
+  }
   checkForCollisions();
   world.update();
   viewport.update(); // always update viewport last
@@ -176,22 +190,22 @@ void Engine::play() {
     if ( ticks > 0 ) {
       clock.incrFrame();
       if (keystate[SDL_SCANCODE_A]) {
-        static_cast<Player*>(player)->left();
+        static_cast<Player*>(collidables[0])->left();
       }
       if (keystate[SDL_SCANCODE_D]) {
-        static_cast<Player*>(player)->right();
+        static_cast<Player*>(collidables[0])->right();
       }
       if (keystate[SDL_SCANCODE_W]) {
-        static_cast<Player*>(player)->up();
+        static_cast<Player*>(collidables[0])->up();
       }
       if (keystate[SDL_SCANCODE_S]) {
-        static_cast<Player*>(player)->down();
+        static_cast<Player*>(collidables[0])->down();
       }
       if(keystate[SDL_SCANCODE_LEFT]){
-        static_cast<Player*>(player)->rotateLeft();
+        static_cast<Player*>(collidables[0])->rotateLeft();
       }
       if(keystate[SDL_SCANCODE_RIGHT]){
-        static_cast<Player*>(player)->rotateRight();
+        static_cast<Player*>(collidables[0])->rotateRight();
       }
       
       update(ticks);

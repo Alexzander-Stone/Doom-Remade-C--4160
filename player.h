@@ -8,13 +8,16 @@
 #include "subjectSprite.h"
 #include "smartSprite.h"
 #include "wallCollidable.h"
+#include "enemy.h"
 
 class Player : public WallCollidable {
 public:
   Player(const std::string&);
   Player(const Player&);
 
-  void draw() { getSpriteInfo()->draw(); }
+  virtual ~Player() {}
+
+  void draw() const { getSpriteInfo()->draw(); }
   void update(Uint32 ticks);
 
   const std::string& getName() const { return getSpriteInfo()->getName(); }
@@ -39,8 +42,13 @@ public:
   // Stop movement of collidableSprite.
   void stop();
 
-private:
+  // Observer pattern functions.
+  void attach( Enemy* e ){ observers.push_back(e); }
+  void detach( Enemy* e );
+
   
+
+private: 
   int maxVelocity;
   int amtToIncreaseVelocity;
   int worldWidth;
@@ -48,5 +56,7 @@ private:
   // Rotation values.
   float x_fov, y_fov;
   int theta, rotation_radius; 
+  // Observer pattern.
+  std::list<Enemy*> observers;
 };
 #endif

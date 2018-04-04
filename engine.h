@@ -5,6 +5,7 @@
 #include "clock.h"
 #include "world.h"
 #include "viewport.h"
+#include "enemy.h"
 
 class Player;
 class CollisionStrategy;
@@ -26,10 +27,11 @@ private:
   World world;
   Viewport& viewport;
 
-  Player*   player;
   // Collision variables.
   std::vector<SmartSprite*> sprites;
   std::vector<CollisionStrategy*> strategies;
+  // Enemy list
+  std::vector<WallCollidable*> collidables;
   int currentStrategy;
   bool collision;
 
