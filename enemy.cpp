@@ -113,10 +113,9 @@ void Enemy::update(Uint32 ticks) {
   float deltaY = playerPos[1] - getSpriteInfo()->getY();
   float angleBetweenVectors = atan2(deltaY, deltaX) * 57.2958 + 180;
   
-  int tempTheta = 360 - theta;
-  std::cout << " temptheta is " << tempTheta  << " and angle btwn is " << angleBetweenVectors << std::endl;
-  std::cout << " theta is " << theta  <<  std::endl;
-  std::cout << " move left is " << fabs(tempTheta - angleBetweenVectors) << " and move right is " << fabs(angleBetweenVectors - tempTheta) << std::endl;
+  deltaX = getPreviousX() - getSpriteInfo()->getX();
+  deltaY = getPreviousY() - getSpriteInfo()->getY();
+  float tempTheta = atan2(deltaY, deltaX) * 57.2958 + 180;
   
   float leftRotCheck = angleBetweenVectors - tempTheta;
   float rightRotCheck = tempTheta - angleBetweenVectors;
@@ -125,10 +124,10 @@ void Enemy::update(Uint32 ticks) {
   if(rightRotCheck < 0)
     rightRotCheck += 360;
 
-  if(rightRotCheck < leftRotCheck){
+  if(rightRotCheck > leftRotCheck){
     rotateRight();
   }
-  else if(rightRotCheck > leftRotCheck){
+  else if(rightRotCheck < leftRotCheck){
     rotateLeft();
   }
   up();  
