@@ -14,8 +14,8 @@ Enemy::Enemy( const std::string& name, const Vector2f& pos) :
   playerPos(pos)
 { }
 
+// Slow down velocity each tick.
 void Enemy::stop() {
-  // Momentum, slow down speed each tick.
   getSpriteInfo()->setVelocity( 
     Vector2f(
 	Gamedata::getInstance().getXmlFloat(getName() + 
@@ -26,16 +26,14 @@ void Enemy::stop() {
   );
 }
 
-// Use y_fov and x_fov to determine how diaggonal movement works.
+// Use y_fov and x_fov to determine how diagonal movement works.
 // Vertical goes from x_fov = 1 (top) to x_fov = -1 (bottom).
 // Horizontal goes form y_fov = 1 (left) to y_fov = -1 (right).
 void Enemy::up()    { 
-  // Add to the current speed of the getSpriteInfo()->
   getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() - amtToIncreaseVelocity * y_fov );
   getSpriteInfo()->setVelocityY( getSpriteInfo()->getVelocityY() - amtToIncreaseVelocity * x_fov );
 } 
 
-// Change momentum direction.
 void Enemy::directionUpdate()
 {
     float not_normalized_x= cos(theta * (3.14/180));
@@ -57,9 +55,7 @@ void Enemy::directionUpdate()
     }
 }
 
-// When determining the vector, make sure to normalize it.
 void Enemy::rotateLeft() {
-    // Wrap the theta around when reaching -1.
     theta -= Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + 
              "/thetaIncrement");
     if(theta < 0) {
@@ -69,7 +65,6 @@ void Enemy::rotateLeft() {
     directionUpdate();
 }
 void Enemy::rotateRight() {
-    // Wrap the theta around when reaching 360.
     theta += Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + 
              "/thetaIncrement");
     if(theta > 359) {
@@ -81,9 +76,10 @@ void Enemy::rotateRight() {
 
 void Enemy::update(Uint32 ticks) {
   // Bouncing timer when colliding with wall.
+  // Can bounce when traveling above the bounce speed.
   if( getState() == 1 && getBounceTimer() >= static_cast<Uint32>( 10 * Gamedata::getInstance().getXmlInt("period") ) 
       && 
-      ( fabs(getSpriteInfo()->getVelocityX() ) +fabs(getSpriteInfo()->getVelocityY()) > 450 ) 
+      ( fabs(getSpriteInfo()->getVelocityX() ) +fabs(getSpriteInfo()->getVelocityY()) > Gamedata::getInstance().getXmlInt(getName() + "/bounceSpeedRequirement") ) 
     ) 
   {
     setState(0); 

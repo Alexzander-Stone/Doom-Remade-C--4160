@@ -76,6 +76,7 @@
   <rotationRadius>1</rotationRadius>
   <momentumSlowdown>.9</momentumSlowdown>
   <thetaIncrement>5</thetaIncrement>
+  <bounceSpeedRequirement>450</bounceSpeedRequirement>
   <Bounce>
     <incSpeed>50</incSpeed>
     <changeVel>.8</changeVel>
@@ -99,7 +100,8 @@
   <directionStart>90</directionStart>
   <rotationRadius>1</rotationRadius>
   <momentumSlowdown>.9</momentumSlowdown>
-  <thetaIncrement>5</thetaIncrement>
+  <thetaIncrement>10</thetaIncrement>
+  <bounceSpeedRequirement>125</bounceSpeedRequirement>
   <Bounce>
     <incSpeed>50</incSpeed>
     <changeVel>.8</changeVel>
