@@ -115,30 +115,44 @@ void Engine::draw() const {
 
 // Collision Detection.
 void Engine::checkForCollisions(){
-    std::vector<WallCollidable*>::iterator colItr = collidables.begin();
-    while( colItr != collidables.end() ){
+    std::vector<WallCollidable*>::iterator currItr = collidables.begin();
+    while( currItr != collidables.end() ){
       bool collisionDetected = true;
 
       // Check until all collisions have been removed.
       while( collisionDetected == true ) {
 	  // Search through all the sprites to determine if collision has occurred.
-	  auto it = sprites.begin();
+	  auto spriteIt = sprites.begin();
 	      collisionDetected = false;
 	      int currentSprite = 0;
-	  while( it != sprites.end() ){
+	  while( spriteIt != sprites.end() ){
 	      // Check for collision between collidables[0] and object.
-	      if( strategies[currentStrategy]->execute( *(*colItr)->getSpriteInfo(), **it) ){
-		(*colItr)->getSpriteInfo()->attach( sprites[currentSprite] );
+	      if( strategies[currentStrategy]->execute( *(*currItr)->getSpriteInfo(), **spriteIt) ){
+		(*currItr)->getSpriteInfo()->attach( sprites[currentSprite] );
 		collisionDetected = true;
 	      }
-	      ++it;
+	      ++spriteIt;
 	      ++currentSprite;
 	  }
+/* NOT IMPLEMENTED YET
+	  auto colIt = collidables.begin();
+	  while( colIt != collidables.end() ){
+	      // Check for collision between collidables[0] and object.
+	      if( (*colIt)->getSpriteInfo() == (*currItr)->getSpriteInfo() )
+		; // Ignore self image.
+	      else if( strategies[currentStrategy]->execute( *(*currItr)->getSpriteInfo(), *(*colIt)->getSpriteInfo() ) ){
+		(*currItr)->getSpriteInfo()->attach( sprites[currentSprite] );
+		collisionDetected = true;
+	      }
+	      ++colIt;
+	      ++currentSprite;
+	  }
+*/
 	  if( collisionDetected == true){
-	     (*colItr)->collisionDetected();
+	     (*currItr)->collisionDetected();
 	  }
       }
-      colItr++;
+      currItr++;
     }
 }
 
