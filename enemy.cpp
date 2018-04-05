@@ -41,13 +41,35 @@ void Enemy::left()  {
 } 
 void Enemy::up()    { 
   // Add to the current speed of the getSpriteInfo()->
-  getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() - amtToIncreaseVelocity * -y_fov );
+  getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() - amtToIncreaseVelocity * y_fov );
   getSpriteInfo()->setVelocityY( getSpriteInfo()->getVelocityY() - amtToIncreaseVelocity * x_fov );
 } 
 void Enemy::down()  { 
   // Add to the current speed of the getSpriteInfo()->
   getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() + amtToIncreaseVelocity * -y_fov );
   getSpriteInfo()->setVelocityY( getSpriteInfo()->getVelocityY() + amtToIncreaseVelocity * x_fov );
+}
+
+// Change momentum direction.
+void Enemy::directionUpdate()
+{
+    float not_normalized_x= cos(theta * (3.14/180));
+    float not_normalized_y = sin(theta * (3.14/180));
+    
+    // Check to see if the values are negative, need to preserve the negative if so.
+    if(not_normalized_x >= 0){
+      x_fov = rotation_radius * pow(not_normalized_x, 2);
+    }
+    else{
+      x_fov = -1 * rotation_radius * pow(not_normalized_x, 2);
+    }
+
+    if(not_normalized_y >= 0){
+      y_fov = rotation_radius * pow(not_normalized_y, 2);
+    }
+    else{
+      y_fov = -1 * rotation_radius * pow(not_normalized_y, 2);
+    }
 }
 
 // When determining the vector, make sure to normalize it.
@@ -58,23 +80,8 @@ void Enemy::rotateLeft() {
     if(theta < 0) {
       theta += 360;
     }
-    float not_normalized_x= cos(theta * (3.14/180));
-    float not_normalized_y = sin(theta * (3.14/180));
     
-    // Check to see if the values are negative, need to preserve the negative if so.
-    if(not_normalized_x >= 0){
-      x_fov = rotation_radius * pow(not_normalized_x, 2);
-    }
-    else{
-      x_fov = -1 * rotation_radius * pow(not_normalized_x, 2);
-    }
-
-    if(not_normalized_y >= 0){
-      y_fov = rotation_radius * pow(not_normalized_y, 2);
-    }
-    else{
-      y_fov = -1 * rotation_radius * pow(not_normalized_y, 2);
-    }
+    directionUpdate();
 }
 void Enemy::rotateRight() {
     // Wrap the theta around when reaching 360.
@@ -83,24 +90,8 @@ void Enemy::rotateRight() {
     if(theta > 359) {
     	theta -= 360;
     }
-    float not_normalized_x= cos(theta * (3.14/180));
-    float not_normalized_y = sin(theta * (3.14/180));
-    
 
-    // Check to see if the values are negative, need to preserve the negative if so.
-    if(not_normalized_x >= 0){
-      x_fov = rotation_radius * pow(not_normalized_x, 2);
-    }
-    else{
-      x_fov = -1 * rotation_radius * pow(not_normalized_x, 2);
-    }
-
-    if(not_normalized_y >= 0){
-      y_fov = rotation_radius * pow(not_normalized_y, 2);
-    }
-    else{
-      y_fov = -1 * rotation_radius * pow(not_normalized_y, 2);
-    }
+    directionUpdate();
 }
 
 void Enemy::update(Uint32 ticks) {
@@ -118,19 +109,27 @@ void Enemy::update(Uint32 ticks) {
 
   // Use player's position/angle to determine which way to rotate the enemy.
   // Tie this to tick rate in future.
-  Vector2f player_direction = playerPos - getSpriteInfo()->getVelocity();
-  player_direction.normalize();
-  Vector2f p_direction_abs(fabs(player_direction[0]), fabs(player_direction[1]));
-  Vector2f player_pos_abs(fabs( getMomentumVelocityX() ), fabs( getMomentumVelocityY() ) );
-  float angleBetweenVectors = acos( ( player_direction.dot(playerPos) ) / (p_direction_abs.dot( player_pos_abs )) ); 
+  float deltaX = playerPos[0] - getSpriteInfo()->getX();
+  float deltaY = playerPos[1] - getSpriteInfo()->getY();
+  float angleBetweenVectors = atan2(deltaY, deltaX) * 57.2958 + 180;
+  
+  int tempTheta = 360 - theta;
+  std::cout << " temptheta is " << tempTheta  << " and angle btwn is " << angleBetweenVectors << std::endl;
+  std::cout << " theta is " << theta  <<  std::endl;
+  std::cout << " move left is " << fabs(tempTheta - angleBetweenVectors) << " and move right is " << fabs(angleBetweenVectors - tempTheta) << std::endl;
+  
+  float leftRotCheck = angleBetweenVectors - tempTheta;
+  float rightRotCheck = tempTheta - angleBetweenVectors;
+  if(leftRotCheck < 0)
+    leftRotCheck += 360; 
+  if(rightRotCheck < 0)
+    rightRotCheck += 360;
 
-std::cout << player_direction << " and player position is " << playerPos << std::endl;
-
-  if(angleBetweenVectors > 3.14159){
-    rotateLeft();
-  }
-  else if(angleBetweenVectors < 3.14159){
+  if(rightRotCheck < leftRotCheck){
     rotateRight();
+  }
+  else if(rightRotCheck > leftRotCheck){
+    rotateLeft();
   }
   up();  
 

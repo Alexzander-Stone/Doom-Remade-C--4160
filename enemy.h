@@ -32,6 +32,7 @@ public:
   void down();
 
   // Rotation Options.
+  void directionUpdate();
   void rotateLeft();
   void rotateRight();
 
