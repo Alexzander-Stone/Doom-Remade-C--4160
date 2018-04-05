@@ -117,40 +117,42 @@ void Engine::draw() const {
 void Engine::checkForCollisions(){
     std::vector<WallCollidable*>::iterator currItr = collidables.begin();
     while( currItr != collidables.end() ){
-      bool collisionDetected = true;
-
       // Check until all collisions have been removed.
+	    // Search through all the sprites to determine if collision has occurred.
+      bool collisionDetected = true;
       while( collisionDetected == true ) {
-	  // Search through all the sprites to determine if collision has occurred.
-	  auto spriteIt = sprites.begin();
+
+        // Check against the Walls in the level.
+	      auto spriteIt = sprites.begin();
 	      collisionDetected = false;
 	      int currentSprite = 0;
-	  while( spriteIt != sprites.end() ){
-	      // Check for collision between collidables[0] and object.
-	      if( strategies[currentStrategy]->execute( *(*currItr)->getSpriteInfo(), **spriteIt) ){
-		(*currItr)->getSpriteInfo()->attach( sprites[currentSprite] );
-		collisionDetected = true;
+	      while( spriteIt != sprites.end() ){
+	        // Check for collision between collidables[0] and object.
+	        if( strategies[currentStrategy]->execute( *(*currItr)->getSpriteInfo(), **spriteIt) ){
+		        (*currItr)->getSpriteInfo()->attach( sprites[currentSprite] );
+		        collisionDetected = true;
+	        }
+	        ++spriteIt;
+	        ++currentSprite;
 	      }
-	      ++spriteIt;
-	      ++currentSprite;
-	  }
-/* NOT IMPLEMENTED YET
-	  auto colIt = collidables.begin();
-	  while( colIt != collidables.end() ){
-	      // Check for collision between collidables[0] and object.
-	      if( (*colIt)->getSpriteInfo() == (*currItr)->getSpriteInfo() )
-		; // Ignore self image.
-	      else if( strategies[currentStrategy]->execute( *(*currItr)->getSpriteInfo(), *(*colIt)->getSpriteInfo() ) ){
-		(*currItr)->getSpriteInfo()->attach( sprites[currentSprite] );
-		collisionDetected = true;
+/*
+        // Check against other collidable objects.
+	      auto colIt = collidables.begin();
+	      while( colIt != collidables.end() ){
+	        // Check for collision between collidables[0] and object.
+	        if( (*colIt)->getSpriteInfo() == (*currItr)->getSpriteInfo() )
+		        ; // Ignore self image.
+	        else if( strategies[currentStrategy]->execute( *(*currItr)->getSpriteInfo(), *(*colIt)->getSpriteInfo() ) ){
+		        (*currItr)->getSpriteInfo()->attach( sprites[currentSprite] );
+		        collisionDetected = true;
+	        }
+	        ++colIt;
+	        ++currentSprite;
 	      }
-	      ++colIt;
-	      ++currentSprite;
-	  }
 */
-	  if( collisionDetected == true){
-	     (*currItr)->collisionDetected();
-	  }
+	      if( collisionDetected == true){
+	        (*currItr)->collisionDetected();
+	      }
       }
       currItr++;
     }

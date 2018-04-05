@@ -21,9 +21,8 @@ void WallCollidable::collisionDetected(){
   bool xFinished = false;			
   float momentumX = getMomentumVelocityX();
   float momentumY = getMomentumVelocityY();
-
-  std::list<SmartSprite*>::iterator it = collidableSprite.getObservers().begin();
-  while( it != collidableSprite.getObservers().end() ) {
+  auto it = collidableSprite.getColliders().begin();
+  while( it != collidableSprite.getColliders().end() ) { 
     float collision_obj_x = (*it)->getX();
     float collision_obj_y = (*it)->getY();
     float currentX = collidableSprite.getX();
@@ -31,7 +30,7 @@ void WallCollidable::collisionDetected(){
     float currentIncrement = 0;
    
     // Momentum direction determines which direction to move the collidableSprite in response 
-    // to the collision. 
+    // to the collision. Essentially, the projection matrix. 
     if( (*it)->getName() == "Wall/Horizontal") {
       while ( currentY + currentIncrement <= collision_obj_y + (*it)->getScaledHeight() + 1.001 &&
 		          currentY + currentIncrement + getScaledHeight() >= collision_obj_y - 1.001 ) {
@@ -56,7 +55,7 @@ void WallCollidable::collisionDetected(){
 
     it++;			
   }
-  collidableSprite.getObservers().erase( collidableSprite.getObservers().begin(), collidableSprite.getObservers().end() );
+  collidableSprite.getColliders().erase( collidableSprite.getColliders().begin(), collidableSprite.getColliders().end() );
 
   // Use the direction that the momentum is traveling towards.
   // Bounce collidableSprite back towards opposite direction.

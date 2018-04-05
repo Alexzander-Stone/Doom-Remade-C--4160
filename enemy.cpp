@@ -29,26 +29,11 @@ void Enemy::stop() {
 // Use y_fov and x_fov to determine how diaggonal movement works.
 // Vertical goes from x_fov = 1 (top) to x_fov = -1 (bottom).
 // Horizontal goes form y_fov = 1 (left) to y_fov = -1 (right).
-void Enemy::right() { 
-  // Add to the current speed of the getSpriteInfo()->
-  getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() + amtToIncreaseVelocity * x_fov );
-  getSpriteInfo()->setVelocityY( getSpriteInfo()->getVelocityY() + amtToIncreaseVelocity * y_fov );
-} 
-void Enemy::left()  { 
-  // Add to the current speed of the getSpriteInfo()->
-  getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() - amtToIncreaseVelocity * x_fov );
-  getSpriteInfo()->setVelocityY( getSpriteInfo()->getVelocityY() - amtToIncreaseVelocity * y_fov );
-} 
 void Enemy::up()    { 
   // Add to the current speed of the getSpriteInfo()->
   getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() - amtToIncreaseVelocity * y_fov );
   getSpriteInfo()->setVelocityY( getSpriteInfo()->getVelocityY() - amtToIncreaseVelocity * x_fov );
 } 
-void Enemy::down()  { 
-  // Add to the current speed of the getSpriteInfo()->
-  getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() + amtToIncreaseVelocity * -y_fov );
-  getSpriteInfo()->setVelocityY( getSpriteInfo()->getVelocityY() + amtToIncreaseVelocity * x_fov );
-}
 
 // Change momentum direction.
 void Enemy::directionUpdate()

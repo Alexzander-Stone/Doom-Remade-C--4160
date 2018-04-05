@@ -5,19 +5,19 @@
 
 SubjectSprite::SubjectSprite( const std::string& name) :
   MultiSprite(name), 
-  observers()
+  colliders()
 { }
 
 SubjectSprite::SubjectSprite(const SubjectSprite& s) :
   MultiSprite(s), 
-  observers( s.observers )
+  colliders( s.colliders )
   { }
 
 void SubjectSprite::detach( SmartSprite* o ) {
-  std::list<SmartSprite*>::iterator ptr = observers.begin();
-  while ( ptr != observers.end() ) {
+  std::list<SmartSprite*>::iterator ptr = colliders.begin();
+  while ( ptr != colliders.end() ) {
     if ( *ptr == o ) {
-      ptr = observers.erase(ptr);
+      ptr = colliders.erase(ptr);
       return;
     }
     ++ptr;
@@ -26,9 +26,8 @@ void SubjectSprite::detach( SmartSprite* o ) {
 
 void SubjectSprite::update(Uint32 ticks) { 
   MultiSprite::update(ticks);
-  std::list<SmartSprite*>::iterator ptr = observers.begin();
-  while ( ptr != observers.end() ) {
-    (*ptr)->setPlayerPos( getPosition() );
+  for(SmartSprite* ptr : colliders){
+    (*ptr).setPlayerPos( getPosition() );
     ++ptr;
   }
 }

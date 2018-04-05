@@ -26,10 +26,7 @@ public:
   float getY() const { return getSpriteInfo()->getY(); }
 
   // Translation options.
-  void right();
-  void left();
   void up();
-  void down();
 
   // Rotation Options.
   void directionUpdate();

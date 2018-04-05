@@ -17,29 +17,27 @@ public:
   virtual void draw() const = 0;
   virtual void update(Uint32 ticks) = 0;
 
-  const Image* getImage() const { 
-    return collidableSprite.getImage();
-  }
-  int getScaledWidth()  const { 
-    return collidableSprite.getScaledWidth();
-  } 
-  int getScaledHeight()  const { 
-    return collidableSprite.getScaledHeight();
-  } 
-  const SDL_Surface* getSurface() const { 
-    return collidableSprite.getSurface();
-  }
+  const Image* getImage() const { return collidableSprite.getImage(); }
+  int getScaledWidth()  const { return collidableSprite.getScaledWidth(); } 
+  int getScaledHeight()  const { return collidableSprite.getScaledHeight(); } 
+  const SDL_Surface* getSurface() const { return collidableSprite.getSurface(); }
 
-  // Get sprite info (pos, velo, etc.)
-  SubjectSprite* getSpriteInfo() {
-      return &collidableSprite;
-  }
-  // Get sprite info (pos, velo, etc.)
-  const SubjectSprite* getSpriteInfo() const {
-      return &collidableSprite;
-  }
+  SubjectSprite* getSpriteInfo() { return &collidableSprite; }
+  const SubjectSprite* getSpriteInfo() const { return &collidableSprite; }
 
-  // Normal = 0, Bounce = 1
+  Uint32 getBounceTimer() { return bounce_timer; }
+  void setBounceTimer(Uint32 incTime) { bounce_timer += incTime; }
+
+  float getPreviousX(){ return previous_x; }
+  float getPreviousY(){ return previous_y; }
+  void setPreviousX(float x){ previous_x = x; }
+  void setPreviousY(float y){ previous_y = y; }
+
+  void collisionDetected();
+
+  float getMomentumVelocityX() const;
+  float getMomentumVelocityY() const;
+  
   int getState() {
     switch(current_state){
       case NORMAL: return 0;
@@ -61,33 +59,6 @@ public:
 	       break;
     }
   }
-
-  Uint32 getBounceTimer() {
-    return bounce_timer;
-  }
-  void setBounceTimer(Uint32 incTime) {
-    bounce_timer += incTime;
-  }
-
-  float getPreviousX(){
-    return previous_x;
-  }
-  float getPreviousY(){
-    return previous_y;
-  }
-  void setPreviousX(float x){
-    previous_x = x;
-  }
-  void setPreviousY(float y){
-    previous_y = y;
-  }
-
-  // Collision reaction.
-  void collisionDetected();
-
-  // Momentum direction.
-  float getMomentumVelocityX() const;
-  float getMomentumVelocityY() const;
 
 private:
   enum WallCollidableState { NORMAL, BOUNCE };

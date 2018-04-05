@@ -14,12 +14,12 @@ public:
   SubjectSprite(const SubjectSprite&);
 
   void update(Uint32 ticks);
-  void attach( SmartSprite* o ) { observers.push_back(o); } 
+  void attach( SmartSprite* o ) { colliders.push_back(o); } 
   void detach( SmartSprite* o );
-	std::list<SmartSprite*>& getObservers() { return observers; } 
+	std::list<SmartSprite*>& getColliders() { return colliders; } 
 
 protected:
-  std::list<SmartSprite*> observers;
+  std::list<SmartSprite*> colliders;
   SubjectSprite& operator=(const SubjectSprite&);
 };
 #endif
