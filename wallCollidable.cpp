@@ -17,8 +17,10 @@ WallCollidable::WallCollidable( const std::string& name) :
 void WallCollidable::collisionDetected(){
   // Sort the vector of collidars to determine which object is closest to the
   // player. Each object will be solved in ascending order.
-  collidableSprite.sort(collidableSprite.getPosition());
-
+  if(collidableSprite.getColliders().size() > 1)
+  {
+    collidableSprite.sort(collidableSprite.getPosition());
+  }
   // Keep track of which wall the collidableSprite encountered.
   bool xFinished = false;			
   float momentumX = getMomentumVelocityX();

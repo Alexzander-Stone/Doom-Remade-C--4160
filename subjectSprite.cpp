@@ -1,8 +1,9 @@
+#include <algorithm>
+#include <cmath>
 #include "subjectSprite.h"
 #include "smartSprite.h"
 #include "gamedata.h"
 #include "renderContext.h"
-#include <algorithm>
 
 SubjectSprite::SubjectSprite( const std::string& name) :
   MultiSprite(name), 
@@ -37,19 +38,23 @@ void SubjectSprite::sort(const Vector2f& playerPosition){
   colliders.sort( [&playerPosition](SmartSprite* lhs, 
                                    SmartSprite* rhs) { 
 
-      std::cout <<  hypot(lhs->getPosition()[0] - playerPosition[0],
-                        lhs->getPosition()[1] - playerPosition[1]) 
+      std::cout << playerPosition << std::endl;
+      std::cout << "lhs is " << lhs->getPosition() << " and rhs is " << rhs->getPosition() << std::endl;
+      std::cout << lhs->getScaledWidth()/2 << " and other lhs is " << lhs->getScaledHeight()/2 << std::endl;
+      std::cout << rhs->getScaledWidth()/2 << " and other rhs is " << rhs->getScaledHeight()/2 << std::endl;
+      std::cout <<  hypot(lhs->getPosition()[0] + lhs->getScaledWidth()/2 - playerPosition[0] + 16,
+                        lhs->getPosition()[1] + lhs->getScaledWidth()/2 - playerPosition[1] + 16) 
                   << " and " <<
-                  hypot(rhs->getPosition()[0] - playerPosition[0], 
-                        rhs->getPosition()[1] - playerPosition[1])
+                  hypot(rhs->getPosition()[0] + rhs->getScaledWidth()/2 - playerPosition[0] + 16, 
+                        rhs->getPosition()[1] + rhs->getScaledHeight()/2 - playerPosition[1] + 16)
                   << std::endl;
 
                 return
-                  hypot(lhs->getPosition()[0] - playerPosition[0],
-                        lhs->getPosition()[1] - playerPosition[1]) 
+                  hypot(lhs->getPosition()[0] + lhs->getScaledWidth()/2 - playerPosition[0] + 16,
+                        lhs->getPosition()[1] + lhs->getScaledHeight()/2 - playerPosition[1] + 16) 
                   <
-                  hypot(rhs->getPosition()[0] - playerPosition[0], 
-                        rhs->getPosition()[1] - playerPosition[1])
+                  hypot(rhs->getPosition()[0] + rhs->getScaledWidth()/2 - playerPosition[0] + 16, 
+                        rhs->getPosition()[1] + rhs->getScaledHeight()/2 - playerPosition[1] + 16)
                 ;}
                 
   );

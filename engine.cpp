@@ -60,10 +60,6 @@ Engine::Engine() :
 
   int w = static_cast<Player*>(collidables[0])->getSpriteInfo()->getScaledWidth();
   int h = static_cast<Player*>(collidables[0])->getSpriteInfo()->getScaledHeight();
-  for ( int i = 0; i < wallCount; i++ ){
-      Vector2f spritePos(50 + i*w, 100);
-      sprites.push_back( new SmartSprite("Wall/Horizontal", placeholderPlayerPos, w, h, spritePos) );
-  }
   // Boxed Arena Walls
   Vector2f spritePos(100, 500);
   Vector2f spritePos2(100, 500);

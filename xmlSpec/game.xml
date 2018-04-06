@@ -40,7 +40,7 @@
   <numberOfWalls>10</numberOfWalls>
   <Horizontal>
 	  <file>assets/horizontalWall.png</file>
-	  <startLoc x="0" y="0"/>
+	  <startLoc x="2000" y="2000"/>
 	  <speedX>0</speedX>
 	  <speedY>0</speedY>
 	  <transparency>false</transparency>
