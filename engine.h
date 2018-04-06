@@ -6,6 +6,7 @@
 #include "world.h"
 #include "viewport.h"
 #include "enemy.h"
+#include "hud.h"
 
 class Player;
 class CollisionStrategy;
@@ -38,6 +39,9 @@ private:
   bool makeVideo;
  
   int currentSprite;
+
+  Hud hud;
+
   void draw() const;
   void update(Uint32);
 

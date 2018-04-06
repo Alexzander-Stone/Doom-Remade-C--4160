@@ -43,7 +43,8 @@ Engine::Engine() :
   currentStrategy(0),
   collision( false ),
   makeVideo( false ),
-  currentSprite(1)
+  currentSprite(1),
+  hud()
 {
   // Objects that can collide with walls.
   collidables.reserve(10);
@@ -92,6 +93,7 @@ void Engine::draw() const {
     it->draw();
   }
   viewport.draw();
+  hud.draw();
 
   // Screen height and width for drawing.
   int height = Gamedata::getInstance().getXmlInt("view/height");

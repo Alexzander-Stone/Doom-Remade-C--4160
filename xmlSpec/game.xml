@@ -36,6 +36,16 @@
   <alpha>0</alpha>
 </font>
 
+<Hud>
+  <file>assets/newHudWithoutText.png</file>
+  <xLoc>0</xLoc>
+  <yLoc>528</yLoc>
+	<startLoc x="0" y="528"/>
+  <speedX>0</speedX>
+	<speedY>0</speedY>
+	<transparency>false</transparency>
+</Hud>
+
 <Wall>
   <numberOfWalls>10</numberOfWalls>
   <Horizontal>
