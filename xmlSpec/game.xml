@@ -2,7 +2,7 @@
 <GameData>
 <!-- screenTitle is also used to identify you and your animation. 
      So make sure to include your name as part of the screenTitle -->
-<title>The Tracker Framework</title>
+<title>Alexzander Stone - Wolfendoom</title>
 <maxStringSize>50</maxStringSize>
 
 <frameCapOn>true</frameCapOn>
@@ -12,8 +12,8 @@
 <username>malloy</username>
 
 <view>
-  <width>854</width>
-  <height>480</height>
+  <width>1280</width>
+  <height>720</height>
 </view>
 
 <world>
@@ -22,8 +22,8 @@
 </world>
 
 <back>
-  <file>assets/bigstarrysky.png</file>
-  <factor>1</factor>
+  <file>assets/doom.jpg</file>
+  <factor>300</factor>
   <transparency>false</transparency>
 </back>
 

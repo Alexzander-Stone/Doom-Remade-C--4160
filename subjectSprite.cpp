@@ -34,15 +34,24 @@ void SubjectSprite::update(Uint32 ticks) {
 }
 
 void SubjectSprite::sort(const Vector2f& playerPosition){
-  colliders.sort( [playerPosition](SmartSprite* lhs, 
+  colliders.sort( [&playerPosition](SmartSprite* lhs, 
                                    SmartSprite* rhs) { 
+
+      std::cout <<  hypot(lhs->getPosition()[0] - playerPosition[0],
+                        lhs->getPosition()[1] - playerPosition[1]) 
+                  << " and " <<
+                  hypot(rhs->getPosition()[0] - playerPosition[0], 
+                        rhs->getPosition()[1] - playerPosition[1])
+                  << std::endl;
+
                 return
-                  hypot(abs( lhs->getVelocityX() ) - abs(playerPosition[0]),
-                        abs( lhs->getVelocityY() ) - abs(playerPosition[1])) 
+                  hypot(lhs->getPosition()[0] - playerPosition[0],
+                        lhs->getPosition()[1] - playerPosition[1]) 
                   <
-                  hypot(abs( rhs->getVelocityX() ) - abs(playerPosition[0]), 
-                        abs( rhs->getVelocityY() ) - abs(playerPosition[1]))
+                  hypot(rhs->getPosition()[0] - playerPosition[0], 
+                        rhs->getPosition()[1] - playerPosition[1])
                 ;}
                 
   );
+
 }
