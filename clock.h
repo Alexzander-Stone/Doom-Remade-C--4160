@@ -7,6 +7,7 @@ class Clock {
 public:
   static Clock& getInstance();
   unsigned int getTicks() const;
+  int getFps() const;
 
 private:
   friend class Engine;
@@ -34,7 +35,6 @@ private:
   unsigned int getFrames() const  { return frames;  }
   unsigned int getSeconds() const { return getTicks()/1000;  }
   unsigned int capFrameRate() const;
-  int getFps() const;
 
   void startClock();
   void pause();

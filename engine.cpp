@@ -93,20 +93,8 @@ void Engine::draw() const {
     it->draw();
   }
   viewport.draw();
-  hud.draw();
-
-  // Screen height and width for drawing.
-  int height = Gamedata::getInstance().getXmlInt("view/height");
-  int width = Gamedata::getInstance().getXmlInt("view/width");
-  // Draw FPS.
-  std::stringstream fpsStream;
-  fpsStream << clock.getFps();
-  string fpsCounter = "FPS: " + fpsStream.str();
-  IoMod::getInstance().
-      writeText(fpsCounter, width - 100, 0);
-  // Draw name.
-  IoMod::getInstance().
-      writeText("Alexzander Stone", 0, height - Gamedata::getInstance().getXmlInt("font/size"));
+  if(hud.getActive() == true)
+    hud.draw();
 
   SDL_RenderPresent(renderer);
 }
@@ -164,6 +152,7 @@ void Engine::update(Uint32 ticks) {
   checkForCollisions();
   world.update();
   viewport.update(); // always update viewport last
+  hud.update(ticks);
 }
 
 void Engine::play() {
@@ -186,6 +175,10 @@ void Engine::play() {
         if ( keystate[SDL_SCANCODE_P] ) {
           if ( clock.isPaused() ) clock.unpause();
           else clock.pause();
+        }
+	if (keystate[SDL_SCANCODE_F1]) {
+          std::cout << "Initiating hud" << std::endl;
+          hud.toggleActive();
         }
         if (keystate[SDL_SCANCODE_F4] && !makeVideo) {
           std::cout << "Initiating frame capture" << std::endl;

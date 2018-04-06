@@ -31,19 +31,32 @@
   <file>fonts/arial.ttf</file>
   <size>24</size>
   <red>255</red>
-  <green>255</green>
+  <green>220</green>
   <blue>0</blue>
   <alpha>0</alpha>
 </font>
 
 <Hud>
   <file>assets/newHudWithoutText.png</file>
+  <xRes>1600</xRes>
+  <yRes>900</yRes>
   <xLoc>0</xLoc>
-  <yLoc>528</yLoc>
-	<startLoc x="0" y="528"/>
+  <yLoc>530</yLoc>
+  <startLoc x="0" y="528"/>
   <speedX>0</speedX>
-	<speedY>0</speedY>
-	<transparency>false</transparency>
+  <speedY>0</speedY>
+  <transparency>false</transparency>
+  <DoomFace>
+    <file>assets/doomFace.png</file>
+    <speedY>0</speedY>
+    <speedX>0</speedX>
+    <frames>3</frames>
+    <frameInterval>2000</frameInterval>
+    <imageWidth>178</imageWidth>
+    <imageHeight>203</imageHeight>
+    <startLoc x="0" y="528"/>
+    <transparency>false</transparency>
+  </DoomFace>
 </Hud>
 
 <Wall>
@@ -69,9 +82,9 @@
 
 
 <DoomGuy>
-  <file>assets/spinstar.png</file>
+  <file>assets/doomGuy.png</file>
   <startLoc x="300" y="700"/>
-  <frames>4</frames>
+  <frames>3</frames>
   <imageWidth>32</imageWidth>
   <imageHeight>32</imageHeight>
   <frameInterval>2000</frameInterval>
@@ -94,7 +107,7 @@
 </DoomGuy>
 
 <Pinkie>
-  <file>assets/spinstar.png</file>
+  <file>assets/enemy.png</file>
   <startLoc x="400" y="800"/>
   <frames>1</frames>
   <imageWidth>32</imageWidth>
