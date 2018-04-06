@@ -18,6 +18,7 @@ OBJS = \
 	frameGenerator.o \
 	sprite.o \
 	multisprite.o \
+	subjectSprite.o \
 	wallCollidable.o \
 	player.o \
 	vector2f.o \
@@ -25,7 +26,6 @@ OBJS = \
 	engine.o \
 	smartSprite.o \
 	collisionStrategy.o \
-	subjectSprite.o \
 	enemy.o \
 	main.o
 EXEC = run

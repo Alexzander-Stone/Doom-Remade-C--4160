@@ -16,6 +16,9 @@ public:
   void update(Uint32 ticks);
   void attach( SmartSprite* o ) { colliders.push_back(o); } 
   void detach( SmartSprite* o );
+
+  void sort(const Vector2f& player);
+
 	std::list<SmartSprite*>& getColliders() { return colliders; } 
 
 protected:

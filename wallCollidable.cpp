@@ -10,13 +10,15 @@ WallCollidable::WallCollidable( const std::string& name) :
   previous_y(0)
 { }
 
+// Check to see if the object is within the left/right and top/bottom range
+// of the object. This will determine where to place the object.
+// Detach the collision object once the collidableSprite is in a valid state (outside
+// the wall).
 void WallCollidable::collisionDetected(){
-  // Check to see if the object is within the left/right and top/bottom range
-  // of the object. This will determine where to place the object.
-  // Detach the collision object once the collidableSprite is in a valid state (outside
-  // the wall).
-	
-	
+  // Sort the vector of collidars to determine which object is closest to the
+  // player. Each object will be solved in ascending order.
+  collidableSprite.sort();
+
   // Keep track of which wall the collidableSprite encountered.
   bool xFinished = false;			
   float momentumX = getMomentumVelocityX();

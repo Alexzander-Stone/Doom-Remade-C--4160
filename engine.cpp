@@ -66,9 +66,9 @@ Engine::Engine() :
   }
   // Boxed Arena Walls
   Vector2f spritePos(100, 500);
-  Vector2f spritePos2(100, 500);
-  Vector2f spritePos3(100, 1012);
-  Vector2f spritePos4(612, 500);
+  Vector2f spritePos2(99, 501);
+  Vector2f spritePos3(100, 560);
+  Vector2f spritePos4(161, 501);
   sprites.push_back( new SmartSprite("Wall/Horizontal", placeholderPlayerPos, w, h, spritePos) );
   sprites.push_back( new SmartSprite("Wall/Vertical", placeholderPlayerPos, w, h, spritePos2) );
   sprites.push_back( new SmartSprite("Wall/Horizontal", placeholderPlayerPos, w, h, spritePos3) );
