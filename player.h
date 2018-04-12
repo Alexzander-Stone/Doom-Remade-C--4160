@@ -23,6 +23,8 @@ public:
   const std::string& getName() const { return getSpriteInfo()->getName(); }
   float getX() const { return getSpriteInfo()->getX(); }
   float getY() const { return getSpriteInfo()->getY(); }
+  float getXFov() const { return x_fov; }
+  float getYFov() const { return y_fov; }
 
   // Translation options.
   void right();

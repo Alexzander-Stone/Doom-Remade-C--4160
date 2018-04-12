@@ -142,3 +142,5 @@ void Player::update(Uint32 ticks) {
     itr++;
   } 
 }
+
+

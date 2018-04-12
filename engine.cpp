@@ -96,6 +96,98 @@ void Engine::draw() const {
   if(hud.getActive() == true)
     hud.draw();
 
+  /* TODO: Raycasting, May want to create seperate class*/
+  // Loop through all the vertical stripes of the collidables[0]'s view (x's) based on 
+  // the screen width/height. This will calculate the rays using a grid system.
+    for( int vertPixelX = 0; 
+	 vertPixelX < Gamedata::getInstance().getXmlInt("view/width"); 
+	 vertPixelX++ 
+    ) {
+      // Current X-coor in camera (-1 to 1).
+      float planeCoorX = 0; 
+      float planeCoorY = 0.66;
+      float cameraX = 2 * vertPixelX / Gamedata::getInstance().getXmlFloat("view/width") - 1;
+      float rayCoorX = dynamic_cast<Player*>(collidables[0])->getXFov() + planeCoorX * cameraX;
+      float rayCoorY = dynamic_cast<Player*>(collidables[0])->getYFov() + planeCoorY * cameraX;
+
+      // Lengths of the ray from collidables[0]X and playerY to first
+      // increment of the ray (x and y), and from one ray coordinates 
+      // step to the next.
+      float planeRayX, planeRayY;
+      float incrementRayX = fabs(1/rayCoorX);
+      float incrementRayY = fabs(1/rayCoorY);
+      float wallDistance;
+
+      // Direction to move the ray's x and y coordinates when attempting 
+      // to find a "hit" (1 or -1).
+      //int directionRayX = 1;
+      //int directionRayY = 1;
+
+      // The value that the ray hit (Wall) and side that it hit.
+      int rayHit = 0; 
+      int side = 0;
+
+      // Determine which way to send the increments. Negative values will head towards 
+      // the left of the viewer's plane while positive values go right.
+      if(rayCoorX < 0){
+	//directionRayX = -1;
+	planeRayX = 0;
+      }
+      else{
+	planeRayX = 1;	
+      }
+      if(rayCoorY < 0){
+	//directionRayY = -1;
+	planeRayY = 0;
+      }
+      else{
+	planeRayY = 1;	
+      }
+
+      // Loop DDA until wall has been hit. Increment a single planeRay coordinate until 
+      // it reaches past the other coordinate. Can be used to determine what part of the tile
+      // the ray has hit.
+      while (rayHit == 0)
+      {
+	  if(planeRayX < planeRayY){
+	    planeRayX += incrementRayX;
+	    side = 0;
+	  }
+	  else{
+	    planeRayY += incrementRayY;
+	    side = 1;
+	  }
+
+	// Check for collision with a wall object.
+      
+      }
+
+      // Find the total distance to the wall from the current vertPixelX.
+      // This will be used to determine the length of the line drawn for the current vertPixelX.
+      if(side == 0){
+	wallDistance = ( (1 - planeRayX) / 2 ) / rayCoorX;
+      }
+      else{
+	wallDistance = ( (1 - planeRayY) / 2 ) / rayCoorY;
+      }	
+      int vertLineLength = Gamedata::getInstance().getXmlInt("view/height") / wallDistance;
+
+      // Find starting and ending pixel to draw to.
+      int drawTop = -vertLineLength / 2 + Gamedata::getInstance().getXmlInt("view/height") / 2;
+      if (drawTop < 0)
+	drawTop = 0;
+
+      int drawBottom = -vertLineLength / 2 + Gamedata::getInstance().getXmlInt("view/height") / 2;
+      if (drawBottom >= Gamedata::getInstance().getXmlInt("view/height"))
+	drawBottom = Gamedata::getInstance().getXmlInt("view/height") - 1;
+
+      // Draw the line.
+      SDL_SetRenderDrawColor(renderer, side==0?255:128, side==0?255:128, side==0?255:128, 255);
+      SDL_RenderDrawLine(renderer, vertPixelX, drawTop, vertPixelX, drawBottom);
+      
+
+  }
+
   SDL_RenderPresent(renderer);
 }
 
