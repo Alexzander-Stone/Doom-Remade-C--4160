@@ -12,8 +12,8 @@
 <username>malloy</username>
 
 <view>
-  <width>1280</width>
-  <height>720</height>
+  <width>384</width>
+  <height>216</height>
 </view>
 
 <world>
@@ -92,15 +92,15 @@
 
 <DoomGuy>
   <file>assets/doomGuy.png</file>
-  <startLoc x="300" y="700"/>
+  <startLoc x="400" y="400"/>
   <frames>3</frames>
   <imageWidth>32</imageWidth>
   <imageHeight>32</imageHeight>
   <frameInterval>2000</frameInterval>
   <speedY>0</speedY>
   <speedX>0</speedX>
-  <maxSpeed>250</maxSpeed>
-  <incSpeed>50</incSpeed>
+  <maxSpeed>25</maxSpeed>
+  <incSpeed>5</incSpeed>
   <transparency>false</transparency>
   <xFovStart>0</xFovStart>
   <yFovStart>1</yFovStart>
@@ -110,7 +110,7 @@
   <thetaIncrement>5</thetaIncrement>
   <bounceSpeedRequirement>450</bounceSpeedRequirement>
   <Bounce>
-    <incSpeed>50</incSpeed>
+    <incSpeed>5</incSpeed>
     <changeVel>.8</changeVel>
   </Bounce>
 </DoomGuy>

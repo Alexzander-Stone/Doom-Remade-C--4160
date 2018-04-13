@@ -38,6 +38,7 @@ void SubjectSprite::sort(const Vector2f& playerPosition){
   colliders.sort( [&playerPosition](SmartSprite* lhs, 
                                    SmartSprite* rhs) { 
 
+/*
       std::cout << playerPosition << std::endl;
       std::cout << "lhs is " << lhs->getPosition() << " and rhs is " << rhs->getPosition() << std::endl;
       std::cout << lhs->getScaledWidth()/2 << " and other lhs is " << lhs->getScaledHeight()/2 << std::endl;
@@ -48,7 +49,7 @@ void SubjectSprite::sort(const Vector2f& playerPosition){
                   hypot(rhs->getPosition()[0] + rhs->getScaledWidth()/2 - playerPosition[0] + 16, 
                         rhs->getPosition()[1] + rhs->getScaledHeight()/2 - playerPosition[1] + 16)
                   << std::endl;
-
+*/
                 return
                   hypot(lhs->getPosition()[0] + lhs->getScaledWidth()/2 - playerPosition[0] + 16,
                         lhs->getPosition()[1] + lhs->getScaledHeight()/2 - playerPosition[1] + 16) 
