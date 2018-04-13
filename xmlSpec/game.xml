@@ -36,6 +36,15 @@
   <alpha>0</alpha>
 </font>
 
+<Ray>
+  <file>assets/ray.png</file>
+  <factor>300</factor>
+  <speedX>0</speedX>
+  <speedY>0</speedY>
+  <startLoc x="0" y="0" />
+  <transparency>false</transparency>
+</Ray>
+
 <Hud>
   <file>assets/newHudWithoutText.png</file>
   <xRes>1600</xRes>

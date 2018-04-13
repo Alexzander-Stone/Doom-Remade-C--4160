@@ -12,7 +12,9 @@ Player::Player( const std::string& name) :
   y_fov(Gamedata::getInstance().getXmlInt(name + "/yFovStart")),
   theta(Gamedata::getInstance().getXmlInt(name + "/directionStart")),
   rotation_radius(Gamedata::getInstance().getXmlInt(name + "/rotationRadius")),
-  observers()
+  observers(),
+  plane_x(0),
+  plane_y(.66)
 { }
 
 void Player::stop() {
@@ -76,6 +78,25 @@ void Player::rotateLeft() {
     else{
       y_fov = -1 * rotation_radius * pow(not_normalized_y, 2);
     }
+
+    // Update the camera plane.
+    float not_normalized_plane_x = cos(theta * (3.14/180));
+    float not_normalized_plane_y = sin(theta * (3.14/180));
+    
+    // Check to see if the values are negative, need to preserve the negative if so.
+    if(not_normalized_plane_x >= 0){
+      plane_x = rotation_radius * pow(not_normalized_plane_x, 2);
+    }
+    else{
+      plane_x = -1 * rotation_radius * pow(not_normalized_plane_x, 2);
+    }
+
+    if(not_normalized_plane_y >= 0){
+      plane_y = rotation_radius * pow(not_normalized_plane_y, 2);
+    }
+    else{
+      plane_y = -1 * rotation_radius * pow(not_normalized_plane_y, 2);
+    }
 }
 void Player::rotateRight() {
     // Wrap the theta around when reaching 360.
@@ -101,6 +122,26 @@ void Player::rotateRight() {
     }
     else{
       y_fov = -1 * rotation_radius * pow(not_normalized_y, 2);
+    }
+    
+    //TODO: place into seperate function like enemy.
+    // Update the camera plane.
+    float not_normalized_plane_x = cos(theta * (3.14/180));
+    float not_normalized_plane_y = sin(theta * (3.14/180));
+    
+    // Check to see if the values are negative, need to preserve the negative if so.
+    if(not_normalized_plane_x >= 0){
+      plane_x = rotation_radius * pow(not_normalized_plane_x, 2);
+    }
+    else{
+      plane_x = -1 * rotation_radius * pow(not_normalized_plane_x, 2);
+    }
+
+    if(not_normalized_plane_y >= 0){
+      plane_y = rotation_radius * pow(not_normalized_plane_y, 2);
+    }
+    else{
+      plane_y = -1 * rotation_radius * pow(not_normalized_plane_y, 2);
     }
 }
 

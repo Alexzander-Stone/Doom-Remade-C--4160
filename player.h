@@ -25,6 +25,8 @@ public:
   float getY() const { return getSpriteInfo()->getY(); }
   float getXFov() const { return x_fov; }
   float getYFov() const { return y_fov; }
+  float getPlaneX() const { return plane_x; }
+  float getPlaneY() const { return plane_y; }
 
   // Translation options.
   void right();
@@ -60,5 +62,7 @@ private:
   int theta, rotation_radius; 
   // Observer pattern.
   std::list<Enemy*> observers;
+  // Camera plane.
+  float plane_x, plane_y;
 };
 #endif
