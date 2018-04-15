@@ -97,7 +97,6 @@ void Engine::draw() const {
     it->draw();
   }
 */
-    /* TODO: Raycasting, May want to create seperate class*/
   // Loop through all the vertical stripes of the collidables[0]'s view (x's) based on 
   // the screen width/height. This will calculate the rays using a grid system.
     float planeX = player->getPlaneX(); 
