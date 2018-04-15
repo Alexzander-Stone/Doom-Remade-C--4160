@@ -12,8 +12,8 @@
 <username>malloy</username>
 
 <view>
-  <width>1280</width>
-  <height>720</height>
+  <width>1366</width>
+  <height>768</height>
 </view>
 
 <raycastResolution>
@@ -113,7 +113,7 @@
   <thetaIncrement>1</thetaIncrement>
   <rotationRadius>1</rotationRadius>
   <momentumSlowdown>.9</momentumSlowdown>
-  <bounceSpeedRequirement>450</bounceSpeedRequirement>
+  <bounceSpeedRequirement>240</bounceSpeedRequirement>
   <Bounce>
     <incSpeed>25</incSpeed>
     <changeVel>.8</changeVel>

@@ -102,16 +102,15 @@ void Engine::draw() const {
   // the screen width/height. This will calculate the rays using a grid system.
     float planeX = dynamic_cast<Player*>(collidables[0])->getPlaneX(); 
     float planeY = dynamic_cast<Player*>(collidables[0])->getPlaneY();
+    // These variables are used for scaling
+    int side = 0;
+    int drawTop = 0;
+    int drawBottom = 0;
 
     for( int vertPixelX = 0; 
       	 vertPixelX < Gamedata::getInstance().getXmlInt("view/width"); 
 	       vertPixelX++ 
     ) {
-
-      // These variables are used for scaling
-      int side = 0;
-      int drawTop = 0;
-      int drawBottom = 0;
 
       // Scale the screen based on the original raycast resolution.	
       if(vertPixelX % (Gamedata::getInstance().getXmlInt("view/width") / Gamedata::getInstance().getXmlInt("raycastResolution/width")) == 0)
