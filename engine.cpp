@@ -62,10 +62,10 @@ Engine::Engine() :
   int w = static_cast<Player*>(collidables[0])->getSpriteInfo()->getScaledWidth();
   int h = static_cast<Player*>(collidables[0])->getSpriteInfo()->getScaledHeight();
   // Boxed Arena Walls
-  Vector2f spritePos(200, 0);
-  Vector2f spritePos2(0, 0);
-  Vector2f spritePos3(200, 600);
-  Vector2f spritePos4(800, 0);
+  Vector2f spritePos(20, 0);
+  Vector2f spritePos2(0, 20);
+  Vector2f spritePos3(20, 80);
+  Vector2f spritePos4(80, 20);
   sprites.push_back( new SmartSprite("Wall/Horizontal", placeholderPlayerPos, w, h, spritePos) );
   sprites.push_back( new SmartSprite("Wall/Vertical", placeholderPlayerPos, w, h, spritePos2) );
   sprites.push_back( new SmartSprite("Wall/Horizontal", placeholderPlayerPos, w, h, spritePos3) );
@@ -82,8 +82,8 @@ Engine::Engine() :
 
 void Engine::draw() const {
   world.draw();
-
   // Draw all sprites in container.
+/*
   for( auto& it : sprites )
   {
     it->draw();
@@ -92,137 +92,150 @@ void Engine::draw() const {
   {
     it->draw();
   }
-  viewport.draw();
+*/
   if(hud.getActive() == true)
     hud.draw();
+  viewport.draw();
 
   /* TODO: Raycasting, May want to create seperate class*/
   // Loop through all the vertical stripes of the collidables[0]'s view (x's) based on 
   // the screen width/height. This will calculate the rays using a grid system.
     float planeX = dynamic_cast<Player*>(collidables[0])->getPlaneX(); 
     float planeY = dynamic_cast<Player*>(collidables[0])->getPlaneY();
-std::cout << "plane vals" << planeX << " and " << planeY << std::endl;
-std::cout << "xfov vals" <<dynamic_cast<Player*>(collidables[0])->getXFov() << " and " << dynamic_cast<Player*>(collidables[0])->getYFov() << std::endl;
 
     for( int vertPixelX = 0; 
       	 vertPixelX < Gamedata::getInstance().getXmlInt("view/width"); 
 	       vertPixelX++ 
     ) {
-      // Current X-coor in camera (-1 to 1).
-      
-      float cameraX = 2.0f * vertPixelX / Gamedata::getInstance().getXmlFloat("view/width") - 1;
-      float rayDirX = dynamic_cast<Player*>(collidables[0])->getXFov() + planeX * cameraX;
-      float rayDirY = dynamic_cast<Player*>(collidables[0])->getYFov() + planeY * cameraX;
 
-
-      // Lengths of the ray from collidables[0]X and playerY to first
-      // increment of the ray (x and y), and from one ray coordinates 
-      // step to the next.
-      float posX = dynamic_cast<Player*>(collidables[0])->getX();
-      float posY = dynamic_cast<Player*>(collidables[0])->getY();
-
-      // Use a grid system to test raycasting potential.
-      int gridX = int(posX);
-      int gridY = int(posY);
- 
-      // Total length of the coordinate to the first wall encountered.
-      float sideDistX = 0;
-      float sideDistY = 0;
-
-      // Amount to increment the length when attempting to find the 
-      // collided wall's x and y.
-      float deltaDistX = rayDirX != 0?fabs(1/rayDirX):0;
-      float deltaDistY = rayDirY != 0?fabs(1/rayDirY):0;
-      float wallDistance = 0;
-
-      // Direction to move the ray's x and y coordinates when attempting 
-      // to find a "hit" (1 or -1).
-      float stepX;
-      float stepY;
-
-      // The value that the ray hit (Wall) and side that it hit.
-      int rayHit = 0; 
+      // These variables are used for scaling
       int side = 0;
+      int drawTop = 0;
+      int drawBottom = 0;
 
-      // Determine which way to send the increments. Negative values will head towards 
-      // the left of the viewer's plane while positive values go right.
-      // Need to offset initial length based on rotation of user.
-      if(rayDirX < 0){
-	      stepX = -10;
-	      sideDistX = (posX - gridX) * deltaDistX;
-      }
-      else{
-	      stepX = 10;
-	      sideDistX = (gridX - posX + 1.0f) * deltaDistX;
-      }
-      if(rayDirY < 0){
-	      stepY = -10;
-	      sideDistY = (posY - gridY) * deltaDistY;
-      }
-      else{
-	      stepY = 10;
-	      sideDistY = (gridY - posY + 1.0f) * deltaDistY;
-      }
-
-      // Loop DDA until wall has been hit. Increment a single planeRay coordinate until 
-      // it reaches past the other coordinate. Can be used to determine what part of the tile
-      // the ray has hit. Plane ray x/y are the length while the mapx
-      Sprite raySprite("Ray");
-      while (rayHit == 0)
+      // Scale the screen based on the original raycast resolution.	
+      if(vertPixelX % (Gamedata::getInstance().getXmlInt("view/width") / Gamedata::getInstance().getXmlInt("raycastResolution/width")) == 0)
       {
-	      if(sideDistX < sideDistY){
-	        sideDistX += deltaDistX;
-		gridX += stepX;
-	        side = 0;
-	      }
-	      else{
-	        sideDistY += deltaDistY;
-	        gridY += stepY;
-	        side = 1;
-	      }
+	  // Current X-coor in camera (-1 to 1).
+	  float cameraX = 2.0f * vertPixelX / Gamedata::getInstance().getXmlFloat("view/width") - 1;
+	  float rayDirX = dynamic_cast<Player*>(collidables[0])->getXFov() + planeX * cameraX;
+	  float rayDirY = dynamic_cast<Player*>(collidables[0])->getYFov() + planeY * cameraX;
 
-	      // Check for collision with a wall object.
-        // TODO: Replace with collision that doesn't rely on an image. 
-        raySprite.setX(gridX);
-        raySprite.setY(gridY);
-        
-        std::vector<SmartSprite*>::const_iterator spriteIt = sprites.begin();
-        while( spriteIt != sprites.end() && rayHit == 0){
-	        // Check for collision between collidables[0] and object.
-          if( strategies[currentStrategy]->execute( raySprite, **spriteIt) ){
-		        rayHit = 1; 
+
+	  // Lengths of the ray from collidables[0]X and playerY to first
+	  // increment of the ray (x and y), and from one ray coordinates 
+	  // step to the next.
+	  float posX = dynamic_cast<Player*>(collidables[0])->getX() + dynamic_cast<Player*>(collidables[0])->getSpriteInfo()->getScaledWidth()/2 ;
+	  float posY = dynamic_cast<Player*>(collidables[0])->getY() + dynamic_cast<Player*>(collidables[0])->getSpriteInfo()->getScaledHeight()/2;
+
+	  // Use a grid system to test raycasting potential.
+	  int gridX = int(posX);
+	  int gridY = int(posY);
+ 
+	  // Total length of the coordinate to the first wall encountered.
+	  float sideDistX = 0;
+	  float sideDistY = 0;
+
+	  // Amount to increment the length when attempting to find the 
+	  // collided wall's x and y.
+	  float deltaDistX = rayDirX != 0?fabs(1/rayDirX):0;
+	  float deltaDistY = rayDirY != 0?fabs(1/rayDirY):0;
+	  float wallDistance = 0;
+
+	  // Direction to move the ray's x and y coordinates when attempting 
+	  // to find a "hit" (1 or -1).
+	  float stepX;
+	  float stepY;
+
+	  // The value that the ray hit (Wall) and side that it hit.
+	  int rayHit = 0; 
+
+	  // Determine which way to send the increments. Negative values will head towards 
+	  // the left of the viewer's plane while positive values go right.
+	  // Need to offset initial length based on rotation of user.
+	  if(rayDirX < 0){
+		  stepX = -1;
+		  sideDistX = (posX - gridX) * deltaDistX;
 	  }
-	  ++spriteIt;
-	}
+	  else{
+		  stepX = 1;
+		  sideDistX = (gridX - posX + 1.0f) * deltaDistX;
+	  }
+	  if(rayDirY < 0){
+		  stepY = -1;
+		  sideDistY = (posY - gridY) * deltaDistY;
+	  }
+	  else{
+		  stepY = 1;
+		  sideDistY = (gridY - posY + 1.0f) * deltaDistY;
+	  }
+
+	  // Loop DDA until wall has been hit. Increment a single planeRay coordinate until 
+	  // it reaches past the other coordinate. Can be used to determine what part of the tile
+	  // the ray has hit. Plane ray x/y are the length while the mapx
+	  Sprite raySprite("Ray");
+	  while (rayHit == 0)
+	  {
+	    if(sideDistX < sideDistY){
+	      sideDistX += deltaDistX;
+	      gridX += stepX;
+	      side = 0;
+	    }
+	    else{
+	      sideDistY += deltaDistY;
+	      gridY += stepY;
+	      side = 1;
+	    }
+
+	    // Check for collision with a wall object.
+	    // TODO: Replace with collision that doesn't rely on an image. 
+	    raySprite.setX(gridX);
+	    raySprite.setY(gridY);
+	    
+	    std::vector<SmartSprite*>::const_iterator spriteIt = sprites.begin();
+	    while( spriteIt != sprites.end() && rayHit == 0){
+	      // Check for collision between collidables[0] and object.
+	      if( strategies[currentStrategy]->execute( raySprite, **spriteIt) ){
+			    rayHit = 1; 
+	      }
+	      ++spriteIt;
+	    }
+	  }
+
+
+	  // Find the total distance to the wall from the current vertPixelX.
+	  // This will be used to determine the length of the line drawn for 
+	  //the current vertPixelX.
+	  // Don't need to check for 0 for each of the functions since the 
+	  // side it hit's will tell us which value has been incrementing, 
+	  // and thus which is NOT 0.
+	  if(side == 0){
+	    wallDistance = ( gridX - posX + (1 - stepX) / 2 ) / rayDirX;
+	  }
+	  else{
+	    wallDistance = ( gridY - posY + (1 - stepY) / 2 ) / rayDirY;
+	  }	
+	  int vertLineLength = (Gamedata::getInstance().getXmlInt("view/height") * 10 ) / (wallDistance);
+
+	  // Find starting and ending pixel to draw to.
+	  drawTop = -vertLineLength / 2 + ( Gamedata::getInstance().getXmlInt("view/height") ) / 2;
+	  if (drawTop < 0)
+	    drawTop = 0;
+
+	  drawBottom = vertLineLength / 2 + ( Gamedata::getInstance().getXmlInt("view/height") ) / 2;
+	  if (drawBottom >= Gamedata::getInstance().getXmlInt("view/height"))
+	    drawBottom = Gamedata::getInstance().getXmlInt("view/height") - 1;
+
+	  // Draw the line.
+	  SDL_SetRenderDrawColor(renderer, side==0?255:128, 0, 0, 255);
+	  SDL_RenderDrawLine(renderer, vertPixelX, drawTop, vertPixelX, drawBottom);   
       }
+      else {
+	  // Draw the line.
+	  SDL_SetRenderDrawColor(renderer, side==0?255:128, 0, 0, 255);
+	  SDL_RenderDrawLine(renderer, vertPixelX, drawTop, vertPixelX, drawBottom);
 
-
-      // Find the total distance to the wall from the current vertPixelX.
-      // This will be used to determine the length of the line drawn for 
-      //the current vertPixelX.
-      // Don't need to check for 0 for each of the functions since the 
-      // side it hit's will tell us which value has been incrementing, 
-      // and thus which is NOT 0.
-      if(side == 0){
-	wallDistance = ( gridX - posX + (1 - stepX) / 2 ) / rayDirX;
-      }
-      else{
-	wallDistance = ( gridY - posY + (1 - stepY) / 2 ) / rayDirY;
-      }	
-      int vertLineLength = (Gamedata::getInstance().getXmlInt("view/height") * 100 ) / (wallDistance);
-
-      // Find starting and ending pixel to draw to.
-      int drawTop = -vertLineLength / 2 + ( Gamedata::getInstance().getXmlInt("view/height") ) / 2;
-      if (drawTop < 0)
-	      drawTop = 0;
-
-      int drawBottom = vertLineLength / 2 + ( Gamedata::getInstance().getXmlInt("view/height") ) / 2;
-      if (drawBottom >= Gamedata::getInstance().getXmlInt("view/height"))
-	      drawBottom = Gamedata::getInstance().getXmlInt("view/height") - 1;
-
-      // Draw the line.
-      SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);
-      SDL_RenderDrawLine(renderer, vertPixelX, drawTop, vertPixelX, drawBottom);
+      }  
   }
 
   SDL_RenderPresent(renderer);

@@ -12,9 +12,14 @@
 <username>malloy</username>
 
 <view>
-  <width>300</width>
-  <height>200</height>
+  <width>1280</width>
+  <height>720</height>
 </view>
+
+<raycastResolution>
+  <width>384</width>
+  <height>216</height>
+</raycastResolution>
 
 <world>
   <width>20000</width>
@@ -22,7 +27,7 @@
 </world>
 
 <back>
-  <file>assets/doom.jpg</file>
+  <file>assets/greyPlaceholder.jpg</file>
   <factor>300</factor>
   <transparency>false</transparency>
 </back>
@@ -92,10 +97,10 @@
 
 <DoomGuy>
   <file>assets/doomGuy.png</file>
-  <startLoc x="400" y="400"/>
+  <startLoc x="40" y="40"/>
   <frames>3</frames>
-  <imageWidth>32</imageWidth>
-  <imageHeight>32</imageHeight>
+  <imageWidth>10</imageWidth>
+  <imageHeight>10</imageHeight>
   <frameInterval>2000</frameInterval>
   <speedY>0</speedY>
   <speedX>0</speedX>
@@ -117,15 +122,15 @@
 
 <Pinkie>
   <file>assets/enemy.png</file>
-  <startLoc x="400" y="800"/>
+  <startLoc x="40" y="40"/>
   <frames>1</frames>
-  <imageWidth>32</imageWidth>
-  <imageHeight>32</imageHeight>
+  <imageWidth>10</imageWidth>
+  <imageHeight>10</imageHeight>
   <frameInterval>2000</frameInterval>
   <speedY>0</speedY>
   <speedX>0</speedX>
-  <maxSpeed>150</maxSpeed>
-  <incSpeed>25</incSpeed>
+  <maxSpeed>50</maxSpeed>
+  <incSpeed>5</incSpeed>
   <transparency>false</transparency>
   <xFovStart>0</xFovStart>
   <yFovStart>1</yFovStart>
@@ -135,7 +140,7 @@
   <thetaIncrement>10</thetaIncrement>
   <bounceSpeedRequirement>125</bounceSpeedRequirement>
   <Bounce>
-    <incSpeed>50</incSpeed>
+    <incSpeed>5</incSpeed>
     <changeVel>.8</changeVel>
   </Bounce>
 </Pinkie>
