@@ -10,7 +10,7 @@ Player::Player( const std::string& name) :
   worldHeight(Gamedata::getInstance().getXmlInt("world/height")),
   x_fov(Gamedata::getInstance().getXmlInt(name + "/xFovStart")),
   y_fov(Gamedata::getInstance().getXmlInt(name + "/yFovStart")),
-  theta(Gamedata::getInstance().getXmlInt(name + "/directionStart")),
+  theta(Gamedata::getInstance().getXmlInt(name + "/thetaStart")),
   rotation_radius(Gamedata::getInstance().getXmlInt(name + "/rotationRadius")),
   observers(),
   plane_x(0),
@@ -44,13 +44,13 @@ void Player::left()  {
 } 
 void Player::up()    { 
   // Add to the current speed of the getSpriteInfo()->
-  getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() - amtToIncreaseVelocity * -y_fov );
-  getSpriteInfo()->setVelocityY( getSpriteInfo()->getVelocityY() - amtToIncreaseVelocity * x_fov );
+  getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() + amtToIncreaseVelocity * x_fov );
+  getSpriteInfo()->setVelocityY( getSpriteInfo()->getVelocityY() + amtToIncreaseVelocity * y_fov );
 } 
 void Player::down()  { 
   // Add to the current speed of the getSpriteInfo()->
-  getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() + amtToIncreaseVelocity * -y_fov );
-  getSpriteInfo()->setVelocityY( getSpriteInfo()->getVelocityY() + amtToIncreaseVelocity * x_fov );
+  getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() - amtToIncreaseVelocity * x_fov );
+  getSpriteInfo()->setVelocityY( getSpriteInfo()->getVelocityY() - amtToIncreaseVelocity * y_fov );
 }
 
 // When determining the vector, make sure to normalize it.
@@ -61,42 +61,20 @@ void Player::rotateLeft() {
     if(theta < 0) {
       theta += 360;
     }
-    float not_normalized_x= cos(theta * (3.14/180));
-    float not_normalized_y = sin(theta * (3.14/180));
     
     // Check to see if the values are negative, need to preserve the negative if so.
-    if(not_normalized_x >= 0){
-      x_fov = rotation_radius * pow(not_normalized_x, 2);
-    }
-    else{
-      x_fov = -1 * rotation_radius * pow(not_normalized_x, 2);
-    }
-
-    if(not_normalized_y >= 0){
-      y_fov = rotation_radius * pow(not_normalized_y, 2);
-    }
-    else{
-      y_fov = -1 * rotation_radius * pow(not_normalized_y, 2);
-    }
-
-    // Update the camera plane.
-    float not_normalized_plane_x = cos(theta * (3.14/180));
-    float not_normalized_plane_y = sin(theta * (3.14/180));
+    float tempFovX = x_fov;
+    x_fov = x_fov * cos(Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f)
+	      - y_fov * sin(Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f); 
+    y_fov = tempFovX * sin(Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f)
+	      + y_fov * cos(Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f); 
     
     // Check to see if the values are negative, need to preserve the negative if so.
-    if(not_normalized_plane_x >= 0){
-      plane_x = rotation_radius * pow(not_normalized_plane_x, 2);
-    }
-    else{
-      plane_x = -1 * rotation_radius * pow(not_normalized_plane_x, 2);
-    }
-
-    if(not_normalized_plane_y >= 0){
-      plane_y = rotation_radius * pow(not_normalized_plane_y, 2);
-    }
-    else{
-      plane_y = -1 * rotation_radius * pow(not_normalized_plane_y, 2);
-    }
+    float tempPlaneX = plane_x;
+    plane_x = plane_x * cos(Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f)
+	      - plane_y * sin(Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f); 
+    plane_y = tempPlaneX * sin(Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f)
+	      + plane_y * cos(Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f); 
 }
 void Player::rotateRight() {
     // Wrap the theta around when reaching 360.
@@ -105,44 +83,20 @@ void Player::rotateRight() {
     if(theta > 359) {
     	theta -= 360;
     }
-    float not_normalized_x= cos(theta * (3.14/180));
-    float not_normalized_y = sin(theta * (3.14/180));
-    
 
     // Check to see if the values are negative, need to preserve the negative if so.
-    if(not_normalized_x >= 0){
-      x_fov = rotation_radius * pow(not_normalized_x, 2);
-    }
-    else{
-      x_fov = -1 * rotation_radius * pow(not_normalized_x, 2);
-    }
-
-    if(not_normalized_y >= 0){
-      y_fov = rotation_radius * pow(not_normalized_y, 2);
-    }
-    else{
-      y_fov = -1 * rotation_radius * pow(not_normalized_y, 2);
-    }
+    float tempFovX = x_fov;
+    x_fov = x_fov * cos(-Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f)
+	      - y_fov * sin(-Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f); 
+    y_fov = tempFovX * sin(-Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f)
+	      + y_fov * cos(-Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f); 
     
-    //TODO: place into seperate function like enemy.
     // Update the camera plane.
-    float not_normalized_plane_x = cos(theta * (3.14/180));
-    float not_normalized_plane_y = sin(theta * (3.14/180));
-    
-    // Check to see if the values are negative, need to preserve the negative if so.
-    if(not_normalized_plane_x >= 0){
-      plane_x = rotation_radius * pow(not_normalized_plane_x, 2);
-    }
-    else{
-      plane_x = -1 * rotation_radius * pow(not_normalized_plane_x, 2);
-    }
-
-    if(not_normalized_plane_y >= 0){
-      plane_y = rotation_radius * pow(not_normalized_plane_y, 2);
-    }
-    else{
-      plane_y = -1 * rotation_radius * pow(not_normalized_plane_y, 2);
-    }
+    float tempPlaneX = plane_x;
+    plane_x = plane_x * cos(-Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f)
+	      - plane_y * sin(-Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f); 
+    plane_y = tempPlaneX * sin(-Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f)
+	      + plane_y * cos(-Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f);
 }
 
 void Player::detach( Enemy* e ){

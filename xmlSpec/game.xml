@@ -12,8 +12,8 @@
 <username>malloy</username>
 
 <view>
-  <width>384</width>
-  <height>216</height>
+  <width>300</width>
+  <height>200</height>
 </view>
 
 <world>
@@ -99,18 +99,18 @@
   <frameInterval>2000</frameInterval>
   <speedY>0</speedY>
   <speedX>0</speedX>
-  <maxSpeed>25</maxSpeed>
-  <incSpeed>5</incSpeed>
+  <maxSpeed>250</maxSpeed>
+  <incSpeed>25</incSpeed>
   <transparency>false</transparency>
-  <xFovStart>0</xFovStart>
-  <yFovStart>1</yFovStart>
-  <directionStart>90</directionStart>
+  <xFovStart>-1</xFovStart>
+  <yFovStart>0</yFovStart>
+  <thetaStart>270</thetaStart>
+  <thetaIncrement>1</thetaIncrement>
   <rotationRadius>1</rotationRadius>
   <momentumSlowdown>.9</momentumSlowdown>
-  <thetaIncrement>5</thetaIncrement>
   <bounceSpeedRequirement>450</bounceSpeedRequirement>
   <Bounce>
-    <incSpeed>5</incSpeed>
+    <incSpeed>25</incSpeed>
     <changeVel>.8</changeVel>
   </Bounce>
 </DoomGuy>
