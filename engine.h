@@ -33,6 +33,10 @@ private:
   std::vector<CollisionStrategy*> strategies;
   // Enemy list
   std::vector<WallCollidable*> collidables;
+  // Player reference
+  Player* player;
+
+  // Collisions
   int currentStrategy;
   bool collision;
 

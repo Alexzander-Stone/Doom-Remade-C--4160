@@ -40,6 +40,7 @@ Engine::Engine() :
   sprites(),
   strategies(),
   collidables(),
+  player(NULL),
   currentStrategy(0),
   collision( false ),
   makeVideo( false ),
@@ -48,19 +49,22 @@ Engine::Engine() :
 {
   // Objects that can collide with walls.
   collidables.reserve(10);
-  collidables.push_back(new Player("DoomGuy"));
+  
+  // Player object.
+  player = new Player("DoomGuy");
+  collidables.push_back(player);
 
   // Enemies, attach to observor in collidables[0].
   Vector2f placeholderPlayerPos(20, 20);
   collidables.push_back( new Enemy("Pinkie", placeholderPlayerPos) );
-  static_cast<Player*>(collidables[0])->attach( static_cast<Enemy*>( *(collidables.end() - 1) ) );
+  player->attach( static_cast<Enemy*>( *(collidables.end() - 1) ) );
 
   // Wall sprites.
   int wallCount = Gamedata::getInstance().getXmlInt("Wall/numberOfWalls");
   sprites.reserve( wallCount*2 );
 
-  int w = static_cast<Player*>(collidables[0])->getSpriteInfo()->getScaledWidth();
-  int h = static_cast<Player*>(collidables[0])->getSpriteInfo()->getScaledHeight();
+  int w = player->getSpriteInfo()->getScaledWidth();
+  int h = player->getSpriteInfo()->getScaledHeight();
   // Boxed Arena Walls
   Vector2f spritePos(20, 0);
   Vector2f spritePos2(0, 20);
@@ -76,7 +80,7 @@ Engine::Engine() :
   strategies.push_back( new PerPixelCollisionStrategy );
   strategies.push_back( new MidPointCollisionStrategy );
 
-  Viewport::getInstance().setObjectToTrack(collidables[0]->getSpriteInfo());
+  Viewport::getInstance().setObjectToTrack(player->getSpriteInfo());
   std::cout << "Loading complete" << std::endl;
 }
 
@@ -93,15 +97,11 @@ void Engine::draw() const {
     it->draw();
   }
 */
-  if(hud.getActive() == true)
-    hud.draw();
-  viewport.draw();
-
-  /* TODO: Raycasting, May want to create seperate class*/
+    /* TODO: Raycasting, May want to create seperate class*/
   // Loop through all the vertical stripes of the collidables[0]'s view (x's) based on 
   // the screen width/height. This will calculate the rays using a grid system.
-    float planeX = dynamic_cast<Player*>(collidables[0])->getPlaneX(); 
-    float planeY = dynamic_cast<Player*>(collidables[0])->getPlaneY();
+    float planeX = player->getPlaneX(); 
+    float planeY = player->getPlaneY();
     // These variables are used for scaling
     int side = 0;
     int drawTop = 0;
@@ -117,15 +117,15 @@ void Engine::draw() const {
       {
 	  // Current X-coor in camera (-1 to 1).
 	  float cameraX = 2.0f * vertPixelX / Gamedata::getInstance().getXmlFloat("view/width") - 1;
-	  float rayDirX = dynamic_cast<Player*>(collidables[0])->getXFov() + planeX * cameraX;
-	  float rayDirY = dynamic_cast<Player*>(collidables[0])->getYFov() + planeY * cameraX;
+	  float rayDirX = player->getXFov() + planeX * cameraX;
+	  float rayDirY = player->getYFov() + planeY * cameraX;
 
 
 	  // Lengths of the ray from collidables[0]X and playerY to first
 	  // increment of the ray (x and y), and from one ray coordinates 
 	  // step to the next.
-	  float posX = dynamic_cast<Player*>(collidables[0])->getX() + dynamic_cast<Player*>(collidables[0])->getSpriteInfo()->getScaledWidth()/2 ;
-	  float posY = dynamic_cast<Player*>(collidables[0])->getY() + dynamic_cast<Player*>(collidables[0])->getSpriteInfo()->getScaledHeight()/2;
+	  float posX = player->getX() + player->getSpriteInfo()->getScaledWidth()/2 ;
+	  float posY = player->getY() + player->getSpriteInfo()->getScaledHeight()/2;
 
 	  // Use a grid system to test raycasting potential.
 	  int gridX = int(posX);
@@ -237,6 +237,11 @@ void Engine::draw() const {
       }  
   }
 
+  if(hud.getActive() == true)
+    hud.draw();
+  viewport.draw();
+
+
   SDL_RenderPresent(renderer);
 }
 
@@ -338,22 +343,22 @@ void Engine::play() {
     if ( ticks > 0 ) {
       clock.incrFrame();
       if (keystate[SDL_SCANCODE_A]) {
-        static_cast<Player*>(collidables[0])->left();
+        player->left();
       }
       if (keystate[SDL_SCANCODE_D]) {
-        static_cast<Player*>(collidables[0])->right();
+        player->right();
       }
       if (keystate[SDL_SCANCODE_W]) {
-        static_cast<Player*>(collidables[0])->up();
+        player->up();
       }
       if (keystate[SDL_SCANCODE_S]) {
-        static_cast<Player*>(collidables[0])->down();
+        player->down();
       }
       if(keystate[SDL_SCANCODE_LEFT]){
-        static_cast<Player*>(collidables[0])->rotateLeft();
+        player->rotateLeft();
       }
       if(keystate[SDL_SCANCODE_RIGHT]){
-        static_cast<Player*>(collidables[0])->rotateRight();
+        player->rotateRight();
       }
       
       update(ticks);
