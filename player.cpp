@@ -21,7 +21,7 @@ void Player::stop() {
   // Momentum, slow down speed each tick.
   getSpriteInfo()->setVelocity( 
     Vector2f(
-	Gamedata::getInstance().getXmlFloat(getName() + 
+	      Gamedata::getInstance().getXmlFloat(getName() + 
         "/momentumSlowdown") * getSpriteInfo()->getVelocityX(), 
         Gamedata::getInstance().getXmlFloat(getName() + 
         "/momentumSlowdown") * getSpriteInfo()->getVelocityY()

@@ -117,8 +117,10 @@ void Engine::draw() const {
       float posY = player->getY() + player->getSpriteInfo()->getScaledHeight()/2;
 
       // Use a grid system to test raycasting potential.
-      float gridX = posX;
-      float gridY = posY;
+      // TODO: ints create better view when not on wall, floats create better
+      // view when on wall. Determine how to fix.
+      int gridX = int(posX);
+      int gridY = int(posY);
    
       // Total length of the coordinate to the first wall encountered.
       float lengthDistX = 0;
