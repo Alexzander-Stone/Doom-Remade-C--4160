@@ -25,8 +25,8 @@ void Viewport::setObjectToTrack(const Drawable *obj) {
 }
 
 void Viewport::draw() const {
-  IoMod::getInstance().
-    writeText("Tracking: "+objectToTrack->getName(), 30, 30);
+  //IoMod::getInstance().
+    //writeText("Tracking: "+objectToTrack->getName(), 30, 30);
 }
 
 void Viewport::update() {

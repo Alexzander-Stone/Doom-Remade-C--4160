@@ -85,18 +85,8 @@ Engine::Engine() :
 }
 
 void Engine::draw() const {
-  world.draw();
-  // Draw all sprites in container.
-/*
-  for( auto& it : sprites )
-  {
-    it->draw();
-  }
-  for( auto& it : collidables )
-  {
-    it->draw();
-  }
-*/
+  world.draw(); 
+
   // Loop through all the vertical stripes of the collidables[0]'s view (x's) based on 
   // the screen width/height. This will calculate the rays using a grid system.
   float planeX = player->getPlaneX(); 
@@ -229,6 +219,16 @@ void Engine::draw() const {
       SDL_SetRenderDrawColor(renderer, 0, side==0?255:128, 0, 255);
       SDL_RenderDrawLine(renderer, vertPixelX, drawTop, vertPixelX, drawBottom);
     }  
+  }
+
+  // Draw all sprites in container.
+  for( auto& it : sprites )
+  {
+    it->draw();
+  }
+  for( auto& it : collidables )
+  {
+    it->draw();
   }
 
   if(hud.getActive() == true)
