@@ -119,8 +119,8 @@ void Engine::draw() const {
       // Use a grid system to test raycasting potential.
       // TODO: ints create better view when not on wall, floats create better
       // view when on wall. Determine how to fix.
-      int gridX = int(posX);
-      int gridY = int(posY);
+      float gridX = posX;
+      float gridY = posY;
    
       // Total length of the coordinate to the first wall encountered.
       float lengthDistX = 0;
@@ -203,6 +203,41 @@ void Engine::draw() const {
       else{
         wallDistance = ( gridY - posY + (1 - incrementY) / 2 ) / rayDirY;
       }	
+
+      // Repeat check for wall distance if < 10. Helps fix issues with walls
+      // bouncing raycasting.
+      bool repeatX = side == 0 && wallDistance < 30;
+      bool repeatY = side == 1 && wallDistance < 30;
+
+      if(repeatX == true || repeatY == true){
+        rayHit = 0;
+        gridX = posX;
+        gridY = posY;
+        while (rayHit == 0)
+        {
+          if(repeatX == true){
+            gridX += incrementX*.1;
+            side = 0;
+          }
+          else{
+            gridY += incrementY*.1;
+            side = 1;
+          }
+
+          // Check for collision with a wall object.
+          raySprite.setX(gridX);
+          raySprite.setY(gridY);
+          
+          std::vector<SmartSprite*>::const_iterator spriteIt = sprites.begin();
+          while( spriteIt != sprites.end() && rayHit == 0){
+            if( strategies[currentStrategy]->execute( raySprite, **spriteIt) ){
+              rayHit = 1; 
+            }
+            ++spriteIt;
+          }
+        }
+      }
+
       int vertLineLength = (Gamedata::getInstance().getXmlInt("view/height") * 10 ) / (wallDistance);
 
       // Find starting and ending pixel to draw to.
