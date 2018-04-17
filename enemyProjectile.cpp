@@ -1,9 +1,8 @@
-#include "enemy.h"
+#include "enemyProjectile.h"
 #include "gamedata.h"
 
-Enemy::Enemy( const std::string& name, const Vector2f& pos) :
+EnemyProjectile::EnemyProjectile( const std::string& name, const Vector2f& pos) :
   WallCollidable(name), // Pass parent constructor the name.
-  current_state(NORMAL),
   maxVelocity(Gamedata::getInstance().getXmlInt(name + "/maxSpeed")),
   amtToIncreaseVelocity(Gamedata::getInstance().getXmlInt(name+ "/incSpeed")),
   worldWidth(Gamedata::getInstance().getXmlInt("world/width")),
@@ -16,7 +15,7 @@ Enemy::Enemy( const std::string& name, const Vector2f& pos) :
 { }
 
 // Slow down velocity each tick.
-void Enemy::stop() {
+void EnemyProjectile::stop() {
   getSpriteInfo()->setVelocity( 
     Vector2f(
 	Gamedata::getInstance().getXmlFloat(getName() + 
@@ -30,12 +29,12 @@ void Enemy::stop() {
 // Use y_fov and x_fov to determine how diagonal movement works.
 // Vertical goes from x_fov = 1 (top) to x_fov = -1 (bottom).
 // Horizontal goes form y_fov = 1 (left) to y_fov = -1 (right).
-void Enemy::up()    { 
+void EnemyProjectile::up()    { 
   getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() - amtToIncreaseVelocity * y_fov );
   getSpriteInfo()->setVelocityY( getSpriteInfo()->getVelocityY() - amtToIncreaseVelocity * x_fov );
 } 
 
-void Enemy::directionUpdate()
+void EnemyProjectile::directionUpdate()
 {
     float not_normalized_x= cos(theta * (3.14/180));
     float not_normalized_y = sin(theta * (3.14/180));
@@ -56,7 +55,7 @@ void Enemy::directionUpdate()
     }
 }
 
-void Enemy::rotateLeft() {
+void EnemyProjectile::rotateLeft() {
     theta -= Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + 
              "/thetaIncrement");
     if(theta < 0) {
@@ -65,7 +64,7 @@ void Enemy::rotateLeft() {
     
     directionUpdate();
 }
-void Enemy::rotateRight() {
+void EnemyProjectile::rotateRight() {
     theta += Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + 
              "/thetaIncrement");
     if(theta > 359) {
@@ -75,66 +74,15 @@ void Enemy::rotateRight() {
     directionUpdate();
 }
 
-void Enemy::update(Uint32 ticks) {
-  // Bouncing timer when colliding with wall.
-  // Can bounce when traveling above the bounce speed.
-  if( getState() == 1 && getBounceTimer() >= static_cast<Uint32>( 10 * Gamedata::getInstance().getXmlInt("period") ) 
-      && 
-      ( fabs(getSpriteInfo()->getVelocityX() ) +fabs(getSpriteInfo()->getVelocityY()) > Gamedata::getInstance().getXmlInt(getName() + "/bounceSpeedRequirement") ) 
-    ) 
-  {
-    setState(0); 
-  }
-  else if ( getState() == 1 ){
-    setBounceTimer(ticks);
-  }
-
-  // Use player's position/angle to determine which way to rotate the enemy.
-  // Tie this to tick rate in future.
-  float deltaX = playerPos[0] - getSpriteInfo()->getX();
-  float deltaY = playerPos[1] - getSpriteInfo()->getY();
-  float angleBetweenVectors = atan2(deltaY, deltaX) * 57.2958 + 180;
+void EnemyProjectile::update(Uint32 ticks) {
   
-  deltaX = getPreviousX() - getSpriteInfo()->getX();
-  deltaY = getPreviousY() - getSpriteInfo()->getY();
-  float tempTheta = atan2(deltaY, deltaX) * 57.2958 + 180;
-  
-  float leftRotCheck = angleBetweenVectors - tempTheta;
-  float rightRotCheck = tempTheta - angleBetweenVectors;
-  if(leftRotCheck < 0)
-    leftRotCheck += 360; 
-  if(rightRotCheck < 0)
-    rightRotCheck += 360;
-
-  if(rightRotCheck > leftRotCheck){
-    rotateRight();
-  }
-  else if(rightRotCheck < leftRotCheck){
-    rotateLeft();
-  }
-
-  // Shoot projectile at player if they are within range.
-  if(current_state == NORMAL && hypot(playerPos[0]-getSpriteInfo()->getX(), playerPos[1] - getSpriteInfo()->getY()) < Gamedata::getInstance().getXmlInt(getName()+"/attackDistance"))
-  {
-    current_state = ATTACK;
-    amtToIncreaseVelocity = 0;
-    std::cout << "My leg!" << std::endl;
-  }
-  // Continue shooting at player until they exit range.
-  else if(current_state == ATTACK && hypot(playerPos[0]-getSpriteInfo()->getX(), playerPos[1] - getSpriteInfo()->getY()) < Gamedata::getInstance().getXmlInt(getName()+"/attackDistance")) {
-    std::cout << "Attack!" << std::endl;
-  }
-  else if(current_state == ATTACK) {
-    current_state = NORMAL;
-    amtToIncreaseVelocity = Gamedata::getInstance().getXmlInt(getName() + "/incSpeed");
-
-    std::cout << "fancey nancey" << std::endl;
-  }
-
   up();  
 
   setPreviousY(getSpriteInfo()->getY());
   setPreviousX(getSpriteInfo()->getX());
+
+  
+
   getSpriteInfo()->update(ticks);
   stop();
 }

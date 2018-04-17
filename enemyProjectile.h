@@ -1,5 +1,3 @@
-#ifndef ENEMY__H
-#define ENEMY__H
 #include <SDL2/SDL.h>
 #include <string>
 #include <vector>
@@ -9,34 +7,22 @@
 #include "smartSprite.h"
 #include "wallCollidable.h"
 
-class Enemy : public WallCollidable {
+class EnemyProjectile {
 public:
-  Enemy(const std::string&, const Vector2f& pos);
-  Enemy(const Enemy&);
-  virtual ~Enemy(){}
+  EnemyProjectile(const std::string&, const Vector2f& pos);
+  EnemyProjectile(const EnemyProjectile&);
+  virtual ~EnemyProjectile(){}
 
   void draw() const { getSpriteInfo()->draw(); }
   void update(Uint32 ticks);
 
   // Observor setter.
-  void setPlayerPos(const Vector2f& p) { playerPos = p; }
-
   const std::string& getName() const { return getSpriteInfo()->getName(); }
   float getX() const { return getSpriteInfo()->getX(); }
   float getY() const { return getSpriteInfo()->getY(); }
 
   // Translation options.
   void up();
-
-  // Rotation Options.
-  void directionUpdate();
-  void rotateLeft();
-  void rotateRight();
-
-  // Getter for rotation value (theta)
-  const int& getRotation() const{
-    return theta;
-  };
 
   // Stop movement of collidableSprite.
   void stop();
@@ -45,8 +31,6 @@ public:
   void attackPlayer() const;
 
 private:
-  enum EnemyAttackState { NORMAL, ATTACK };
-  EnemyAttackState current_state;
   
   int maxVelocity;
   int amtToIncreaseVelocity;
@@ -58,4 +42,3 @@ private:
   // Observer- player position.
   Vector2f playerPos; 
 };
-#endif

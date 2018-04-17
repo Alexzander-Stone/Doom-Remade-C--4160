@@ -62,18 +62,20 @@ Engine::Engine() :
   // Wall sprites.
   int wallCount = Gamedata::getInstance().getXmlInt("Wall/numberOfWalls");
   sprites.reserve( wallCount*2 );
-
   int w = player->getSpriteInfo()->getScaledWidth();
   int h = player->getSpriteInfo()->getScaledHeight();
+
   // Boxed Arena Walls
-  Vector2f spritePos(20, 0);
-  Vector2f spritePos2(0, 20);
-  Vector2f spritePos3(20, 80);
-  Vector2f spritePos4(80, 20);
-  sprites.push_back( new SmartSprite("Wall/Horizontal", placeholderPlayerPos, w, h, spritePos) );
-  sprites.push_back( new SmartSprite("Wall/Vertical", placeholderPlayerPos, w, h, spritePos2) );
-  sprites.push_back( new SmartSprite("Wall/Horizontal", placeholderPlayerPos, w, h, spritePos3) );
-  sprites.push_back( new SmartSprite("Wall/Vertical", placeholderPlayerPos, w, h, spritePos4) );
+  for(int i = 0; i < Gamedata::getInstance().getXmlInt("arena/size"); i++) {
+    Vector2f spritePos(60*i, 0*i);
+    sprites.push_back( new SmartSprite("Wall/Horizontal", placeholderPlayerPos, w, h, spritePos) );
+    spritePos = Vector2f(60*i, 60*Gamedata::getInstance().getXmlInt("arena/size"));
+    sprites.push_back( new SmartSprite("Wall/Horizontal", placeholderPlayerPos, w, h, spritePos) );
+    spritePos = Vector2f(0*i, 60*i);
+    sprites.push_back( new SmartSprite("Wall/Vertical", placeholderPlayerPos, w, h, spritePos) );
+    spritePos = Vector2f(60*Gamedata::getInstance().getXmlInt("arena/size"), i*60);
+    sprites.push_back( new SmartSprite("Wall/Vertical", placeholderPlayerPos, w, h, spritePos) );
+  }
 
   // Collision strategies ( rect, pixel, distance(midpoint) ).
   strategies.push_back( new RectangularCollisionStrategy );
@@ -203,41 +205,6 @@ void Engine::draw() const {
       else{
         wallDistance = ( gridY - posY + (1 - incrementY) / 2 ) / rayDirY;
       }	
-
-      // Repeat check for wall distance if < 10. Helps fix issues with walls
-      // bouncing raycasting.
-      bool repeatX = side == 0 && wallDistance < 30;
-      bool repeatY = side == 1 && wallDistance < 30;
-
-      if(repeatX == true || repeatY == true){
-        rayHit = 0;
-        gridX = posX;
-        gridY = posY;
-        while (rayHit == 0)
-        {
-          if(repeatX == true){
-            gridX += incrementX*.1;
-            side = 0;
-          }
-          else{
-            gridY += incrementY*.1;
-            side = 1;
-          }
-
-          // Check for collision with a wall object.
-          raySprite.setX(gridX);
-          raySprite.setY(gridY);
-          
-          std::vector<SmartSprite*>::const_iterator spriteIt = sprites.begin();
-          while( spriteIt != sprites.end() && rayHit == 0){
-            if( strategies[currentStrategy]->execute( raySprite, **spriteIt) ){
-              rayHit = 1; 
-            }
-            ++spriteIt;
-          }
-        }
-      }
-
       int vertLineLength = (Gamedata::getInstance().getXmlInt("view/height") * 10 ) / (wallDistance);
 
       // Find starting and ending pixel to draw to.

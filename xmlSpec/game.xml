@@ -9,7 +9,7 @@
 <period>17</period>
 
 <maxFrames>300</maxFrames>
-<username>malloy</username>
+<username>alexzas</username>
 
 <view>
   <width>1366</width>
@@ -25,6 +25,10 @@
   <width>20000</width>
   <height>8000</height>
 </world>
+
+<arena>
+  <size>3</size>
+</arena>
 
 <back>
   <file>assets/greyPlaceholder.jpg</file>
@@ -122,7 +126,7 @@
 
 <Pinkie>
   <file>assets/enemy.png</file>
-  <startLoc x="40" y="40"/>
+  <startLoc x="100" y="100"/>
   <frames>1</frames>
   <imageWidth>10</imageWidth>
   <imageHeight>10</imageHeight>
@@ -143,6 +147,7 @@
     <incSpeed>5</incSpeed>
     <changeVel>.8</changeVel>
   </Bounce>
+  <attackDistance>50</attackDistance>
 </Pinkie>
 
 </GameData>
