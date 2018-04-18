@@ -29,16 +29,6 @@ public:
   // Translation options.
   void up();
 
-  // Rotation Options.
-  void directionUpdate();
-  void rotateLeft();
-  void rotateRight();
-
-  // Getter for rotation value (theta)
-  const int& getRotation() const{
-    return theta;
-  };
-
   // Stop movement of collidableSprite.
   void stop();
 
@@ -54,9 +44,6 @@ private:
   int amtToIncreaseVelocity;
   int worldWidth;
   int worldHeight;
-  // Rotation values.
-  float x_fov, y_fov;
-  int theta, rotation_radius; 
   // Observer- player position.
   Vector2f playerPos; 
 };

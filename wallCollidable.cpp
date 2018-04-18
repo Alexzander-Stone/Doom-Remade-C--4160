@@ -4,9 +4,14 @@
 WallCollidable::WallCollidable( const std::string& name) :
   collidableSprite(name),
   current_state(NORMAL),
+  amtToIncreaseVelocity(Gamedata::getInstance().getXmlInt(name+ "/incSpeed")),
   bounce_timer(0),
   previous_x(0),
   previous_y(0),
+  x_fov(Gamedata::getInstance().getXmlFloat(name + "/xFovStart")),
+  y_fov(Gamedata::getInstance().getXmlFloat(name + "/yFovStart")),
+  theta(Gamedata::getInstance().getXmlInt(name + "/directionStart")),
+  rotation_radius(Gamedata::getInstance().getXmlInt(name + "/rotationRadius")),
   bulletName( Gamedata::getInstance().getXmlStr(name+"/bullet") ),
   bullets(),
   bulletInterval( Gamedata::getInstance().getXmlInt(bulletName+"/interval") ),
@@ -21,6 +26,7 @@ void WallCollidable::draw() const{
 }
 
 void WallCollidable::update(Uint32 ticks){
+  timeSinceLastFrame += ticks;
   for( Bullet& bullet : bullets )
     bullet.update(ticks);
 }
@@ -125,14 +131,64 @@ float WallCollidable::getMomentumVelocityY() const {
   return result;
 }
 
+// Use y_fov and x_fov to determine how diaggonal movement works.
+// Vertical goes from x_fov = 1 (top) to x_fov = -1 (bottom).
+// Horizontal goes form y_fov = 1 (left) to y_fov = -1 (right).
+void WallCollidable::right() { 
+  getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() - amtToIncreaseVelocity * -y_fov );
+  getSpriteInfo()->setVelocityY( getSpriteInfo()->getVelocityY() - amtToIncreaseVelocity * x_fov );
+} 
+void WallCollidable::left()  { 
+  getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() + amtToIncreaseVelocity * -y_fov );
+  getSpriteInfo()->setVelocityY( getSpriteInfo()->getVelocityY() + amtToIncreaseVelocity * x_fov );
+} 
+void WallCollidable::up()    { 
+  getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() + amtToIncreaseVelocity * x_fov );
+  getSpriteInfo()->setVelocityY( getSpriteInfo()->getVelocityY() + amtToIncreaseVelocity * y_fov );
+} 
+void WallCollidable::down()  { 
+  getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() - amtToIncreaseVelocity * x_fov );
+  getSpriteInfo()->setVelocityY( getSpriteInfo()->getVelocityY() - amtToIncreaseVelocity * y_fov );
+}
+
+// When determining the vector, make sure to normalize it.
+void WallCollidable::rotateLeft() {
+    // Wrap the theta around when reaching -1.
+    theta -= Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + 
+             "/thetaIncrement");
+    if(theta < 0) {
+      theta += 360;
+    }
+    
+    // Check to see if the values are negative, need to preserve the negative if so.
+    float tempFovX = x_fov;
+    x_fov = x_fov * cos(Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f)
+	      - y_fov * sin(Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f); 
+    y_fov = tempFovX * sin(Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f)
+	      + y_fov * cos(Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f);  
+}
+void WallCollidable::rotateRight() {
+    // Wrap the theta around when reaching 360.
+    theta += Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + 
+             "/thetaIncrement");
+    if(theta > 359) {
+    	theta -= 360;
+    }
+    
+    float tempFovX = x_fov;
+    x_fov = x_fov * cos(-Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f)
+            - y_fov * sin(-Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f);
+    y_fov = tempFovX * sin(-Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f)
+            + y_fov * cos(-Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f);
+}
+
 void WallCollidable::shoot(){
   if( timeSinceLastFrame  < bulletInterval ) return;
   Bullet bullet(bulletName);
   bullet.setPosition( getSpriteInfo()->getPosition() + 
                       Vector2f(getSpriteInfo()->getScaledWidth()/2, 
                       getSpriteInfo()->getScaledHeight()/2) );
-  //TODO: replace with x_fov and y_fov
-  bullet.setVelocity( Vector2f(1 * bulletSpeed, 1 * bulletSpeed)  );
+  bullet.setVelocity( Vector2f(x_fov * bulletSpeed, y_fov * bulletSpeed)  );
   bullets.push_back( bullet );
   timeSinceLastFrame = 0;
 }

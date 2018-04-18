@@ -31,8 +31,8 @@ public:
   Uint32 getBounceTimer() { return bounce_timer; }
   void setBounceTimer(Uint32 incTime) { bounce_timer += incTime; }
 
-  float getPreviousX(){ return previous_x; }
-  float getPreviousY(){ return previous_y; }
+  float getPreviousX() const{ return previous_x; }
+  float getPreviousY() const{ return previous_y; }
   void setPreviousX(float x){ previous_x = x; }
   void setPreviousY(float y){ previous_y = y; }
 
@@ -40,6 +40,21 @@ public:
 
   float getMomentumVelocityX() const;
   float getMomentumVelocityY() const;
+
+  float getXFov() const{ return x_fov; }
+  float getYFov() const{ return y_fov; }
+
+  float getRotation() const{ return theta; }
+  void setRotation(int t) { theta = t; }
+
+  // Movement options.
+  virtual void right();
+  virtual void left();
+  virtual void up();
+  virtual void down();
+
+  virtual void rotateLeft();
+  virtual void rotateRight();
   
   int getState() {
     switch(current_state){
@@ -69,11 +84,16 @@ private:
   SubjectSprite collidableSprite;
   // State machine.
   WallCollidableState current_state;
+  // Movement.
+  int amtToIncreaseVelocity; 
   // Bounce Timer.
   Uint32 bounce_timer;
   // Previous coordinates.
   float previous_x; 
   float previous_y;
+  // Direction vector.
+  float x_fov, y_fov;
+  int theta, rotation_radius;
   // Shooting
   std::string bulletName;
   std::vector<Bullet> bullets;

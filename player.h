@@ -23,28 +23,13 @@ public:
   const std::string& getName() const { return getSpriteInfo()->getName(); }
   float getX() const { return getSpriteInfo()->getX(); }
   float getY() const { return getSpriteInfo()->getY(); }
-  float getXFov() const { return x_fov; }
-  float getYFov() const { return y_fov; }
   float getPlaneX() const { return plane_x; }
-  float getPlaneY() const { return plane_y; }
+  float getPlaneY() const { return plane_y; } 
 
-  // Translation options.
-  void right();
-  void left();
-  void up();
-  void down();
-
-  // Rotation Options.
+  // Movement options.
+  void stop();
   void rotateLeft();
   void rotateRight();
-
-  // Getter for rotation value (theta)
-  const int& getRotation() const{
-    return theta;
-  };
-
-  // Stop movement of collidableSprite.
-  void stop();
 
   // Observer pattern functions.
   void attach( Enemy* e ){ observers.push_back(e); }
@@ -54,12 +39,8 @@ public:
 
 private: 
   int maxVelocity;
-  int amtToIncreaseVelocity;
   int worldWidth;
   int worldHeight;
-  // Rotation values.
-  float x_fov, y_fov;
-  int theta, rotation_radius; 
   // Observer pattern.
   std::list<Enemy*> observers;
   // Camera plane.

@@ -27,7 +27,7 @@
 </world>
 
 <arena>
-  <size>3</size>
+  <size>2</size>
 </arena>
 
 <back>
@@ -108,18 +108,18 @@
   <frameInterval>2000</frameInterval>
   <speedY>0</speedY>
   <speedX>0</speedX>
-  <maxSpeed>250</maxSpeed>
-  <incSpeed>25</incSpeed>
+  <maxSpeed>25</maxSpeed>
+  <incSpeed>5</incSpeed>
   <transparency>false</transparency>
   <xFovStart>-1</xFovStart>
   <yFovStart>0</yFovStart>
-  <thetaStart>270</thetaStart>
+  <directionStart>270</directionStart>
   <thetaIncrement>1</thetaIncrement>
   <rotationRadius>1</rotationRadius>
   <momentumSlowdown>.9</momentumSlowdown>
   <bounceSpeedRequirement>240</bounceSpeedRequirement>
   <Bounce>
-    <incSpeed>25</incSpeed>
+    <incSpeed>5</incSpeed>
     <changeVel>.8</changeVel>
   </Bounce>
   <bullet>Fireball</bullet>
@@ -139,8 +139,8 @@
   <frameInterval>2000</frameInterval>
   <speedY>0</speedY>
   <speedX>0</speedX>
-  <maxSpeed>50</maxSpeed>
-  <incSpeed>5</incSpeed>
+  <maxSpeed>10</maxSpeed>
+  <incSpeed>1</incSpeed>
   <transparency>false</transparency>
   <xFovStart>0</xFovStart>
   <yFovStart>1</yFovStart>
@@ -159,12 +159,17 @@
 
 <Fireball>
   <file>assets/fireball.png</file>
+  <startLoc x="-100" y="-100"/>
   <frames>1</frames>
   <imageWidth>10</imageWidth>
   <imageHeight>10</imageHeight>
   <frameInterval>2000</frameInterval>
-  <interval>200</interval>
+  <transparency>false</transparency>
+  <interval>2000</interval>
+  <distance>100</distance>
   <speed>10</speed>
+  <speedX>0</speedX>
+  <speedY>0</speedY>
 </Fireball>
 
 </GameData>
