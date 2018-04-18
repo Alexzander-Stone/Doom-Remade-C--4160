@@ -28,6 +28,8 @@ OBJS = \
 	collisionStrategy.o \
 	enemy.o \
 	hud.o \
+	enemyProjectile.o \
+	bullet.o \
 	main.o
 EXEC = run
 

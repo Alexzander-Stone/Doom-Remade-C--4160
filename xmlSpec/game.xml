@@ -122,7 +122,13 @@
     <incSpeed>25</incSpeed>
     <changeVel>.8</changeVel>
   </Bounce>
+  <bullet>Fireball</bullet>
 </DoomGuy>
+
+<Plasma>
+  <interval>200</interval>
+  <speed>10</speed>
+</Plasma>
 
 <Pinkie>
   <file>assets/enemy.png</file>
@@ -148,6 +154,17 @@
     <changeVel>.8</changeVel>
   </Bounce>
   <attackDistance>50</attackDistance>
+  <bullet>Fireball</bullet>
 </Pinkie>
+
+<Fireball>
+  <file>assets/fireball.png</file>
+  <frames>1</frames>
+  <imageWidth>10</imageWidth>
+  <imageHeight>10</imageHeight>
+  <frameInterval>2000</frameInterval>
+  <interval>200</interval>
+  <speed>10</speed>
+</Fireball>
 
 </GameData>

@@ -8,6 +8,7 @@
 #include "subjectSprite.h"
 #include "smartSprite.h"
 #include "wallCollidable.h"
+#include "enemyProjectile.h"
 
 class Enemy : public WallCollidable {
 public:
@@ -15,7 +16,7 @@ public:
   Enemy(const Enemy&);
   virtual ~Enemy(){}
 
-  void draw() const { getSpriteInfo()->draw(); }
+  void draw() const;
   void update(Uint32 ticks);
 
   // Observor setter.
@@ -43,6 +44,7 @@ public:
 
   // Attack towards the current direction of the player.
   void attackPlayer() const;
+  void shoot();
 
 private:
   enum EnemyAttackState { NORMAL, ATTACK };

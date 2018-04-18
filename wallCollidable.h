@@ -7,6 +7,8 @@
 
 #include "subjectSprite.h"
 #include "smartSprite.h"
+#include "bullet.h"
+
 
 class WallCollidable {
 public:
@@ -14,8 +16,9 @@ public:
   WallCollidable(const WallCollidable&);
   virtual ~WallCollidable(){}
 
-  virtual void draw() const = 0;
-  virtual void update(Uint32 ticks) = 0;
+  virtual void draw() const;
+  virtual void update(Uint32);
+  virtual void shoot();
 
   const Image* getImage() const { return collidableSprite.getImage(); }
   int getScaledWidth()  const { return collidableSprite.getScaledWidth(); } 
@@ -71,5 +74,11 @@ private:
   // Previous coordinates.
   float previous_x; 
   float previous_y;
+  // Shooting
+  std::string bulletName;
+  std::vector<Bullet> bullets;
+  int bulletInterval;
+  int bulletSpeed;
+  int timeSinceLastFrame;
 };
 #endif

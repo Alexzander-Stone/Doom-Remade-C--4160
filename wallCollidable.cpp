@@ -1,14 +1,29 @@
 #include "wallCollidable.h"
 #include "gamedata.h"
 
-
 WallCollidable::WallCollidable( const std::string& name) :
   collidableSprite(name),
   current_state(NORMAL),
   bounce_timer(0),
   previous_x(0),
-  previous_y(0)
+  previous_y(0),
+  bulletName( Gamedata::getInstance().getXmlStr(name+"/bullet") ),
+  bullets(),
+  bulletInterval( Gamedata::getInstance().getXmlInt(bulletName+"/interval") ),
+  bulletSpeed( Gamedata::getInstance().getXmlInt(bulletName+"/speed")),
+  timeSinceLastFrame(0)
 { }
+
+// Needed for shooting projectiles/bullets.
+void WallCollidable::draw() const{
+  for( const Bullet& bullet : bullets )
+    bullet.draw();
+}
+
+void WallCollidable::update(Uint32 ticks){
+  for( Bullet& bullet : bullets )
+    bullet.update(ticks);
+}
 
 // Check to see if the object is within the left/right and top/bottom range
 // of the object. This will determine where to place the object.
@@ -109,3 +124,17 @@ float WallCollidable::getMomentumVelocityY() const {
 
   return result;
 }
+
+void WallCollidable::shoot(){
+  if( timeSinceLastFrame  < bulletInterval ) return;
+  Bullet bullet(bulletName);
+  bullet.setPosition( getSpriteInfo()->getPosition() + 
+                      Vector2f(getSpriteInfo()->getScaledWidth()/2, 
+                      getSpriteInfo()->getScaledHeight()/2) );
+  //TODO: replace with x_fov and y_fov
+  bullet.setVelocity( Vector2f(1 * bulletSpeed, 1 * bulletSpeed)  );
+  bullets.push_back( bullet );
+  timeSinceLastFrame = 0;
+}
+
+

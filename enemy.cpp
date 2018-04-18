@@ -15,6 +15,11 @@ Enemy::Enemy( const std::string& name, const Vector2f& pos) :
   playerPos(pos)
 { }
 
+void Enemy::draw() const{
+  WallCollidable::draw();
+  getSpriteInfo()->draw();
+}
+
 // Slow down velocity each tick.
 void Enemy::stop() {
   getSpriteInfo()->setVelocity( 
@@ -122,8 +127,10 @@ void Enemy::update(Uint32 ticks) {
   }
   // Continue shooting at player until they exit range.
   else if(current_state == ATTACK && hypot(playerPos[0]-getSpriteInfo()->getX(), playerPos[1] - getSpriteInfo()->getY()) < Gamedata::getInstance().getXmlInt(getName()+"/attackDistance")) {
-    std::cout << "Attack!" << std::endl;
+  shoot();  
   }
+  // Player has left the range of the enemy, begin walking towards the player
+  // again.
   else if(current_state == ATTACK) {
     current_state = NORMAL;
     amtToIncreaseVelocity = Gamedata::getInstance().getXmlInt(getName() + "/incSpeed");
@@ -136,5 +143,13 @@ void Enemy::update(Uint32 ticks) {
   setPreviousY(getSpriteInfo()->getY());
   setPreviousX(getSpriteInfo()->getX());
   getSpriteInfo()->update(ticks);
+
+  // Shooting.
+  WallCollidable::update(ticks);
+
   stop();
+}
+
+void Enemy::shoot(){
+    std::cout << "Attack!" << std::endl;
 }
