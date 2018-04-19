@@ -28,6 +28,9 @@ void Enemy::stop() {
 }
 
 void Enemy::update(Uint32 ticks) {
+  // Shooting.
+  WallCollidable::update(ticks);
+
   // Bouncing timer when colliding with wall.
   // Can bounce when traveling above the bounce speed.
   if( getState() == 1 && getBounceTimer() >= static_cast<Uint32>( 10 * Gamedata::getInstance().getXmlInt("period") ) 
@@ -43,13 +46,14 @@ void Enemy::update(Uint32 ticks) {
 
   // Use player's position/angle to determine which way to rotate the enemy.
   // Tie this to tick rate in future.
-  float deltaX = playerPos[0] - getSpriteInfo()->getX();
-  float deltaY = playerPos[1] - getSpriteInfo()->getY();
+  float deltaX = playerPos[0] - getSpriteInfo()->getX() - getXFov();
+  float deltaY = playerPos[1] - getSpriteInfo()->getY() - getYFov();
   float angleBetweenVectors = atan2(deltaY, deltaX) * 57.2958 + 180;
   
-  deltaX = getPreviousX() - getSpriteInfo()->getX();
-  deltaY = getPreviousY() - getSpriteInfo()->getY();
+  deltaX = getPreviousX() - getSpriteInfo()->getX() - getXFov();
+  deltaY = getPreviousY() - getSpriteInfo()->getY() - getYFov();
   float tempTheta = atan2(deltaY, deltaX) * 57.2958 + 180;
+  std::cout << tempTheta << " and " << angleBetweenVectors << std::endl;
   
   float leftRotCheck = angleBetweenVectors - tempTheta;
   float rightRotCheck = tempTheta - angleBetweenVectors;
@@ -57,12 +61,13 @@ void Enemy::update(Uint32 ticks) {
     leftRotCheck += 360; 
   if(rightRotCheck < 0)
     rightRotCheck += 360;
-
-  if(rightRotCheck > leftRotCheck){
-    rotateRight();
+  if(rightRotCheck - 180 < 5 && rightRotCheck - 180 > -5 && leftRotCheck - 180 < 5 && leftRotCheck - 180 > -5)
+    ;
+  else if(rightRotCheck > leftRotCheck){
+    rotateLeft();
   }
   else if(rightRotCheck < leftRotCheck){
-    rotateLeft();
+    rotateRight();
   }
 
   // Shoot projectile at player if they are within range.
@@ -70,29 +75,22 @@ void Enemy::update(Uint32 ticks) {
   {
     current_state = ATTACK;
     setIncrementalVel(0);
-    std::cout << "My leg!" << std::endl;
   }
   // Continue shooting at player until they exit range.
   else if(current_state == ATTACK && hypot(playerPos[0]-getSpriteInfo()->getX(), playerPos[1] - getSpriteInfo()->getY()) < Gamedata::getInstance().getXmlInt(getName()+"/attackDistance")) {
-  shoot();  
+    shoot();  
   }
   // Player has left the range of the enemy, begin walking towards the player
   // again.
   else if(current_state == ATTACK) {
     current_state = NORMAL;
     setIncrementalVel( Gamedata::getInstance().getXmlInt(getName() + "/incSpeed") );
-
-    std::cout << "fancey nancey" << std::endl;
   }
-
   WallCollidable::up();  
 
   setPreviousY(getSpriteInfo()->getY());
   setPreviousX(getSpriteInfo()->getX());
   getSpriteInfo()->update(ticks);
-
-  // Shooting.
-  WallCollidable::update(ticks);
 
   stop();
 }
