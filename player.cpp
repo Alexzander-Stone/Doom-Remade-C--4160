@@ -9,7 +9,7 @@ Player::Player( const std::string& name) :
   worldHeight(Gamedata::getInstance().getXmlInt("world/height")),
   observers(),
   plane_x(0),
-  plane_y(.66)
+  plane_y(-.66)
 { }
 
 void Player::stop() {
@@ -25,8 +25,8 @@ void Player::stop() {
 }
 
 // When determining the vector, make sure to normalize it.
-void Player::rotateLeft() {
-    WallCollidable::rotateLeft();
+void Player::rotateRight() {
+    WallCollidable::rotateRight();
    
     // Check to see if the values are negative, need to preserve the negative if so.
     float tempPlaneX = plane_x;
@@ -35,7 +35,7 @@ void Player::rotateLeft() {
     plane_y = tempPlaneX * sin(Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f)
 	      + plane_y * cos(Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f); 
 }
-void Player::rotateRight() {   
+void Player::rotateLeft() {   
     WallCollidable::rotateLeft();
 
     // Update the camera plane.
@@ -59,6 +59,8 @@ void Player::detach( Enemy* e ){
 }
 
 void Player::update(Uint32 ticks) {
+  WallCollidable::update(ticks);
+
   // Bouncing timer when colliding with wall.
   if( getState() == 1 && getBounceTimer() >= static_cast<Uint32>( 10 * Gamedata::getInstance().getXmlInt("period") ) 
       && 

@@ -17,7 +17,7 @@ public:
 
   virtual ~Player() {}
 
-  void draw() const { getSpriteInfo()->draw(); }
+  void draw() const { getSpriteInfo()->draw(); WallCollidable::draw();}
   void update(Uint32 ticks);
 
   const std::string& getName() const { return getSpriteInfo()->getName(); }

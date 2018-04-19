@@ -315,11 +315,14 @@ void Engine::play() {
           done = true;
           break;
         }
+        if (keystate[SDL_SCANCODE_LSHIFT]) {
+          player->shoot();
+        }
         if ( keystate[SDL_SCANCODE_P] ) {
           if ( clock.isPaused() ) clock.unpause();
           else clock.pause();
         }
-	if (keystate[SDL_SCANCODE_F1]) {
+	      if (keystate[SDL_SCANCODE_F1]) {
           std::cout << "Initiating hud" << std::endl;
           hud.toggleActive();
         }

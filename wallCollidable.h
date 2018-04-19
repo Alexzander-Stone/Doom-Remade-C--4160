@@ -40,6 +40,8 @@ public:
 
   float getMomentumVelocityX() const;
   float getMomentumVelocityY() const;
+  float getIncrementalVel() const { return amtToIncreaseVelocity; }
+  void setIncrementalVel(float inc) { amtToIncreaseVelocity = inc; }
 
   float getXFov() const{ return x_fov; }
   float getYFov() const{ return y_fov; }

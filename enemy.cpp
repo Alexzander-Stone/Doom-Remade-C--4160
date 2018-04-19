@@ -5,7 +5,6 @@ Enemy::Enemy( const std::string& name, const Vector2f& pos) :
   WallCollidable(name), // Pass parent constructor the name.
   current_state(NORMAL),
   maxVelocity(Gamedata::getInstance().getXmlInt(name + "/maxSpeed")),
-  amtToIncreaseVelocity(Gamedata::getInstance().getXmlInt(name+ "/incSpeed")),
   worldWidth(Gamedata::getInstance().getXmlInt("world/width")),
   worldHeight(Gamedata::getInstance().getXmlInt("world/height")),
   playerPos(pos)
@@ -27,16 +26,6 @@ void Enemy::stop() {
     ) 
   );
 }
-
-// Use y_fov and x_fov to determine how diagonal movement works.
-// Vertical goes from x_fov = 1 (top) to x_fov = -1 (bottom).
-// Horizontal goes form y_fov = 1 (left) to y_fov = -1 (right).
-void Enemy::up()    { 
-  getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() - amtToIncreaseVelocity * getYFov() );
-  getSpriteInfo()->setVelocityY( getSpriteInfo()->getVelocityY() - amtToIncreaseVelocity * getXFov() );
-} 
-
-
 
 void Enemy::update(Uint32 ticks) {
   // Bouncing timer when colliding with wall.
@@ -80,7 +69,7 @@ void Enemy::update(Uint32 ticks) {
   if(current_state == NORMAL && hypot(playerPos[0]-getSpriteInfo()->getX(), playerPos[1] - getSpriteInfo()->getY()) < Gamedata::getInstance().getXmlInt(getName()+"/attackDistance"))
   {
     current_state = ATTACK;
-    amtToIncreaseVelocity = 0;
+    setIncrementalVel(0);
     std::cout << "My leg!" << std::endl;
   }
   // Continue shooting at player until they exit range.
@@ -91,12 +80,12 @@ void Enemy::update(Uint32 ticks) {
   // again.
   else if(current_state == ATTACK) {
     current_state = NORMAL;
-    amtToIncreaseVelocity = Gamedata::getInstance().getXmlInt(getName() + "/incSpeed");
+    setIncrementalVel( Gamedata::getInstance().getXmlInt(getName() + "/incSpeed") );
 
     std::cout << "fancey nancey" << std::endl;
   }
 
-  up();  
+  WallCollidable::up();  
 
   setPreviousY(getSpriteInfo()->getY());
   setPreviousX(getSpriteInfo()->getX());
@@ -108,6 +97,3 @@ void Enemy::update(Uint32 ticks) {
   stop();
 }
 
-void Enemy::shoot(){
-  WallCollidable::shoot();
-}

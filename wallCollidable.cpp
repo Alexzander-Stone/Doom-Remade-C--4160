@@ -134,11 +134,11 @@ float WallCollidable::getMomentumVelocityY() const {
 // Use y_fov and x_fov to determine how diaggonal movement works.
 // Vertical goes from x_fov = 1 (top) to x_fov = -1 (bottom).
 // Horizontal goes form y_fov = 1 (left) to y_fov = -1 (right).
-void WallCollidable::right() { 
+void WallCollidable::left() { 
   getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() - amtToIncreaseVelocity * -y_fov );
   getSpriteInfo()->setVelocityY( getSpriteInfo()->getVelocityY() - amtToIncreaseVelocity * x_fov );
 } 
-void WallCollidable::left()  { 
+void WallCollidable::right()  { 
   getSpriteInfo()->setVelocityX( getSpriteInfo()->getVelocityX() + amtToIncreaseVelocity * -y_fov );
   getSpriteInfo()->setVelocityY( getSpriteInfo()->getVelocityY() + amtToIncreaseVelocity * x_fov );
 } 
@@ -152,7 +152,7 @@ void WallCollidable::down()  {
 }
 
 // When determining the vector, make sure to normalize it.
-void WallCollidable::rotateLeft() {
+void WallCollidable::rotateRight() {
     // Wrap the theta around when reaching -1.
     theta -= Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + 
              "/thetaIncrement");
@@ -167,7 +167,7 @@ void WallCollidable::rotateLeft() {
     y_fov = tempFovX * sin(Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f)
 	      + y_fov * cos(Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f);  
 }
-void WallCollidable::rotateRight() {
+void WallCollidable::rotateLeft() {
     // Wrap the theta around when reaching 360.
     theta += Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + 
              "/thetaIncrement");
