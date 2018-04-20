@@ -200,7 +200,7 @@ void WallCollidable::rotateLeft() {
 void WallCollidable::shoot(){
   if( timeSinceLastFrame  < bulletInterval ) return;
   // Create new bullet if freeAmmo is empty.
-  if(freeAmmo.empty()) {
+  if(freeAmmo.empty() && bullets.size() < static_cast<unsigned int>(Gamedata::getInstance().getXmlInt(bulletName+"/ammo")) ){
     Bullet* newBullet = new Bullet(bulletName);
     newBullet->setPosition( getSpriteInfo()->getPosition() + 
                       Vector2f(getSpriteInfo()->getScaledWidth()/2, 
@@ -209,7 +209,7 @@ void WallCollidable::shoot(){
     bullets.push_back( newBullet );
   }
   // Use a bullet available from the freeAmmo vector.
-  else {
+  else if (bullets.size() < static_cast<unsigned int>(Gamedata::getInstance().getXmlInt(bulletName+"/ammo")) ) {
     auto itr = freeAmmo.end()-1;
     (*itr)->setPosition( getSpriteInfo()->getPosition() + 
                       Vector2f(getSpriteInfo()->getScaledWidth()/2, 

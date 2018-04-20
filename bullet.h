@@ -2,7 +2,6 @@
 #include "sprite.h"
 #include "gamedata.h"
 #include "collisionStrategy.h"
-#include "drawable.h"
 
 
 class Bullet : public Sprite {
