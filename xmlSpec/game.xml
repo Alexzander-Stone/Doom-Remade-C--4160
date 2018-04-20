@@ -170,6 +170,7 @@
   <speed>10</speed>
   <speedX>0</speedX>
   <speedY>0</speedY>
+  <ammo>5</ammo>
 </Fireball>
 
 </GameData>

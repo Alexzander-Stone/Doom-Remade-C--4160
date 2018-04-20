@@ -14,21 +14,36 @@ WallCollidable::WallCollidable( const std::string& name) :
   rotation_radius(Gamedata::getInstance().getXmlInt(name + "/rotationRadius")),
   bulletName( Gamedata::getInstance().getXmlStr(name+"/bullet") ),
   bullets(),
+  freeAmmo(),
   bulletInterval( Gamedata::getInstance().getXmlInt(bulletName+"/interval") ),
   bulletSpeed( Gamedata::getInstance().getXmlInt(bulletName+"/speed")),
   timeSinceLastFrame(0)
-{ }
+{ 
+  bullets.reserve(Gamedata::getInstance().getXmlInt(bulletName+"/ammo"));
+  freeAmmo.reserve(Gamedata::getInstance().getXmlInt(bulletName+"/ammo"));
+}
+
+WallCollidable::~WallCollidable(){
+  for( Bullet* b : bullets ){
+    delete b;
+  }
+  for( Bullet* b : freeAmmo ){
+    delete b;
+  }
+  bullets.clear();
+  freeAmmo.clear();
+}
 
 // Needed for shooting projectiles/bullets.
 void WallCollidable::draw() const{
-  for( const Bullet& bullet : bullets )
-    bullet.draw();
+  for( const Bullet* bullet : bullets )
+    bullet->draw();
 }
 
 void WallCollidable::update(Uint32 ticks){
   timeSinceLastFrame += ticks;
-  for( Bullet& bullet : bullets )
-    bullet.update(ticks);
+  for( Bullet* bullet : bullets )
+    bullet->update(ticks);
 }
 
 // Check to see if the object is within the left/right and top/bottom range
@@ -184,13 +199,37 @@ void WallCollidable::rotateLeft() {
 
 void WallCollidable::shoot(){
   if( timeSinceLastFrame  < bulletInterval ) return;
-  Bullet bullet(bulletName);
-  bullet.setPosition( getSpriteInfo()->getPosition() + 
+  // Create new bullet if freeAmmo is empty.
+  if(freeAmmo.empty()) {
+    Bullet* newBullet = new Bullet(bulletName);
+    newBullet->setPosition( getSpriteInfo()->getPosition() + 
                       Vector2f(getSpriteInfo()->getScaledWidth()/2, 
                       getSpriteInfo()->getScaledHeight()/2) );
-  bullet.setVelocity( Vector2f(x_fov * bulletSpeed, y_fov * bulletSpeed)  );
-  bullets.push_back( bullet );
+    newBullet->setVelocity( Vector2f(x_fov * bulletSpeed, y_fov * bulletSpeed)  );
+    bullets.push_back( newBullet );
+  }
+  // Use a bullet available from the freeAmmo vector.
+  else {
+    auto itr = freeAmmo.end()-1;
+    (*itr)->setPosition( getSpriteInfo()->getPosition() + 
+                      Vector2f(getSpriteInfo()->getScaledWidth()/2, 
+                      getSpriteInfo()->getScaledHeight()/2) );
+    (*itr)->setVelocity( Vector2f(x_fov * bulletSpeed, y_fov * bulletSpeed)  );
+    bullets.push_back( *itr );
+    freeAmmo.erase(itr);
+  }
+
   timeSinceLastFrame = 0;
 }
 
-
+void WallCollidable::checkBulletCollision(WallCollidable* col){
+  auto b = bullets.begin();
+  while( b != bullets.end() ){
+    if((*b)->checkCollision(col->getSpriteInfo())){
+      freeAmmo.push_back(*b);
+      b = bullets.erase(b);
+    }
+    else
+      b++;
+  }
+}

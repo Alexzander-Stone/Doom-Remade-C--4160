@@ -14,7 +14,7 @@ class WallCollidable {
 public:
   WallCollidable(const std::string&);
   WallCollidable(const WallCollidable&);
-  virtual ~WallCollidable(){}
+  virtual ~WallCollidable();
 
   virtual void draw() const;
   virtual void update(Uint32);
@@ -48,6 +48,8 @@ public:
 
   float getRotation() const{ return theta; }
   void setRotation(int t) { theta = t; }
+
+  void checkBulletCollision(WallCollidable*);
 
   // Movement options.
   virtual void right();
@@ -98,7 +100,8 @@ private:
   int theta, rotation_radius;
   // Shooting
   std::string bulletName;
-  std::vector<Bullet> bullets;
+  std::vector<Bullet*> bullets;
+  std::vector<Bullet*> freeAmmo;
   int bulletInterval;
   int bulletSpeed;
   int timeSinceLastFrame;
