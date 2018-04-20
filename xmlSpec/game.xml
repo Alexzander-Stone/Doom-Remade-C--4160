@@ -75,6 +75,17 @@
     <startLoc x="0" y="528"/>
     <transparency>false</transparency>
   </DoomFace>
+  <Shell>
+    <file>assets/fireball.png</file>
+    <startLoc x="-100" y="-100"/>
+    <frames>1</frames>
+    <imageWidth>10</imageWidth>
+    <imageHeight>10</imageHeight>
+    <frameInterval>2000</frameInterval>
+    <transparency>false</transparency>
+    <speedX>0</speedX>
+    <speedY>0</speedY>
+  </Shell>
 </Hud>
 
 <Wall>
@@ -122,12 +133,23 @@
     <incSpeed>5</incSpeed>
     <changeVel>.8</changeVel>
   </Bounce>
-  <bullet>Fireball</bullet>
+  <bullet>Plasma</bullet>
 </DoomGuy>
 
 <Plasma>
-  <interval>200</interval>
-  <speed>10</speed>
+  <file>assets/fireball.png</file>
+  <startLoc x="-100" y="-100"/>
+  <frames>1</frames>
+  <imageWidth>10</imageWidth>
+  <imageHeight>10</imageHeight>
+  <frameInterval>2000</frameInterval>
+  <transparency>false</transparency>
+  <interval>500</interval>
+  <distance>100</distance>
+  <speed>75</speed>
+  <speedX>0</speedX>
+  <speedY>0</speedY>
+  <ammo>5</ammo>
 </Plasma>
 
 <Pinkie>
@@ -167,10 +189,10 @@
   <transparency>false</transparency>
   <interval>2000</interval>
   <distance>100</distance>
-  <speed>10</speed>
+  <speed>25</speed>
   <speedX>0</speedX>
   <speedY>0</speedY>
-  <ammo>5</ammo>
+  <ammo>3</ammo>
 </Fireball>
 
 </GameData>

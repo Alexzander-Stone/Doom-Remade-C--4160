@@ -8,7 +8,7 @@
 Hud::Hud() : 
 background("Hud"),
 doom_head("Hud/DoomFace"),
-shells(),
+shell("Hud/Shell"),
 screen_ratio((((Gamedata::getInstance().getXmlFloat("view/width") + (Gamedata::getInstance().getXmlFloat("view/height") )) / 
 	    ( Gamedata::getInstance().getXmlFloat(background.getName() + "/xRes") + Gamedata::getInstance().getXmlFloat(background.getName() + "/yRes"))))),
 active(true),
@@ -16,13 +16,11 @@ player(nullptr)
 {
   background.setScale(screen_ratio);
   doom_head.setScale(screen_ratio);
-  
 }
 
 Hud::Hud(Player* p) : 
 background("Hud"),
 doom_head("Hud/DoomFace"),
-shells(),
 screen_ratio((((Gamedata::getInstance().getXmlFloat("view/width") + (Gamedata::getInstance().getXmlFloat("view/height") )) / 
 	    ( Gamedata::getInstance().getXmlFloat(background.getName() + "/xRes") + Gamedata::getInstance().getXmlFloat(background.getName() + "/yRes"))))),
 active(true),
@@ -30,19 +28,11 @@ player(p)
 {
   background.setScale(screen_ratio);
   doom_head.setScale(screen_ratio);
-  shells.reserve(Gamedata::getInstance().getXmlInt( Gamedata::getInstance().getXmlStr(player->getName()+"/bullet") + "/ammo"));
-  for( int i = 0; i < Gamedata::getInstance().getXmlInt( Gamedata::getInstance().getXmlStr(player->getName()+"/bullet") + "/ammo"); i++ ) {
-    Sprite* newShell =  new Sprite("Hud/Shell");
-    newShell->setScale(5);
-    newShell->setPosition( Vector2f(210 + 50 * i, Gamedata::getInstance().getXmlInt("view/height") - 50) );
-    shells.push_back(newShell);
-  }
 }
 
 Hud::Hud(const Hud& h) : 
 background("Hud"),
 doom_head("Hud/DoomFace"),
-shells(),
 screen_ratio((((Gamedata::getInstance().getXmlFloat("view/width") + (Gamedata::getInstance().getXmlFloat("view/height") )) / 
 	    ( Gamedata::getInstance().getXmlFloat(background.getName() + "/xRes") + Gamedata::getInstance().getXmlFloat(background.getName() + "/yRes"))))),
 active(true),
@@ -50,29 +40,12 @@ player(h.player)
 {
   background.setScale(screen_ratio);
   doom_head.setScale(screen_ratio);
-  auto itr = shells.begin();
-  while (itr != shells.end());
-  {
-    delete *itr;
-    itr = shells.erase(itr);
-  }
 }
 
 Hud& Hud::operator=(const Hud& h){
   if(this == &h) return *this;
   player = h.player;
   return *this;
-}
-
-void Hud::setPlayer(Player* p){
-  player = p;
-  shells.reserve(Gamedata::getInstance().getXmlInt( Gamedata::getInstance().getXmlStr(player->getName()+"/bullet") + "/ammo"));
-  for( int i = 0; i < Gamedata::getInstance().getXmlInt( Gamedata::getInstance().getXmlStr(player->getName()+"/bullet") + "/ammo"); i++ ) {
-    Sprite* newShell =  new Sprite("Hud/Shell");
-    newShell->setScale(5);
-    newShell->setPosition( Vector2f(210 + 50 * i, Gamedata::getInstance().getXmlInt("view/height") - 50) );
-    shells.push_back(newShell);
-  }
 }
 
 void Hud::draw() const {
@@ -111,7 +84,11 @@ void Hud::draw() const {
 
   // Draw the number of projectiles available to the player.
   for( unsigned int i = 0; i < player->getBulletCount(); i++ ) {
-    shells[i]->draw();
+    IoMod::getInstance().writeText(
+      "Yeet",
+      Gamedata::getInstance().getXmlInt("view/width")/2 + Gamedata::getInstance().getXmlInt("font/size") * 4 * i, 
+      Gamedata::getInstance().getXmlInt("view/height")/2 - Gamedata::getInstance().getXmlInt("font/size") * 2
+    );
   }
 }
 

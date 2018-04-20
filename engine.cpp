@@ -53,6 +53,8 @@ Engine::Engine() :
   // Player object.
   player = new Player("DoomGuy");
   collidables.push_back(player);
+  // Hud reference for ammo count.
+  hud.setPlayer(player);
 
   // Enemies, attach to observor in collidables[0].
   Vector2f placeholderPlayerPos(20, 20);

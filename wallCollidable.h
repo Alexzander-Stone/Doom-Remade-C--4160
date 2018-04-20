@@ -50,6 +50,7 @@ public:
   void setRotation(int t) { theta = t; }
 
   void checkBulletCollision(Drawable*);
+  unsigned int getBulletCount(){ return 5 - bullets.size(); }
 
   // Movement options.
   virtual void right();
