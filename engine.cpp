@@ -286,14 +286,21 @@ void Engine::checkForCollisions(){
       currItr++;
     }
     // Check bullets to see if they have collided with 
-    // enemies/players.
+    // enemies/players and walls.
     std::vector<WallCollidable*>::iterator currGun = collidables.begin();
     while( currGun != collidables.end() ){
       auto currTarget = collidables.begin();
+      // Enemy/Player.
       while( currTarget != collidables.end() ) {
         if(currGun != currTarget)
-          (*currGun)->checkBulletCollision(*currTarget);
+          (*currGun)->checkBulletCollision((*currTarget)->getSpriteInfo());
         currTarget++;
+      }
+      // Walls.
+      auto currWall = sprites.begin();
+      while( currWall != sprites.end() ) {
+        (*currGun)->checkBulletCollision(*currWall);
+        currWall++;
       }
       currGun++;
     }

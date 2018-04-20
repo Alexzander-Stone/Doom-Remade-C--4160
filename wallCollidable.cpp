@@ -222,10 +222,10 @@ void WallCollidable::shoot(){
   timeSinceLastFrame = 0;
 }
 
-void WallCollidable::checkBulletCollision(WallCollidable* col){
+void WallCollidable::checkBulletCollision(Drawable* col){
   auto b = bullets.begin();
   while( b != bullets.end() ){
-    if((*b)->checkCollision(col->getSpriteInfo())){
+    if((*b)->checkCollision(col)){
       freeAmmo.push_back(*b);
       b = bullets.erase(b);
     }

@@ -49,7 +49,7 @@ public:
   float getRotation() const{ return theta; }
   void setRotation(int t) { theta = t; }
 
-  void checkBulletCollision(WallCollidable*);
+  void checkBulletCollision(Drawable*);
 
   // Movement options.
   virtual void right();
