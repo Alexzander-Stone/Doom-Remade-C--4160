@@ -112,16 +112,23 @@ void Engine::draw() const {
   Uint32* textPixels; 
   const SDL_Surface* textSurface; 
 
+  int viewWidth = Gamedata::getInstance().getXmlInt("view/width");
+  int viewHeight = Gamedata::getInstance().getXmlInt("view/height");
+  int raycastWidth = Gamedata::getInstance().getXmlInt("raycastResolution/width");
+  int raycastHeight = Gamedata::getInstance().getXmlInt("raycastResolution/height");
+  
+
+  
   for( int vertPixelX = 0; 
-       vertPixelX < Gamedata::getInstance().getXmlInt("view/width"); 
+       vertPixelX < viewWidth; 
        vertPixelX++ 
   ) {
 
     // Scale the screen based on the original raycast resolution.	
-    if(vertPixelX % (Gamedata::getInstance().getXmlInt("view/width") / Gamedata::getInstance().getXmlInt("raycastResolution/width")) == 0)
+    if(vertPixelX % (viewWidth / raycastWidth) == 0)
     {
       // Current X-coor in camera (-1 to 1).
-      float cameraX = 2.0f * vertPixelX / Gamedata::getInstance().getXmlFloat("view/width") - 1;
+      float cameraX = 2.0f * vertPixelX / viewWidth - 1;
       float rayDirX = player->getXFov() + planeX * cameraX;
       float rayDirY = player->getYFov() + planeY * cameraX;
 
@@ -228,28 +235,27 @@ void Engine::draw() const {
         else{
           wallDistance = ( gridY - posY + (1 - incrementY) / 2 ) / rayDirY;
         }	
-        int vertLineLength = (Gamedata::getInstance().getXmlInt("view/height") * 10 ) / (wallDistance);
+        int vertLineLength = viewHeight * 10 / (wallDistance);
 
         // Find starting and ending pixel to draw to.
-        drawTop = -vertLineLength / 2 + ( Gamedata::getInstance().getXmlInt("view/height") ) / 2;
+        drawTop = -vertLineLength / 2 + viewHeight / 2;
         if (drawTop < 0)
           drawTop = 0;
 
-        drawBottom = vertLineLength / 2 + ( Gamedata::getInstance().getXmlInt("view/height") ) / 2;
-        if (drawBottom >= Gamedata::getInstance().getXmlInt("view/height"))
-          drawBottom = Gamedata::getInstance().getXmlInt("view/height") - 1;
+        drawBottom = vertLineLength / 2 + viewHeight / 2;
+        if (drawBottom >= viewHeight)
+          drawBottom = viewHeight - 1;
 
-        // Horizontal pixels.
-        float horizPixel = 0;
+        // X location where wall was hit by ray.
+        float wallRayX = 0;
         if(side == 0)
-          horizPixel = posY + wallDistance * rayDirY;
+          wallRayX = posY + wallDistance * rayDirY;
         else
-          horizPixel = posX + wallDistance * rayDirX;
-        // Test with rounding.
-        horizPixel -= floor(horizPixel);
+          wallRayX = posX + wallDistance * rayDirX;
+        wallRayX -= floor(wallRayX);
 
         // Find the coordinate on the image of the sprite.
-        int textureX = int(horizPixel * float((*spriteCollided)->getScaledWidth()));
+        int textureX = wallRayX * float((*spriteCollided)->getScaledWidth());
         if(side == 0 && rayDirX > 0) textureX = (*spriteCollided)->getScaledWidth() - textureX - 1;
         if(side == 1 && rayDirY > 0) textureX = (*spriteCollided)->getScaledWidth() - textureX - 1;
 
@@ -263,16 +269,21 @@ void Engine::draw() const {
         unsigned pixel;
         for( int vertPixelY = drawTop; vertPixelY < drawBottom; vertPixelY++ )
         {
-          int d = vertPixelY * 256 - (Gamedata::getInstance().getXmlInt("view/height")  ) * 128 + vertLineLength * 128;
-          int textureY = ((d * (*spriteCollided)->getScaledHeight()) / vertLineLength) / 256;
+          // Scale the screen based on the original raycast resolution.	
+          if( (vertPixelY % (viewHeight / raycastHeight)) == 0)
+          {
+            int d = vertPixelY * 256 - viewHeight * 128 + vertLineLength * 128;
+            int textureY = ((d * ((*spriteCollided)->getScaledHeight()) / vertLineLength)) / 256;
           
-          pixel = textPixels[(textureY * (*spriteCollided)->getScaledWidth()) + textureX];
-          SDL_GetRGBA(pixel, textSurface->format, 
+            pixel = textPixels[(textureY * (*spriteCollided)->getScaledWidth()) + textureX];
+            SDL_GetRGBA(pixel, textSurface->format, 
                       &red, &green, &blue, &alpha);
 
 
-          SDL_SetRenderDrawColor(renderer, red, green, blue, alpha);
-          SDL_RenderDrawPoint(renderer, vertPixelX, vertPixelY);
+            SDL_SetRenderDrawColor(renderer, red, green, blue, alpha);
+            SDL_RenderDrawPoint(renderer, vertPixelX, vertPixelY);
+
+          }
         }
 
         //SDL_SetRenderDrawColor(renderer, side==0?255:128, 0, 0, 255);
