@@ -128,3 +128,10 @@ void Hud::update(Uint32 ticks) {
   
   doom_head.update(ticks);
 }
+
+Hud::~Hud(){
+  for(auto ptr : shells)
+  {
+    delete ptr;
+  }
+}

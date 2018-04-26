@@ -9,7 +9,7 @@ class Hud {
     Hud();
     Hud(Player* p);
     Hud(const Hud&);
-    ~Hud(){}
+    ~Hud();
 
     Hud& operator=(const Hud&);
     

@@ -27,6 +27,7 @@ Engine::~Engine() {
   {
       delete collide;
   }
+
   std::cout << "Terminating program" << std::endl;
 }
 
