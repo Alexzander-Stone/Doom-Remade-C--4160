@@ -27,7 +27,7 @@
 </world>
 
 <arena>
-  <size>2</size>
+  <size>6</size>
 </arena>
 
 <back>
@@ -92,6 +92,8 @@
   <numberOfWalls>10</numberOfWalls>
   <Horizontal>
 	  <file>assets/horizontalWall.png</file>
+    <x>20</x>
+    <y>20</y>
 	  <startLoc x="2000" y="2000"/>
 	  <speedX>0</speedX>
 	  <speedY>0</speedY>
@@ -101,6 +103,8 @@
     
   <Vertical>
 	  <file>assets/verticalWall.png</file>
+    <x>20</x>
+    <y>20</y>
 	  <startLoc x="0" y="0"/>
 	  <speedX>0</speedX>
 	  <speedY>0</speedY>
@@ -144,7 +148,7 @@
   <imageHeight>10</imageHeight>
   <frameInterval>2000</frameInterval>
   <transparency>false</transparency>
-  <interval>500</interval>
+  <interval>100</interval>
   <distance>100</distance>
   <speed>75</speed>
   <speedX>0</speedX>

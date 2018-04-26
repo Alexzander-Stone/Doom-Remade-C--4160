@@ -69,13 +69,15 @@ Engine::Engine() :
 
   // Boxed Arena Walls
   for(int i = 0; i < Gamedata::getInstance().getXmlInt("arena/size"); i++) {
-    Vector2f spritePos(60*i, 0*i);
+    Vector2f spritePos(Gamedata::getInstance().getXmlInt("Wall/Horizontal/x")*i, 0*i);
     sprites.push_back( new SmartSprite("Wall/Horizontal", placeholderPlayerPos, w, h, spritePos) );
-    spritePos = Vector2f(60*i, 60*Gamedata::getInstance().getXmlInt("arena/size"));
+    spritePos = Vector2f( Gamedata::getInstance().getXmlInt("Wall/Horizontal/x")*i, 
+                          Gamedata::getInstance().getXmlInt("Wall/Horizontal/x")*Gamedata::getInstance().getXmlInt("arena/size"));
     sprites.push_back( new SmartSprite("Wall/Horizontal", placeholderPlayerPos, w, h, spritePos) );
-    spritePos = Vector2f(0*i, 60*i);
+    spritePos = Vector2f(0*i, Gamedata::getInstance().getXmlInt("Wall/Vertical/y")*i);
     sprites.push_back( new SmartSprite("Wall/Vertical", placeholderPlayerPos, w, h, spritePos) );
-    spritePos = Vector2f(60*Gamedata::getInstance().getXmlInt("arena/size"), i*60);
+    spritePos = Vector2f( Gamedata::getInstance().getXmlInt("Wall/Vertical/x")*Gamedata::getInstance().getXmlInt("arena/size"), 
+                          i*Gamedata::getInstance().getXmlInt("Wall/Vertical/y"));
     sprites.push_back( new SmartSprite("Wall/Vertical", placeholderPlayerPos, w, h, spritePos) );
   }
 
@@ -89,6 +91,9 @@ Engine::Engine() :
 }
 
 void Engine::draw() const {
+  // Clear render.
+  SDL_RenderClear(renderer);
+  // Draw background.
   world.draw(); 
 
   // Loop through all the vertical stripes of the collidables[0]'s view (x's) based on 
@@ -99,6 +104,13 @@ void Engine::draw() const {
   int side = 0;
   int drawTop = 0;
   int drawBottom = 0;
+  // Boolean to optimize performance for rays hitting the same sprite. Saves
+  // cycles by only updating surface if new sprite has been hit.
+  std::vector<SmartSprite*>::const_iterator spriteCollided ;
+  bool newSpriteCollided = true;
+
+  Uint32* textPixels; 
+  const SDL_Surface* textSurface; 
 
   for( int vertPixelX = 0; 
        vertPixelX < Gamedata::getInstance().getXmlInt("view/width"); 
@@ -184,48 +196,94 @@ void Engine::draw() const {
         // Check for collision with a wall object.
         raySprite.setX(gridX);
         raySprite.setY(gridY);
-        
+
         std::vector<SmartSprite*>::const_iterator spriteIt = sprites.begin();
         while( spriteIt != sprites.end() && rayHit == 0){
           if( strategies[currentStrategy]->execute( raySprite, **spriteIt) ){
             rayHit = 1; 
+            if( spriteCollided == spriteIt ){
+              newSpriteCollided = false;
+            }
+            else
+              newSpriteCollided = true;
+              
+            spriteCollided = spriteIt;
           }
-          ++spriteIt;
+          else
+            ++spriteIt;
         }
       }
 
+      if(rayHit == 1)
+      {
+        // Find the total distance to the wall from the current vertPixelX.
+        // This will be used to determine the length of the line drawn for 
+        //the current vertPixelX.
+        // Don't need to check for 0 for each of the functions since the 
+        // side it hit's will tell us which value has been incrementing, 
+        // and thus which is NOT 0.
+        if(side == 0){
+          wallDistance = ( gridX - posX + (1 - incrementX) / 2 ) / rayDirX;
+        }
+        else{
+          wallDistance = ( gridY - posY + (1 - incrementY) / 2 ) / rayDirY;
+        }	
+        int vertLineLength = (Gamedata::getInstance().getXmlInt("view/height") * 10 ) / (wallDistance);
 
-      // Find the total distance to the wall from the current vertPixelX.
-      // This will be used to determine the length of the line drawn for 
-      //the current vertPixelX.
-      // Don't need to check for 0 for each of the functions since the 
-      // side it hit's will tell us which value has been incrementing, 
-      // and thus which is NOT 0.
-      if(side == 0){
-        wallDistance = ( gridX - posX + (1 - incrementX) / 2 ) / rayDirX;
+        // Find starting and ending pixel to draw to.
+        drawTop = -vertLineLength / 2 + ( Gamedata::getInstance().getXmlInt("view/height") ) / 2;
+        if (drawTop < 0)
+          drawTop = 0;
+
+        drawBottom = vertLineLength / 2 + ( Gamedata::getInstance().getXmlInt("view/height") ) / 2;
+        if (drawBottom >= Gamedata::getInstance().getXmlInt("view/height"))
+          drawBottom = Gamedata::getInstance().getXmlInt("view/height") - 1;
+
+        // Horizontal pixels.
+        float horizPixel = 0;
+        if(side == 0)
+          horizPixel = posY + wallDistance * rayDirY;
+        else
+          horizPixel = posX + wallDistance * rayDirX;
+        // Test with rounding.
+        horizPixel -= floor(horizPixel);
+
+        // Find the coordinate on the image of the sprite.
+        int textureX = int(horizPixel * float((*spriteCollided)->getScaledWidth()));
+        if(side == 0 && rayDirX > 0) textureX = (*spriteCollided)->getScaledWidth() - textureX - 1;
+        if(side == 1 && rayDirY > 0) textureX = (*spriteCollided)->getScaledWidth() - textureX - 1;
+
+        // TextPixels contains the pixels of the obj that collided with the
+        // ray.
+        if(newSpriteCollided == true){
+          textSurface = (*spriteCollided)->getSurface();
+          textPixels = static_cast<Uint32 *>(textSurface->pixels);
+        }
+        Uint8 red, green, blue, alpha;
+        unsigned pixel;
+        for( int vertPixelY = drawTop; vertPixelY < drawBottom; vertPixelY++ )
+        {
+          int d = vertPixelY * 256 - (Gamedata::getInstance().getXmlInt("view/height")  ) * 128 + vertLineLength * 128;
+          int textureY = ((d * (*spriteCollided)->getScaledHeight()) / vertLineLength) / 256;
+          
+          pixel = textPixels[(textureY * (*spriteCollided)->getScaledWidth()) + textureX];
+          SDL_GetRGBA(pixel, textSurface->format, 
+                      &red, &green, &blue, &alpha);
+
+
+          SDL_SetRenderDrawColor(renderer, red, green, blue, alpha);
+          SDL_RenderDrawPoint(renderer, vertPixelX, vertPixelY);
+        }
+
+        //SDL_SetRenderDrawColor(renderer, side==0?255:128, 0, 0, 255);
+        //SDL_RenderDrawLine(renderer, vertPixelX, drawTop, vertPixelX, drawBottom);   
       }
-      else{
-        wallDistance = ( gridY - posY + (1 - incrementY) / 2 ) / rayDirY;
-      }	
-      int vertLineLength = (Gamedata::getInstance().getXmlInt("view/height") * 10 ) / (wallDistance);
-
-      // Find starting and ending pixel to draw to.
-      drawTop = -vertLineLength / 2 + ( Gamedata::getInstance().getXmlInt("view/height") ) / 2;
-      if (drawTop < 0)
-        drawTop = 0;
-
-      drawBottom = vertLineLength / 2 + ( Gamedata::getInstance().getXmlInt("view/height") ) / 2;
-      if (drawBottom >= Gamedata::getInstance().getXmlInt("view/height"))
-        drawBottom = Gamedata::getInstance().getXmlInt("view/height") - 1;
-
-      SDL_SetRenderDrawColor(renderer, 0, side==0?255:128, 0, 255);
-      SDL_RenderDrawLine(renderer, vertPixelX, drawTop, vertPixelX, drawBottom);   
     }
     else {
-      SDL_SetRenderDrawColor(renderer, 0, side==0?255:128, 0, 255);
-      SDL_RenderDrawLine(renderer, vertPixelX, drawTop, vertPixelX, drawBottom);
+      //SDL_SetRenderDrawColor(renderer, side==0?255:128, 0, 0, 255);
+      //SDL_RenderDrawLine(renderer, vertPixelX, drawTop, vertPixelX, drawBottom);
     }  
-  }
+  } 
 
   // Draw all sprites in container.
   for( auto& it : sprites )
@@ -241,6 +299,7 @@ void Engine::draw() const {
     hud.draw();
   viewport.draw();
 
+  // Draw the texture/pixels of walls and sprites.
   SDL_RenderPresent(renderer);
 }
 

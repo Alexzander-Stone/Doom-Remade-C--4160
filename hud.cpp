@@ -97,17 +97,22 @@ void Hud::draw() const {
   IoMod::getInstance().
       writeText("Use WASD to move.", 
 		Gamedata::getInstance().getXmlInt("view/width") - Gamedata::getInstance().getXmlInt("font/size") * 13, 
-		Gamedata::getInstance().getXmlInt("view/height") - Gamedata::getInstance().getXmlInt("font/size") * 6);
+		Gamedata::getInstance().getXmlInt("view/height") - Gamedata::getInstance().getXmlInt("font/size") * 4 - 20);
   
   IoMod::getInstance().
       writeText("Use left/right arrow to rotate.", 
 		Gamedata::getInstance().getXmlInt("view/width") - Gamedata::getInstance().getXmlInt("font/size") * 13, 
-		Gamedata::getInstance().getXmlInt("view/height") - Gamedata::getInstance().getXmlInt("font/size") * 4);
+		Gamedata::getInstance().getXmlInt("view/height") - Gamedata::getInstance().getXmlInt("font/size") * 3 - 15);
+
+  IoMod::getInstance().
+      writeText("Press left shift to shoot.", 
+		Gamedata::getInstance().getXmlInt("view/width") - Gamedata::getInstance().getXmlInt("font/size") * 13, 
+		Gamedata::getInstance().getXmlInt("view/height") - Gamedata::getInstance().getXmlInt("font/size") * 2 - 10);
 
   IoMod::getInstance().
       writeText("F1 to remove hud.", 
 		Gamedata::getInstance().getXmlInt("view/width") - Gamedata::getInstance().getXmlInt("font/size") * 13, 
-		Gamedata::getInstance().getXmlInt("view/height") - Gamedata::getInstance().getXmlInt("font/size") * 2);
+		Gamedata::getInstance().getXmlInt("view/height") - Gamedata::getInstance().getXmlInt("font/size") * 1 - 5);
 
   // Draw the number of projectiles available to the player.
   for( unsigned int i = 0; i < player->getBulletCount(); i++ ) {

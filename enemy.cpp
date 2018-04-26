@@ -53,7 +53,6 @@ void Enemy::update(Uint32 ticks) {
   deltaX = getPreviousX() - getSpriteInfo()->getX() - getXFov();
   deltaY = getPreviousY() - getSpriteInfo()->getY() - getYFov();
   float tempTheta = atan2(deltaY, deltaX) * 57.2958 + 180;
-  std::cout << tempTheta << " and " << angleBetweenVectors << std::endl;
   
   float leftRotCheck = angleBetweenVectors - tempTheta;
   float rightRotCheck = tempTheta - angleBetweenVectors;
