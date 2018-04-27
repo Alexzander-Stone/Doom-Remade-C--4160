@@ -41,10 +41,6 @@ void WallCollidable::draw() const{
 }
 
 void WallCollidable::update(Uint32 ticks){
-  
-  std::cout << getSpriteInfo()->getVelocityX() << std::endl;
-  std::cout << getSpriteInfo()->getVelocityY() << std::endl;
-
   timeSinceLastFrame += ticks;
   for( Bullet* bullet : bullets )
     bullet->update(ticks);

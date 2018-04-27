@@ -95,76 +95,71 @@ Engine::Engine() :
 }
 
 void Engine::draw() const {
-  // Clear render.
-  SDL_RenderClear(renderer);
   // Draw background.
   world.draw(); 
 
-  // Loop through all the vertical stripes of the collidables[0]'s view (x's) based on 
+  // Loop through all the vertical stripes of the player's view (x's) based on 
   // the screen width/height. This will calculate the rays using a grid system.
+  // Camera/plane variables for projection/rendering cycles.
   float planeX = player->getPlaneX(); 
   float planeY = player->getPlaneY();
-  // These variables are used for scaling
-  int side = 0;
-  int drawTop = 0;
-  int drawBottom = 0;
-  // Boolean to optimize performance for rays hitting the same sprite. Saves
-  // cycles by only updating surface if new sprite has been hit.
-  std::vector<SmartSprite*>::const_iterator spriteCollided ;
-  bool newSpriteCollided = true;
 
-  Uint32* textPixels; 
-  const SDL_Surface* textSurface; 
-
+  // These variables are used for scaling the screen for multiple resolutions.
   int viewWidth = Gamedata::getInstance().getXmlInt("view/width");
   int viewHeight = Gamedata::getInstance().getXmlInt("view/height");
   int raycastWidth = Gamedata::getInstance().getXmlInt("raycastResolution/width");
   int raycastHeight = Gamedata::getInstance().getXmlInt("raycastResolution/height");
+  int side = 0;
+  int drawTop = 0;
+  int drawBottom = 0;
+
+  // Boolean to optimize performance for rays hitting the same sprite. Saves
+  // cycles by only updating surface if new sprite has been hit.
+  bool newSpriteCollided = true;
+  std::vector<SmartSprite*>::const_iterator spriteCollided;
+  Uint32* textPixels; 
+  const SDL_Surface* textSurface; 
   
+  // Pixel data for drawing textures.
+  Uint8 red, green, blue, alpha;
+  unsigned pixel;
 
   
-  for( int vertPixelX = 0; 
-       vertPixelX < viewWidth; 
-       vertPixelX++ 
-  ) {
-
-    // Scale the screen based on the original raycast resolution.	
+  // Cycle through each column of pixels that will be rendered to the screen.
+  for( int vertPixelX = 0; vertPixelX < viewWidth; vertPixelX++ ) {
+    // Scale the screen based on the original raycast resolution. Effectively
+    // duplicate the previous pixels to create illusion of size increase.	
     if(vertPixelX % (viewWidth / raycastWidth) == 0)
     {
       // Current X-coor in camera (-1 to 1).
-      float cameraX = 2.0f * static_cast<float>(vertPixelX) / static_cast<float>(viewWidth) - 1;
-      float rayDirX = player->getXFov() + planeX * cameraX;
-      float rayDirY = player->getYFov() + planeY * cameraX;
-
-
-      // Lengths of the ray from collidables[0]X and playerY to first
+      // Current player position, centered.
+      // Current "grid" position, made for performance increase.
+      // Lengths of the ray from playerX and playerY to first
       // increment of the ray (x and y), and from one ray coordinates 
       // step to the next.
+      float cameraX = 2.0f * static_cast<float>(vertPixelX) / static_cast<float>(viewWidth) - 1;
       float posX = player->getX() + player->getSpriteInfo()->getScaledWidth()/2 ;
-      float posY = player->getY() + player->getSpriteInfo()->getScaledHeight()/2;
-
-      // Use a grid system to test raycasting potential.
-      // TODO: ints create better view when not on wall, floats create better
-      // view when on wall. Determine how to fix.
+      float posY = player->getY() + player->getSpriteInfo()->getScaledHeight()/2; 
       int gridX = posX;
       int gridY = posY;
-   
+      float rayDirX = player->getXFov() + planeX * cameraX;
+      float rayDirY = player->getYFov() + planeY * cameraX;
+            
       // Total length of the coordinate to the first wall encountered.
-      float lengthDistX = 0;
-      float lengthDistY = 0;
-
+      // Needed for determining the size/length of the wall to draw.
       // Amount to increment the length when attempting to find the 
       // collided wall's x and y.
+      float lengthDistX = 0;
+      float lengthDistY = 0;
       float deltaDistX = rayDirX != 0?fabs(1/rayDirX):0;
       float deltaDistY = rayDirY != 0?fabs(1/rayDirY):0;
       float wallDistance = 0;
 
       // Direction to move the ray's x and y coordinates when attempting 
       // to find a "hit" (1 or -1).
+      // The value that the ray hit (Wall) and side that it hit.
       float incrementX;
       float incrementY;
-
-      // The value that the ray hit (Wall) and side that it hit.
       int rayHit = 0; 
 
       // Determine which way to send the increments. Negative values will head towards 
@@ -187,10 +182,11 @@ void Engine::draw() const {
         lengthDistY = (gridY - posY + 1.0f) * deltaDistY;
       }
 
-      // Loop DDA until wall has been hit. Increment a single planeRay coordinate until 
+      // Loop until wall has been hit. Increment a single planeRay/lengthDist coordinate until 
       // it reaches past the other coordinate. Can be used to determine what part of the tile
-      // the ray has hit. Plane ray x/y are the length while the mapx
-      // TODO: change increment to float
+      // the ray has hit (side). 
+      // Once collision with a wall has been found with the single ray, record
+      // the sprite it has hit so it can be used to render it's image/pixels.
       Sprite raySprite("Ray");
       while (rayHit == 0)
       {
@@ -226,74 +222,70 @@ void Engine::draw() const {
         }
       }
 
-      if(rayHit == 1)
+      // Find the total distance to the wall from the current vertPixelX.
+      // This will be used to determine the length of the line drawn for 
+      //the current vertPixelX.
+      // Don't need to check for 0 for each of the functions since the 
+      // side it hit's will tell us which value has been incrementing, 
+      // and thus which is NOT 0.
+      if(side == 0){
+        wallDistance = ( gridX - posX + (1 - incrementX) / 2 ) / rayDirX;
+      }
+      else{
+        wallDistance = ( gridY - posY + (1 - incrementY) / 2 ) / rayDirY;
+      }	
+      float vertLineLength = viewHeight  / (wallDistance);
+
+      // Find starting and ending pixel to draw to.
+      drawTop = -vertLineLength / 2 + viewHeight / 2;
+      if (drawTop < 0)
+        drawTop = 0;
+
+      drawBottom = vertLineLength / 2 + viewHeight / 2;
+      if (drawBottom >= viewHeight)
+        drawBottom = viewHeight - 1;
+
+      // X location where wall was hit by ray. Needed for determining which
+      // pixel to draw from the wall image that has collided with the ray.
+      float wallRayX = 0;
+      if(side == 0)
+        wallRayX = posY + wallDistance * rayDirY;
+      else
+        wallRayX = posX + wallDistance * rayDirX;
+      wallRayX -= floor(wallRayX);
+
+      // Find the x coordinate on the image of the sprite based on wall ray x hit
+      // location.
+      int textureX = wallRayX * float((*spriteCollided)->getScaledWidth());
+      if(side == 0 && rayDirX > 0) textureX = (*spriteCollided)->getScaledWidth() - textureX - 1;
+      if(side == 1 && rayDirY > 0) textureX = (*spriteCollided)->getScaledWidth() - textureX - 1;
+
+      // TextPixels contains the pixels of the obj that collided with the
+      // ray. These pixels will be the array for which we draw from (based on
+      // pixel perfect collision strategy).
+      if(newSpriteCollided == true){
+        textSurface = (*spriteCollided)->getSurface();
+        textPixels = static_cast<Uint32 *>(textSurface->pixels);
+      }
+      
+      // Begin rendering the rows of each column to the screen. By using the
+      // previously found texture x coordinate, we can determine the y
+      // coordinate on the texture using the wall location.
+      for( int vertPixelY = drawTop; vertPixelY < drawBottom; vertPixelY++ )
       {
-        // Find the total distance to the wall from the current vertPixelX.
-        // This will be used to determine the length of the line drawn for 
-        //the current vertPixelX.
-        // Don't need to check for 0 for each of the functions since the 
-        // side it hit's will tell us which value has been incrementing, 
-        // and thus which is NOT 0.
-        if(side == 0){
-          wallDistance = ( gridX - posX + (1 - incrementX) / 2 ) / rayDirX;
-        }
-        else{
-          wallDistance = ( gridY - posY + (1 - incrementY) / 2 ) / rayDirY;
-        }	
-        //int vertLineLength = viewHeight *10  / (wallDistance);
-        float vertLineLength = viewHeight  / (wallDistance);
-
-        // Find starting and ending pixel to draw to.
-        drawTop = -vertLineLength / 2 + viewHeight / 2;
-        if (drawTop < 0)
-          drawTop = 0;
-
-        drawBottom = vertLineLength / 2 + viewHeight / 2;
-        if (drawBottom >= viewHeight)
-          drawBottom = viewHeight - 1;
-
-        // X location where wall was hit by ray.
-        float wallRayX = 0;
-        if(side == 0)
-          wallRayX = posY + wallDistance * rayDirY;
-        else
-          wallRayX = posX + wallDistance * rayDirX;
-        wallRayX -= floor(wallRayX);
-
-        // Find the coordinate on the image of the sprite.
-        int textureX = wallRayX * float((*spriteCollided)->getScaledWidth());
-        if(side == 0 && rayDirX > 0) textureX = (*spriteCollided)->getScaledWidth() - textureX - 1;
-        if(side == 1 && rayDirY > 0) textureX = (*spriteCollided)->getScaledWidth() - textureX - 1;
-
-        // TextPixels contains the pixels of the obj that collided with the
-        // ray.
-        if(newSpriteCollided == true){
-          textSurface = (*spriteCollided)->getSurface();
-          textPixels = static_cast<Uint32 *>(textSurface->pixels);
-        }
-        Uint8 red, green, blue, alpha;
-        unsigned pixel;
-        for( int vertPixelY = drawTop; vertPixelY < drawBottom; vertPixelY++ )
+        // Scale the screen based on the original raycast resolution.	
+        if( (vertPixelY % (viewHeight / raycastHeight)) == 0)
         {
-          // Scale the screen based on the original raycast resolution.	
-          if( (vertPixelY % (viewHeight / raycastHeight)) == 0)
-          {
-            int d = vertPixelY * 256 - viewHeight * 128 + vertLineLength * 128;
-            int textureY = ((d * ((*spriteCollided)->getScaledHeight()) / vertLineLength)) / 256;
-          
-            pixel = textPixels[(textureY * (*spriteCollided)->getScaledWidth()) + textureX];
-            SDL_GetRGBA(pixel, textSurface->format, 
-                      &red, &green, &blue, &alpha);
+          int d = vertPixelY * 256 - viewHeight * 128 + vertLineLength * 128;
+          int textureY = ((d * ((*spriteCollided)->getScaledHeight()) / vertLineLength)) / 256;
+        
+          pixel = textPixels[(textureY * (*spriteCollided)->getScaledWidth()) + textureX];
+          SDL_GetRGBA(pixel, textSurface->format, 
+                    &red, &green, &blue, &alpha);
 
-
-            SDL_SetRenderDrawColor(renderer, red, green, blue, alpha);
-            SDL_RenderDrawPoint(renderer, vertPixelX, vertPixelY);
-
-          }
+          SDL_SetRenderDrawColor(renderer, red, green, blue, alpha);
+          SDL_RenderDrawPoint(renderer, vertPixelX, vertPixelY);
         }
-
-        //SDL_SetRenderDrawColor(renderer, side==0?255:128, 0, 0, 255);
-        //SDL_RenderDrawLine(renderer, vertPixelX, drawTop, vertPixelX, drawBottom);   
       }
     }
     else {
@@ -316,7 +308,6 @@ void Engine::draw() const {
     hud.draw();
   viewport.draw();
 
-  // Draw the texture/pixels of walls and sprites.
   SDL_RenderPresent(renderer);
 }
 
@@ -342,22 +333,8 @@ void Engine::checkForCollisions(){
 	        ++spriteIt;
 	        ++currentSprite;
 	      }
-/*
-        // Check against other collidable objects.
-	      auto colIt = collidables.begin();
-	      while( colIt != collidables.end() ){
-	        // Check for collision between collidables[0] and object.
-	        if( (*colIt)->getSpriteInfo() == (*currItr)->getSpriteInfo() )
-		        ; // Ignore self image.
-	        else if( strategies[currentStrategy]->execute( *(*currItr)->getSpriteInfo(), *(*colIt)->getSpriteInfo() ) ){
-		        (*currItr)->getSpriteInfo()->attach( sprites[currentSprite] );
-		        collisionDetected = true;
-	        }
-	        ++colIt;
-	        ++currentSprite;
-	      }
-*/
-	      if( collisionDetected == true){
+	      
+        if( collisionDetected == true){
 	        (*currItr)->collisionDetected();
 	      }
       }
