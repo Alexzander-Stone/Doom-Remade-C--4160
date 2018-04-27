@@ -132,7 +132,7 @@ void Engine::draw() const {
     if(vertPixelX % (viewWidth / raycastWidth) == 0)
     {
       // Current X-coor in camera (-1 to 1).
-      float cameraX = 2.0f * vertPixelX / viewWidth - 1;
+      float cameraX = 2.0f * static_cast<float>(vertPixelX) / static_cast<float>(viewWidth) - 1;
       float rayDirX = player->getXFov() + planeX * cameraX;
       float rayDirY = player->getYFov() + planeY * cameraX;
 
@@ -146,8 +146,8 @@ void Engine::draw() const {
       // Use a grid system to test raycasting potential.
       // TODO: ints create better view when not on wall, floats create better
       // view when on wall. Determine how to fix.
-      float gridX = posX;
-      float gridY = posY;
+      int gridX = posX;
+      int gridY = posY;
    
       // Total length of the coordinate to the first wall encountered.
       float lengthDistX = 0;

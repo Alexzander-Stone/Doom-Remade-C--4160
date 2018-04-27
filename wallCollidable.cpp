@@ -74,7 +74,12 @@ void WallCollidable::collisionDetected(){
     if( (*it)->getName() == "Wall/Horizontal") {
       while ( currentY + currentIncrement <= collision_obj_y + (*it)->getScaledHeight() + 1.001 &&
 		          currentY + currentIncrement + getScaledHeight() >= collision_obj_y - 1.001 ) {
-	      currentIncrement += -momentumY;
+        if(momentumY > 2)
+	        currentIncrement += -momentumY;
+        else{
+          currentIncrement += momentumY>=0?-.001:.001 ;
+          collidableSprite.setVelocity( Vector2f(0,0) );   
+        }
       }
       currentY += currentIncrement;
       collidableSprite.setY( currentY );
@@ -82,7 +87,12 @@ void WallCollidable::collisionDetected(){
     else if( (*it)->getName() == "Wall/Vertical" ) {
       while ( currentX + currentIncrement <= collision_obj_x + (*it)->getScaledWidth() + 1.001 && 
 	            currentX + getScaledWidth() + currentIncrement >= collision_obj_x - 1.001 ) {
-	      currentIncrement += -momentumX ;
+        if(momentumX > 2)
+	        currentIncrement += -momentumX ;
+        else{
+          currentIncrement += momentumX>=0?-.001:.001;
+          collidableSprite.setVelocity( Vector2f(0,0) );   
+        }
       }
       currentX += currentIncrement;
       collidableSprite.setX( currentX );
