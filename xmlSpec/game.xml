@@ -22,12 +22,12 @@
 </raycastResolution>
 
 <world>
-  <width>20000</width>
-  <height>8000</height>
+  <width>10000</width>
+  <height>4000</height>
 </world>
 
 <arena>
-  <size>6</size>
+  <size>4</size>
 </arena>
 
 <back>
@@ -118,13 +118,13 @@
   <file>assets/doomGuy.png</file>
   <startLoc x="40" y="40"/>
   <frames>3</frames>
-  <imageWidth>10</imageWidth>
-  <imageHeight>10</imageHeight>
+  <imageWidth>2</imageWidth>
+  <imageHeight>2</imageHeight>
   <frameInterval>2000</frameInterval>
   <speedY>0</speedY>
   <speedX>0</speedX>
   <maxSpeed>25</maxSpeed>
-  <incSpeed>5</incSpeed>
+  <incSpeed>3</incSpeed>
   <transparency>false</transparency>
   <xFovStart>-1</xFovStart>
   <yFovStart>0</yFovStart>
@@ -134,7 +134,7 @@
   <momentumSlowdown>.9</momentumSlowdown>
   <bounceSpeedRequirement>240</bounceSpeedRequirement>
   <Bounce>
-    <incSpeed>5</incSpeed>
+    <incSpeed>1</incSpeed>
     <changeVel>.8</changeVel>
   </Bounce>
   <bullet>Plasma</bullet>

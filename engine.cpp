@@ -70,15 +70,18 @@ Engine::Engine() :
 
   // Boxed Arena Walls
   for(int i = 0; i < Gamedata::getInstance().getXmlInt("arena/size"); i++) {
-    Vector2f spritePos(Gamedata::getInstance().getXmlInt("Wall/Horizontal/x")*i, 0*i);
+    Vector2f spritePos(Gamedata::getInstance().getXmlInt("Wall/Horizontal/x")*i+20, 0*i);
     sprites.push_back( new SmartSprite("Wall/Horizontal", placeholderPlayerPos, w, h, spritePos) );
-    spritePos = Vector2f( Gamedata::getInstance().getXmlInt("Wall/Horizontal/x")*i, 
-                          Gamedata::getInstance().getXmlInt("Wall/Horizontal/x")*Gamedata::getInstance().getXmlInt("arena/size"));
+
+    spritePos = Vector2f( Gamedata::getInstance().getXmlInt("Wall/Horizontal/x")*i+20, 
+                          Gamedata::getInstance().getXmlInt("Wall/Horizontal/x")*Gamedata::getInstance().getXmlInt("arena/size") + 20);
     sprites.push_back( new SmartSprite("Wall/Horizontal", placeholderPlayerPos, w, h, spritePos) );
-    spritePos = Vector2f(0*i, Gamedata::getInstance().getXmlInt("Wall/Vertical/y")*i);
+
+    spritePos = Vector2f(0*i, Gamedata::getInstance().getXmlInt("Wall/Vertical/y")*i+20);
     sprites.push_back( new SmartSprite("Wall/Vertical", placeholderPlayerPos, w, h, spritePos) );
-    spritePos = Vector2f( Gamedata::getInstance().getXmlInt("Wall/Vertical/x")*Gamedata::getInstance().getXmlInt("arena/size"), 
-                          i*Gamedata::getInstance().getXmlInt("Wall/Vertical/y"));
+
+    spritePos = Vector2f( Gamedata::getInstance().getXmlInt("Wall/Vertical/x")*Gamedata::getInstance().getXmlInt("arena/size") + 20, 
+                          i*Gamedata::getInstance().getXmlInt("Wall/Vertical/y")+20);
     sprites.push_back( new SmartSprite("Wall/Vertical", placeholderPlayerPos, w, h, spritePos) );
   }
 
@@ -187,6 +190,7 @@ void Engine::draw() const {
       // Loop DDA until wall has been hit. Increment a single planeRay coordinate until 
       // it reaches past the other coordinate. Can be used to determine what part of the tile
       // the ray has hit. Plane ray x/y are the length while the mapx
+      // TODO: change increment to float
       Sprite raySprite("Ray");
       while (rayHit == 0)
       {
@@ -236,7 +240,8 @@ void Engine::draw() const {
         else{
           wallDistance = ( gridY - posY + (1 - incrementY) / 2 ) / rayDirY;
         }	
-        int vertLineLength = viewHeight * 10 / (wallDistance);
+        //int vertLineLength = viewHeight *10  / (wallDistance);
+        float vertLineLength = viewHeight  / (wallDistance);
 
         // Find starting and ending pixel to draw to.
         drawTop = -vertLineLength / 2 + viewHeight / 2;
