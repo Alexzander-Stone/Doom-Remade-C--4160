@@ -27,7 +27,7 @@
 </world>
 
 <arena>
-  <size>4</size>
+  <size>3</size>
 </arena>
 
 <back>
@@ -123,8 +123,8 @@
   <frameInterval>2000</frameInterval>
   <speedY>0</speedY>
   <speedX>0</speedX>
-  <maxSpeed>25</maxSpeed>
-  <incSpeed>3</incSpeed>
+  <maxSpeed>10</maxSpeed>
+  <incSpeed>1</incSpeed>
   <transparency>false</transparency>
   <xFovStart>-1</xFovStart>
   <yFovStart>0</yFovStart>
@@ -132,7 +132,7 @@
   <thetaIncrement>1</thetaIncrement>
   <rotationRadius>1</rotationRadius>
   <momentumSlowdown>.9</momentumSlowdown>
-  <bounceSpeedRequirement>240</bounceSpeedRequirement>
+  <bounceSpeedRequirement>9</bounceSpeedRequirement>
   <Bounce>
     <incSpeed>1</incSpeed>
     <changeVel>.8</changeVel>
@@ -158,7 +158,7 @@
 
 <Pinkie>
   <file>assets/enemy.png</file>
-  <startLoc x="100" y="100"/>
+  <startLoc x="30" y="30"/>
   <frames>1</frames>
   <imageWidth>10</imageWidth>
   <imageHeight>10</imageHeight>
@@ -174,7 +174,7 @@
   <rotationRadius>1</rotationRadius>
   <momentumSlowdown>.9</momentumSlowdown>
   <thetaIncrement>1</thetaIncrement>
-  <bounceSpeedRequirement>125</bounceSpeedRequirement>
+  <bounceSpeedRequirement>5</bounceSpeedRequirement>
   <Bounce>
     <incSpeed>5</incSpeed>
     <changeVel>.8</changeVel>

@@ -41,6 +41,10 @@ void WallCollidable::draw() const{
 }
 
 void WallCollidable::update(Uint32 ticks){
+  
+  std::cout << getSpriteInfo()->getVelocityX() << std::endl;
+  std::cout << getSpriteInfo()->getVelocityY() << std::endl;
+
   timeSinceLastFrame += ticks;
   for( Bullet* bullet : bullets )
     bullet->update(ticks);
@@ -72,9 +76,14 @@ void WallCollidable::collisionDetected(){
     // Momentum direction determines which direction to move the collidableSprite in response 
     // to the collision. Essentially, the projection matrix. 
     if( (*it)->getName() == "Wall/Horizontal") {
+      bool toBounce;
+      if(getSpriteInfo()->getVelocityY() >= Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + "/bounceSpeedRequirement") || getSpriteInfo()->getVelocityY() <= -Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + "/bounceSpeedRequirement"))
+	      toBounce = true; 
+      else
+        toBounce = false;
       while ( currentY + currentIncrement <= collision_obj_y + (*it)->getScaledHeight() + 1.001 &&
 		          currentY + currentIncrement + getScaledHeight() >= collision_obj_y - 1.001 ) {
-        if(momentumY > 2)
+        if(toBounce == true)
 	        currentIncrement += -momentumY;
         else{
           currentIncrement += momentumY>=0?-.001:.001 ;
@@ -85,9 +94,14 @@ void WallCollidable::collisionDetected(){
       collidableSprite.setY( currentY );
     }
     else if( (*it)->getName() == "Wall/Vertical" ) {
+      bool toBounce;
+      if(getSpriteInfo()->getVelocityX() >= Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + "/bounceSpeedRequirement") || getSpriteInfo()->getVelocityX() <= -Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + "/bounceSpeedRequirement"))
+	      toBounce = true; 
+      else
+        toBounce = false;
       while ( currentX + currentIncrement <= collision_obj_x + (*it)->getScaledWidth() + 1.001 && 
 	            currentX + getScaledWidth() + currentIncrement >= collision_obj_x - 1.001 ) {
-        if(momentumX > 2)
+        if(toBounce == true)
 	        currentIncrement += -momentumX ;
         else{
           currentIncrement += momentumX>=0?-.001:.001;
