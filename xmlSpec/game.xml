@@ -12,8 +12,8 @@
 <username>alexzas</username>
 
 <view>
-  <width>1366</width>
-  <height>768</height>
+  <width>683</width>
+  <height>384</height>
 </view>
 
 <raycastResolution>
@@ -27,8 +27,17 @@
 </world>
 
 <arena>
-  <size>3</size>
+  <size>1</size>
 </arena>
+
+<Ceiling>
+  <file>assets/ceiling.png</file>
+  <factor>300</factor>
+  <speedX>0</speedX>
+  <speedY>0</speedY>
+  <startLoc x="-100" y="-100" />
+  <transparency>false</transparency>
+</Ceiling>
 
 <back>
   <file>assets/greyPlaceholder.jpg</file>
@@ -116,10 +125,10 @@
 
 <DoomGuy>
   <file>assets/doomGuy.png</file>
-  <startLoc x="40" y="40"/>
+  <startLoc x="30" y="30"/>
   <frames>3</frames>
-  <imageWidth>2</imageWidth>
-  <imageHeight>2</imageHeight>
+  <imageWidth>4</imageWidth>
+  <imageHeight>4</imageHeight>
   <frameInterval>2000</frameInterval>
   <speedY>0</speedY>
   <speedX>0</speedX>

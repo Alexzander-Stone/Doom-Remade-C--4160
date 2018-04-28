@@ -46,6 +46,10 @@ private:
 
   Hud hud;
 
+  // Floor sprite.
+  Sprite* floor;
+  Uint32* floorPixels;
+  const SDL_Surface* floorSurface;
   void draw() const;
   void update(Uint32);
 

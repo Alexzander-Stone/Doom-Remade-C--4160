@@ -28,6 +28,8 @@ Engine::~Engine() {
       delete collide;
   }
 
+  delete floor;
+
   std::cout << "Terminating program" << std::endl;
 }
 
@@ -46,7 +48,10 @@ Engine::Engine() :
   collision( false ),
   makeVideo( false ),
   currentSprite(1),
-  hud()
+  hud(),
+  floor(new Sprite("Ceiling")),
+  floorPixels(static_cast<Uint32 *>(floor->getSurface()->pixels)),
+  floorSurface(floor->getSurface())
 {
   // Objects that can collide with walls.
   collidables.reserve(10);
@@ -209,9 +214,8 @@ void Engine::draw() const {
         while( spriteIt != sprites.end() && rayHit == 0){
           if( strategies[currentStrategy]->execute( raySprite, **spriteIt) ){
             rayHit = 1; 
-            if( spriteCollided == spriteIt ){
+            if( spriteCollided == spriteIt )
               newSpriteCollided = false;
-            }
             else
               newSpriteCollided = true;
               
@@ -252,7 +256,7 @@ void Engine::draw() const {
         wallRayX = posY + wallDistance * rayDirY;
       else
         wallRayX = posX + wallDistance * rayDirX;
-      wallRayX -= floor(wallRayX);
+      wallRayX -= std::floor(wallRayX);
 
       // Find the x coordinate on the image of the sprite based on wall ray x hit
       // location.
@@ -287,6 +291,56 @@ void Engine::draw() const {
           SDL_RenderDrawPoint(renderer, vertPixelX, vertPixelY);
         }
       }
+
+
+      // Floor and ceiling casting. The pixels that aren't used in each row
+      // will be filled using a ceiling/floor method.
+      float floorX, floorY;
+
+      // Find the direction of the wall that has been hit, use this to create
+      // the wall and ceiling.  
+      if(side == 0 && rayDirX > 0){
+        floorX = gridX;
+        floorY = gridY + wallRayX;
+      }
+      else if(side == 0 && rayDirX < 0){
+        floorX = gridX + 1.0;
+        floorY = gridY + wallRayX;
+      }
+      else if(side == 1 && rayDirY > 0){
+        floorX = gridX + wallRayX;
+        floorY = gridY;
+      }
+      else { // side == 1 && rayDirY < 0 
+        floorX = gridX + wallRayX;
+        floorY = gridY + 1.0;
+      }
+
+      float floorToWall, currDistance;
+      floorToWall = wallDistance; 
+
+      // Render floor (and/or ceiling).
+      for( int floorRow = drawBottom + 1; floorRow < viewHeight; floorRow++) {
+        currDistance = viewHeight / (2.0 * floorRow - viewHeight);
+        float linearInterpolation = currDistance / floorToWall;
+
+        float currFloorX = linearInterpolation * floorX + (1.0 - linearInterpolation) * posX;
+        float currFloorY = linearInterpolation * floorY + (1.0 - linearInterpolation) * posY;
+
+        int floorTextureX = int( currFloorX * floor->getScaledWidth()) % floor->getScaledWidth();
+        int floorTextureY = int( currFloorY * floor->getScaledHeight()) % floor->getScaledHeight();
+
+        // Render pixel from the coordinate of the texture to the screen
+        // coordinate. Can repeat for ceilings if wanted.
+        pixel = floorPixels[(floorTextureY * floor->getScaledWidth()) + floorTextureX];
+        
+        SDL_GetRGBA(pixel, floorSurface->format, 
+                    &red, &green, &blue, &alpha);
+
+        SDL_SetRenderDrawColor(renderer, red, green, blue, alpha);
+        SDL_RenderDrawPoint(renderer, vertPixelX, floorRow);
+      }
+
     }
     else {
       //SDL_SetRenderDrawColor(renderer, side==0?255:128, 0, 0, 255);
