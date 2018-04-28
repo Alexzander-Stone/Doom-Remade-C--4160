@@ -363,6 +363,10 @@ void Engine::draw() const {
   // bullets and placing them into the list to be sorted. 
   std::list<const Drawable*> depth_sprite_render;
   std::vector<WallCollidable*>::const_iterator itr = collidables.begin();
+  // Skip the player object, but make sure to collect their bullets.
+  for(unsigned int i = 0; i < (*itr)->getBulletCount(); i++){
+      depth_sprite_render.push_back((*itr)->getBulletSprite(i));
+  }
   itr++; // Skip player object.
   while( itr != collidables.end() )
   {
@@ -436,16 +440,6 @@ void Engine::draw() const {
         }
       }
     }
-  }
-
-  // Draw all sprites in container.
-  for( auto& it : sprites )
-  {
-    it->draw();
-  }
-  for( auto& it : collidables )
-  {
-    it->draw();
   }
 
   if(hud.getActive() == true)

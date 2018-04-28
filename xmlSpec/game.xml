@@ -153,8 +153,8 @@
   <file>assets/fireball.png</file>
   <startLoc x="-100" y="-100"/>
   <frames>1</frames>
-  <imageWidth>10</imageWidth>
-  <imageHeight>10</imageHeight>
+  <imageWidth>256</imageWidth>
+  <imageHeight>256</imageHeight>
   <frameInterval>2000</frameInterval>
   <transparency>false</transparency>
   <interval>100</interval>
@@ -169,8 +169,8 @@
   <file>assets/enemy.png</file>
   <startLoc x="25" y="25"/>
   <frames>1</frames>
-  <imageWidth>3</imageWidth>
-  <imageHeight>3</imageHeight>
+  <imageWidth>256</imageWidth>
+  <imageHeight>256</imageHeight>
   <frameInterval>2000</frameInterval>
   <speedY>0</speedY>
   <speedX>0</speedX>
@@ -196,8 +196,8 @@
   <file>assets/fireball.png</file>
   <startLoc x="-100" y="-100"/>
   <frames>1</frames>
-  <imageWidth>10</imageWidth>
-  <imageHeight>10</imageHeight>
+  <imageWidth>256</imageWidth>
+  <imageHeight>256</imageHeight>
   <frameInterval>2000</frameInterval>
   <transparency>false</transparency>
   <interval>2000</interval>
