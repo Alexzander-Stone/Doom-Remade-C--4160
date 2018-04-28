@@ -119,6 +119,8 @@ void Engine::draw() const {
   int side = 0;
   int drawTop = 0;
   int drawBottom = 0;
+  float posX = player->getX() + player->getSpriteInfo()->getScaledWidth()/2 ;
+  float posY = player->getY() + player->getSpriteInfo()->getScaledHeight()/2;
 
   // Boolean to optimize performance for rays hitting the same sprite. Saves
   // cycles by only updating surface if new sprite has been hit.
@@ -147,8 +149,7 @@ void Engine::draw() const {
       // increment of the ray (x and y), and from one ray coordinates 
       // step to the next.
       float cameraX = 2.0f * static_cast<float>(vertPixelX) / static_cast<float>(viewWidth) - 1;
-      float posX = player->getX() + player->getSpriteInfo()->getScaledWidth()/2 ;
-      float posY = player->getY() + player->getSpriteInfo()->getScaledHeight()/2; 
+       
       int gridX = posX;
       int gridY = posY;
       float rayDirX = player->getXFov() + planeX * cameraX;
@@ -381,6 +382,61 @@ void Engine::draw() const {
                hypot(rhs->getX() - playerX, rhs->getY() - playerY);
       }
   );
+
+  // Begin rendering the sorted sprites.
+  // Need to use a inverse camera matrix to render sprites on screen, for more
+  // info check out lodev.org/cgtutor/raycasting3.html (helpful formulas).
+  for( auto& ptr : depth_sprite_render ) {
+    // Find the sprite's coordinates in relation to the camera.
+    float currSpriteX = ptr->getX() - posX;
+    float currSpriteY = ptr->getY() - posY;
+
+    float inverseCameraMatrix = 1.0f / (planeX * player->getYFov() - player->getXFov() * planeY);
+
+    float cameraSpriteX = inverseCameraMatrix * ( player->getYFov() * currSpriteX - player->getXFov() * currSpriteY);
+    float cameraSpriteY = inverseCameraMatrix * ( -planeY * currSpriteX + planeX * currSpriteY);
+
+    int spriteScreenX = (viewWidth/2) * (1 + cameraSpriteX / cameraSpriteY);
+
+    int spriteScreenHeight = abs(viewHeight/cameraSpriteY);
+    int spriteScreenWidth = abs(viewHeight/cameraSpriteY);
+    
+    // Vertical pixels to draw to, based on sprite sizes.
+    int drawTopY = -spriteScreenHeight / 2 + viewHeight/2;
+    if(drawTopY < 0)
+      drawTopY = 0;
+    int drawBottomY = spriteScreenHeight /2 + viewHeight/2;
+    if(drawBottomY >= viewHeight)
+      drawBottomY = viewHeight - 1;
+
+    // Horizontal pixels to draw to, based on sprite sizes.
+    int drawLeftX = -spriteScreenWidth / 2 + spriteScreenX;
+    if(drawLeftX < 0)
+      drawLeftX = 0;
+    int drawRightX = spriteScreenWidth /2 + spriteScreenX;
+    if(drawRightX >= viewWidth)
+      drawRightX = viewWidth -1;
+
+    // Only draw the sprite if it's within the camera plane.
+    for( int vertSprite = drawLeftX; vertSprite < drawRightX; vertSprite++ ) {
+      int textureX = (256 * (vertSprite - (-spriteScreenWidth / 2 + spriteScreenX)) * ptr->getScaledWidth() / spriteScreenWidth) / 256;
+      
+      if( cameraSpriteY > 0 && vertSprite > 0 && vertSprite < viewWidth && cameraSpriteY < depthBuffer[vertSprite] ){
+        const SDL_Surface* spriteSurface = ptr->getSurface();
+        for( int horizSprite = drawTopY; horizSprite < drawBottomY; horizSprite++ ) {
+          int d = cameraSpriteY * 256 - viewHeight * 128 + spriteScreenHeight * 128;
+          int textureY = ((d * ptr->getScaledHeight()) / spriteScreenHeight) / 256;
+        
+          pixel = textPixels[(textureY * ptr->getScaledWidth()) + textureX];
+          SDL_GetRGBA(pixel, spriteSurface->format, 
+                    &red, &green, &blue, &alpha);
+
+          SDL_SetRenderDrawColor(renderer, red, green, blue, alpha);
+          SDL_RenderDrawPoint(renderer, vertSprite, horizSprite);
+        }
+      }
+    }
+  }
 
   // Draw all sprites in container.
   for( auto& it : sprites )

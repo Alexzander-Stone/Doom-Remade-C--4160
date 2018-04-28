@@ -12,8 +12,8 @@
 <username>alexzas</username>
 
 <view>
-  <width>683</width>
-  <height>384</height>
+  <width>1366</width>
+  <height>768</height>
 </view>
 
 <raycastResolution>
@@ -167,10 +167,10 @@
 
 <Pinkie>
   <file>assets/enemy.png</file>
-  <startLoc x="30" y="30"/>
+  <startLoc x="25" y="25"/>
   <frames>1</frames>
-  <imageWidth>10</imageWidth>
-  <imageHeight>10</imageHeight>
+  <imageWidth>3</imageWidth>
+  <imageHeight>3</imageHeight>
   <frameInterval>2000</frameInterval>
   <speedY>0</speedY>
   <speedX>0</speedX>
@@ -202,7 +202,7 @@
   <transparency>false</transparency>
   <interval>2000</interval>
   <distance>100</distance>
-  <speed>25</speed>
+  <speed>1</speed>
   <speedX>0</speedX>
   <speedY>0</speedY>
   <ammo>3</ammo>
