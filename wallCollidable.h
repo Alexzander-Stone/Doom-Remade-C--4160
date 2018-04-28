@@ -50,7 +50,10 @@ public:
   void setRotation(int t) { theta = t; }
 
   void checkBulletCollision(Drawable*);
-  unsigned int getBulletCount(){ return 5 - bullets.size(); }
+  unsigned int getFreeBulletCount() const { return Gamedata::getInstance().getXmlInt(bulletName + "/ammo") - bullets.size(); }
+  unsigned int getBulletCount() const { return bullets.size(); }
+
+  const Bullet* getBulletSprite(const int i) const{ return bullets[i]; }
 
   // Movement options.
   virtual void right();

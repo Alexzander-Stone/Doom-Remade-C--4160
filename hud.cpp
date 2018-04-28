@@ -115,7 +115,7 @@ void Hud::draw() const {
 		Gamedata::getInstance().getXmlInt("view/height") - Gamedata::getInstance().getXmlInt("font/size") * 1 - 5);
 
   // Draw the number of projectiles available to the player.
-  for( unsigned int i = 0; i < player->getBulletCount(); i++ ) {
+  for( unsigned int i = 0; i < player->getFreeBulletCount(); i++ ) {
     shells[i]->draw();
   }
 }

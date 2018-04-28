@@ -29,6 +29,7 @@ Engine::~Engine() {
   }
 
   delete floor;
+  delete [] depthBuffer;
 
   std::cout << "Terminating program" << std::endl;
 }
@@ -51,7 +52,8 @@ Engine::Engine() :
   hud(),
   floor(new Sprite("Ceiling")),
   floorPixels(static_cast<Uint32 *>(floor->getSurface()->pixels)),
-  floorSurface(floor->getSurface())
+  floorSurface(floor->getSurface()),
+  depthBuffer(new int[Gamedata::getInstance().getXmlInt("view/width")])
 {
   // Objects that can collide with walls.
   collidables.reserve(10);
@@ -129,7 +131,9 @@ void Engine::draw() const {
   Uint8 red, green, blue, alpha;
   unsigned pixel;
 
-  
+  // Depth buffer will be used here when drawing the sprites.
+  // Gives us the ability to scale enemy sprites based on the distance to the
+  // player.
   // Cycle through each column of pixels that will be rendered to the screen.
   for( int vertPixelX = 0; vertPixelX < viewWidth; vertPixelX++ ) {
     // Scale the screen based on the original raycast resolution. Effectively
@@ -292,6 +296,9 @@ void Engine::draw() const {
         }
       }
 
+      // Record the distance into the depth buffer for further use.
+      // No need for 2d array, only each vertical stripe matters for distance.
+      depthBuffer[vertPixelX] = wallDistance;
 
       // Floor and ceiling casting. The pixels that aren't used in each row
       // will be filled using a ceiling/floor method.
@@ -346,7 +353,34 @@ void Engine::draw() const {
       //SDL_SetRenderDrawColor(renderer, side==0?255:128, 0, 0, 255);
       //SDL_RenderDrawLine(renderer, vertPixelX, drawTop, vertPixelX, drawBottom);
     }  
-  } 
+  }
+
+  // Use the depthBuffer to begin drawing the enemy sprites. (matrix math
+  // hurts). Need to sort the sprites first, to determine which is painted
+  // above the others (painters algorithm style).
+  // Loop through all player and enemy sprites, while also obtaining their
+  // bullets and placing them into the list to be sorted. 
+  std::list<const Drawable*> depth_sprite_render;
+  std::vector<WallCollidable*>::const_iterator itr = collidables.begin();
+  itr++; // Skip player object.
+  while( itr != collidables.end() )
+  {
+    depth_sprite_render.push_back((*itr)->getSpriteInfo());
+    for(unsigned int i = 0; i < (*itr)->getBulletCount(); i++){
+      depth_sprite_render.push_back((*itr)->getBulletSprite(i));
+    }
+    itr++;
+  }
+  // Begin sorting the sprites based on their distance to the player.
+  float playerX = player->getX();
+  float playerY = player->getY();
+  depth_sprite_render.sort(
+      [playerX, playerY]( const Drawable* lhs, const Drawable* rhs ) -> bool{ 
+        return hypot(lhs->getX() - playerX, lhs->getY() - playerY) 
+               <=
+               hypot(rhs->getX() - playerX, rhs->getY() - playerY);
+      }
+  );
 
   // Draw all sprites in container.
   for( auto& it : sprites )

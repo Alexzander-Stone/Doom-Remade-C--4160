@@ -50,6 +50,8 @@ private:
   Sprite* floor;
   Uint32* floorPixels;
   const SDL_Surface* floorSurface;
+  // Enemy sprites.
+  int* depthBuffer;
   void draw() const;
   void update(Uint32);
 
