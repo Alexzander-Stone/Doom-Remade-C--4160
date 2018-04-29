@@ -1,5 +1,6 @@
 #include <vector>
 #include <algorithm>
+#include <unistd.h>
 #include "ioMod.h"
 #include "collisionStrategy.h"
 #include "viewport.h"
@@ -18,10 +19,12 @@ bool RectangularCollisionStrategy::execute(
   if ( left1 > right2 ) return false;
   float top1 = sprite1.getY() - 1;
   float top2 = sprite2.getY();
+
   float bottom1 = top1+sprite1.getScaledHeight() + 2;
   float bottom2 = top2+sprite2.getScaledHeight();
   if ( bottom1 < top2 ) return false;
   if ( bottom2 < top1 ) return false;
+  
   return true;
 }
 
@@ -34,17 +37,20 @@ distance(float x1, float y1, float x2, float y2) const {
 
 bool MidPointCollisionStrategy::execute(
       const Drawable& sprite1, const Drawable& sprite2) const {
+  
+  float width1 = sprite1.getCollidableWidth();
+  float width2 = sprite2.getCollidableWidth();
+  float height1 = sprite1.getCollidableHeight();
+  float height2 = sprite2.getCollidableHeight();
+  
+  float COLLISION_DISTANCE = width1/2.0f + width2/2.0f;
+  float x1 = sprite1.getX() + width1/2.0f;
+  float y1 = sprite1.getY() + height1/2.0f;
+  float x2 = sprite2.getX() + width2/2.0f;
+  float y2 = sprite2.getY() + height2/2.0f;
+  std::cout << sprite1.getName() << " x is " << x1 << " y is " << y1 << std::endl;
+  std::cout << sprite2.getName() << " x is " << x2 << " y is " << y2 << std::endl;
 
-  int width1 = sprite1.getScaledWidth();
-  int width2 = sprite2.getScaledWidth();
-  int height1 = sprite1.getScaledHeight();
-  int height2 = sprite2.getScaledHeight();
-
-  int COLLISION_DISTANCE = width1/2 + width2/2;
-  float x1 = sprite1.getX() + width1/2;
-  float y1 = sprite1.getY() + height1/2;
-  float x2 = sprite2.getX() + width2/2;
-  float y2 = sprite2.getY() + height2/2;
   return distance(x1, y1, x2, y2) < COLLISION_DISTANCE;
 }
 

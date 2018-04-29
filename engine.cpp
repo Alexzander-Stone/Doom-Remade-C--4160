@@ -1,4 +1,5 @@
 #include <iostream>
+#include <unistd.h>
 #include <algorithm>
 #include <sstream>
 #include <string>
@@ -441,6 +442,13 @@ void Engine::draw() const {
       }
     }
   }
+
+  for(auto& it : sprites)
+    it->draw();
+
+  for(auto& it : collidables)
+    it->draw();
+
 
   if(hud.getActive() == true)
     hud.draw();

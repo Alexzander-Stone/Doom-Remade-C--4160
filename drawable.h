@@ -5,16 +5,20 @@
 #include <string>
 #include "vector2f.h"
 #include "image.h"
+#include "gamedata.h"
  
 // Drawable is an Abstract Base Class (ABC) that specifies the methods
 // that derived classes may or must have.
 class Drawable {
 public:
   Drawable(const std::string& n, const Vector2f& pos, const Vector2f& vel): 
-    name(n), position(pos), velocity(vel), scale(1.0) {}
+    name(n), position(pos), velocity(vel), scale(1.0), 
+    collidable_height(Gamedata::getInstance().getXmlFloat(name+"/collidableHeight")), collidable_width(Gamedata::getInstance().getXmlFloat(name+"/collidableWidth")) 
+    { }
 
   Drawable(const Drawable& s) : 
-    name(s.name), position(s.position), velocity(s.velocity), scale(s.scale)
+    name(s.name), position(s.position), velocity(s.velocity), scale(s.scale), 
+    collidable_height(s.collidable_height), collidable_width(s.collidable_width)
     { }
 
   virtual ~Drawable() {}
@@ -26,6 +30,8 @@ public:
   void  setScale(float s) { scale = s; }
   virtual int getScaledWidth() const = 0;
   virtual int getScaledHeight() const = 0;
+  virtual float getCollidableWidth() const { return collidable_width; }
+  virtual float getCollidableHeight() const { return collidable_height; };
   virtual const SDL_Surface* getSurface() const = 0;
 
   const std::string& getName() const { return name; }
@@ -53,5 +59,7 @@ private:
   Vector2f position;
   Vector2f velocity;
   float scale;
+  float collidable_height;
+  float collidable_width;
 };
 #endif
