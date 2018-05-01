@@ -64,7 +64,7 @@ Engine::Engine() :
 {
   // Using an array of ints as a container for the pixels will save cycles 
   // through less method calls for per pixel calculations.
-  texture_buffer = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_BGRA8888, SDL_TEXTUREACCESS_STREAMING, 
+  texture_buffer = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_BGR888, SDL_TEXTUREACCESS_STREAMING, 
 				     Gamedata::getInstance().getXmlInt("view/width"), 
 				     Gamedata::getInstance().getXmlInt("view/height"));
 
@@ -123,6 +123,15 @@ void Engine::draw() const {
 
   // Copy the pixels from texture to window.
   SDL_UpdateTexture(texture_buffer, NULL, pixels_to_draw, viewWidth * sizeof(Uint32));
+
+  // Fill out the top half the the pixels with the sky.
+  for(int backgroundY = 0; backgroundY < viewHeight/2; backgroundY++)
+  {
+    for( int backgroundX = 0; backgroundX < viewWidth-1; backgroundX++)
+    {
+      pixels_to_draw[backgroundX + backgroundY * viewWidth] = 0;
+    }
+  }
   
   // Loop through all the vertical stripes of the player's view (x's) based on 
   // the screen width/height. This will calculate the rays using a grid system.
