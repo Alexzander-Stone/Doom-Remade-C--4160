@@ -230,14 +230,14 @@ void WallCollidable::shoot(){
   // Create new bullet if freeAmmo is empty.
   if(freeAmmo.empty() && bullets.size() < max_bullets ){
     Bullet* newBullet = new Bullet(bulletName);
-    newBullet->setPosition( getSpriteInfo()->getPosition() + Vector2f(getSpriteInfo()->getScaledWidth()/2, getSpriteInfo()->getScaledHeight()/2)  );
+    newBullet->setPosition( getSpriteInfo()->getPosition() + Vector2f(getSpriteInfo()->getScaledWidth()/2 - newBullet->getScaledWidth()/2 + x_fov, getSpriteInfo()->getScaledHeight()/2 - newBullet->getScaledHeight()/2 + y_fov)  );
     newBullet->setVelocity( Vector2f(x_fov * bulletSpeed, y_fov * bulletSpeed)  );
     bullets.push_back( newBullet );
   }
   // Use a bullet available from the freeAmmo vector.
   else if (bullets.size() < max_bullets ) {
     auto itr = freeAmmo.end()-1;
-    (*itr)->setPosition( getSpriteInfo()->getPosition() + Vector2f(getSpriteInfo()->getScaledWidth()/2, getSpriteInfo()->getScaledHeight()/2));
+    (*itr)->setPosition( getSpriteInfo()->getPosition() + Vector2f(getSpriteInfo()->getScaledWidth()/2 - (*itr)->getScaledWidth()/2 + x_fov, getSpriteInfo()->getScaledHeight()/2 - (*itr)->getScaledHeight()/2 + y_fov));
     (*itr)->setVelocity( Vector2f(x_fov * bulletSpeed, y_fov * bulletSpeed)  );
     bullets.push_back( *itr );
     freeAmmo.erase(itr);

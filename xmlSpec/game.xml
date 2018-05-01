@@ -12,13 +12,13 @@
 <username>alexzas</username>
 
 <view>
-  <width>512</width>
-  <height>288</height>
+  <width>1024</width>
+  <height>576</height>
 </view>
 
 <raycastResolution>
-  <width>512</width>
-  <height>288</height>
+  <width>1024</width>
+  <height>576</height>
 </raycastResolution>
 
 <world>
