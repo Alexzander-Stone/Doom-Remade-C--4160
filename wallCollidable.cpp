@@ -236,7 +236,6 @@ void WallCollidable::shoot(){
   }
   // Use a bullet available from the freeAmmo vector.
   else if (bullets.size() < max_bullets ) {
-    std::cout << "creation" << std::endl;
     auto itr = freeAmmo.end()-1;
     (*itr)->setPosition( getSpriteInfo()->getPosition() + Vector2f(getSpriteInfo()->getScaledWidth()/2, getSpriteInfo()->getScaledHeight()/2));
     (*itr)->setVelocity( Vector2f(x_fov * bulletSpeed, y_fov * bulletSpeed)  );

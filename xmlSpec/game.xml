@@ -12,13 +12,13 @@
 <username>alexzas</username>
 
 <view>
-  <width>1366</width>
-  <height>768</height>
+  <width>512</width>
+  <height>288</height>
 </view>
 
 <raycastResolution>
-  <width>683</width>
-  <height>384</height>
+  <width>512</width>
+  <height>288</height>
 </raycastResolution>
 
 <world>
@@ -185,10 +185,10 @@
 
 <Pinkie>
   <file>assets/enemy.png</file>
-  <startLoc x="30" y="30"/>
+  <startLoc x="35" y="35"/>
   <frames>1</frames>
-  <imageWidth>5</imageWidth>
-  <imageHeight>5</imageHeight>
+  <imageWidth>512</imageWidth>
+  <imageHeight>512</imageHeight>
   <collidableWidth>5</collidableWidth>
   <collidableHeight>5</collidableHeight>
   <frameInterval>2000</frameInterval>
@@ -208,7 +208,7 @@
     <incSpeed>5</incSpeed>
     <changeVel>.8</changeVel>
   </Bounce>
-  <attackDistance>8</attackDistance>
+  <attackDistance>20</attackDistance>
   <bullet>Fireball</bullet>
 </Pinkie>
 

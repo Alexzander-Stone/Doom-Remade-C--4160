@@ -115,20 +115,22 @@ void Engine::draw() const {
   // These variables are used for scaling the screen for multiple resolutions.
   int viewWidth = Gamedata::getInstance().getXmlInt("view/width");
   int viewHeight = Gamedata::getInstance().getXmlInt("view/height");
-  int raycastWidth = Gamedata::getInstance().getXmlInt("raycastResolution/width");
   int raycastHeight = Gamedata::getInstance().getXmlInt("raycastResolution/height");
   int side = 0;
   int drawTop = 0;
   int drawBottom = 0;
   float posX = player->getX() + player->getScaledWidth()/2;
   float posY = player->getY() + player->getScaledHeight()/2;
+  float directionX = player->getXFov();
+  float directionY = player->getYFov();
 
   // Boolean to optimize performance for rays hitting the same sprite. Saves
   // cycles by only updating surface if new sprite has been hit.
   bool newSpriteCollided = true;
   std::vector<SmartSprite*>::const_iterator spriteCollided;
-  Uint32* textPixels; 
   const SDL_Surface* textSurface; 
+  Uint32* textPixels; 
+  SDL_PixelFormat* textFormat;
   
   // Pixel data for drawing textures.
   Uint8 red, green, blue, alpha;
@@ -141,8 +143,6 @@ void Engine::draw() const {
   for( int vertPixelX = 0; vertPixelX < viewWidth; vertPixelX++ ) {
     // Scale the screen based on the original raycast resolution. Effectively
     // duplicate the previous pixels to create illusion of size increase.	
-    if(vertPixelX % (viewWidth / raycastWidth) == 0)
-    {
       // Current X-coor in camera (-1 to 1).
       // Current player position, centered.
       // Current "grid" position, made for performance increase.
@@ -150,11 +150,10 @@ void Engine::draw() const {
       // increment of the ray (x and y), and from one ray coordinates 
       // step to the next.
       float cameraX = 2.0f * static_cast<float>(vertPixelX) / static_cast<float>(viewWidth) - 1;
-       
       int gridX = posX;
       int gridY = posY;
-      float rayDirX = player->getXFov() + planeX * cameraX;
-      float rayDirY = player->getYFov() + planeY * cameraX;
+      float rayDirX = directionX + planeX * cameraX;
+      float rayDirY = directionY + planeY * cameraX;
             
       // Total length of the coordinate to the first wall encountered.
       // Needed for determining the size/length of the wall to draw.
@@ -244,7 +243,7 @@ void Engine::draw() const {
       else{
         wallDistance = ( gridY - posY + (1 - incrementY) / 2 ) / rayDirY;
       }	
-      float vertLineLength = viewHeight  / (wallDistance);
+      float vertLineLength = viewHeight  / wallDistance;
 
       // Find starting and ending pixel to draw to.
       drawTop = -vertLineLength / 2 + viewHeight / 2;
@@ -266,7 +265,7 @@ void Engine::draw() const {
 
       // Find the x coordinate on the image of the sprite based on wall ray x hit
       // location.
-      int textureX = wallRayX * float((*spriteCollided)->getScaledWidth());
+      int textureX = wallRayX * (*spriteCollided)->getScaledWidth();
       if(side == 0 && rayDirX > 0) textureX = (*spriteCollided)->getScaledWidth() - textureX - 1;
       if(side == 1 && rayDirY > 0) textureX = (*spriteCollided)->getScaledWidth() - textureX - 1;
 
@@ -276,6 +275,7 @@ void Engine::draw() const {
       if(newSpriteCollided == true){
         textSurface = (*spriteCollided)->getSurface();
         textPixels = static_cast<Uint32 *>(textSurface->pixels);
+	textFormat = textSurface->format;
       }
       
       // Begin rendering the rows of each column to the screen. By using the
@@ -287,10 +287,10 @@ void Engine::draw() const {
         if( (vertPixelY % (viewHeight / raycastHeight)) == 0)
         {
           int d = vertPixelY * 256 - viewHeight * 128 + vertLineLength * 128;
-          int textureY = ((d * ((*spriteCollided)->getScaledHeight()) / vertLineLength)) / 256;
+          int textureY = d*(*spriteCollided)->getScaledHeight() / vertLineLength / 256;
         
           pixel = textPixels[(textureY * (*spriteCollided)->getScaledWidth()) + textureX];
-          SDL_GetRGBA(pixel, textSurface->format, 
+          SDL_GetRGBA(pixel, textFormat, 
                     &red, &green, &blue, &alpha);
 
           SDL_SetRenderDrawColor(renderer, red, green, blue, alpha);
@@ -325,9 +325,9 @@ void Engine::draw() const {
         floorY = gridY + 1.0;
       }
 
-      float floorToWall, currDistance;
-      floorToWall = wallDistance; 
-
+      float currDistance;
+      float floorToWall = wallDistance; 
+      
       // Render floor (and/or ceiling).
       for( int floorRow = drawBottom + 1; floorRow < viewHeight; floorRow++) {
         currDistance = viewHeight / (2.0 * floorRow - viewHeight);
@@ -349,12 +349,6 @@ void Engine::draw() const {
         SDL_SetRenderDrawColor(renderer, red, green, blue, alpha);
         SDL_RenderDrawPoint(renderer, vertPixelX, floorRow);
       }
-
-    }
-    else {
-      //SDL_SetRenderDrawColor(renderer, side==0?255:128, 0, 0, 255);
-      //SDL_RenderDrawLine(renderer, vertPixelX, drawTop, vertPixelX, drawBottom);
-    }  
   }
 
   // Use the depthBuffer to begin drawing the enemy sprites. (matrix math
@@ -393,12 +387,13 @@ void Engine::draw() const {
   // info check out lodev.org/cgtutor/raycasting3.html (helpful formulas).
   for( auto& ptr : depth_sprite_render ) {
     // Find the sprite's coordinates in relation to the camera.
-    float currSpriteX = ptr->getX() + ptr->getScaledWidth()/2 - posX;
-    float currSpriteY = ptr->getY() + ptr->getScaledHeight()/2 - posY;
+    // Needed to find the enemies 3D coordinates
+    float currSpriteX = ptr->getX() - posX;
+    float currSpriteY = ptr->getY() - posY;
 
-    float inverseCameraMatrix = 1.0f / (planeX * player->getYFov() - player->getXFov() * planeY);
+    float inverseCameraMatrix = 1.0f / (planeX * directionY - directionX * planeY);
 
-    float cameraSpriteX = inverseCameraMatrix * ( player->getYFov() * currSpriteX - player->getXFov() * currSpriteY);
+    float cameraSpriteX = inverseCameraMatrix * ( directionY * currSpriteX - directionX * currSpriteY);
     float cameraSpriteY = inverseCameraMatrix * ( -planeY * currSpriteX + planeX * currSpriteY);
 
     int spriteScreenX = (viewWidth/2) * (1 + cameraSpriteX / cameraSpriteY);
@@ -407,32 +402,36 @@ void Engine::draw() const {
     int spriteScreenWidth = abs(viewHeight/cameraSpriteY);
     
     // Vertical pixels to draw to, based on sprite sizes.
-    int drawTopY = -spriteScreenHeight / 2 + viewHeight/2;
-    if(drawTopY < 0)
-      drawTopY = 0;
-    int drawBottomY = spriteScreenHeight /2 + viewHeight/2;
-    if(drawBottomY >= viewHeight)
-      drawBottomY = viewHeight - 1;
+    // Can be used to offset sprites.
+    int drawTop = -spriteScreenHeight / 2 + viewHeight/2;
+    if(drawTop < 0)
+      drawTop = 0;
+    int drawBottom = spriteScreenHeight /2 + viewHeight/2;
+    if(drawBottom >= viewHeight)
+      drawBottom = viewHeight - 1;
 
     // Horizontal pixels to draw to, based on sprite sizes.
-    int drawLeftX = -spriteScreenWidth / 2 + spriteScreenX;
-    if(drawLeftX < 0)
-      drawLeftX = 0;
-    int drawRightX = spriteScreenWidth /2 + spriteScreenX;
-    if(drawRightX >= viewWidth)
-      drawRightX = viewWidth -1;
+    // Can be used to offset sprites.
+    int drawLeft = -spriteScreenWidth / 2 + spriteScreenX;
+    if(drawLeft < 0)
+      drawLeft = 0;
+    int drawRight = spriteScreenWidth /2 + spriteScreenX;
+    if(drawRight >= viewWidth)
+      drawRight = viewWidth -1;
 
     // Only draw the sprite if it's within the camera plane.
-    for( int vertSprite = drawLeftX; vertSprite < drawRightX; vertSprite++ ) {
+    for( int vertSprite = drawLeft; vertSprite < drawRight; vertSprite++ ) {
+      // Within the region/rectangle of the camera/window.
       if( cameraSpriteY > 0 && vertSprite > 0 && vertSprite < viewWidth && cameraSpriteY < depthBuffer[vertSprite] ){
-        int textureX = (256 * (vertSprite - (-spriteScreenWidth / 2 + spriteScreenX)) * ptr->getScaledWidth() / spriteScreenWidth) / 256;
+        float textureX = (256 * (vertSprite - (-spriteScreenWidth / 2 + spriteScreenX)) * ptr->getScaledWidth() / spriteScreenWidth) / 256;
         const SDL_Surface* spriteSurface = ptr->getSurface();
         textPixels = static_cast<Uint32 *>(spriteSurface->pixels);
-        for( int horizSprite = drawTopY; horizSprite < drawBottomY; horizSprite++ ) {
-          int d = cameraSpriteY * 256 - viewHeight * 128 + spriteScreenHeight * 128;
-          int textureY = ((d * ptr->getScaledHeight()) / spriteScreenHeight) / 256;
+        for( int horizSprite = drawTop; horizSprite < drawBottom; horizSprite++ ) {
+          int d = horizSprite * 256 - viewHeight * 128 + spriteScreenHeight * 128;
+          int textureY = ((d * ptr->getScaledHeight()) / (float)spriteScreenHeight) / 256;
+	  Uint32 pixelAccess = textureY * (float)ptr->getScaledWidth() + textureX;
         
-          pixel = textPixels[(textureY * ptr->getScaledWidth()) + textureX];
+          pixel = textPixels[pixelAccess];
           SDL_GetRGBA(pixel, spriteSurface->format, 
                     &red, &green, &blue, &alpha);
 
@@ -446,8 +445,8 @@ void Engine::draw() const {
   for(auto& it : sprites)
     it->draw();
 
-  for(auto& it : collidables)
-    it->draw();
+  //for(auto& it : collidables)
+    //it->draw();
 
 
   if(hud.getActive() == true)
@@ -460,7 +459,7 @@ void Engine::draw() const {
 // Collision Detection.
 void Engine::checkForCollisions(){
     std::vector<WallCollidable*>::iterator currItr = collidables.begin();
-    while( currItr != collidables.end() ){
+    if( currItr != collidables.end() ){
       // Check until all collisions have been removed.
 	    // Search through all the sprites to determine if collision has occurred.
       bool collisionDetected = true;
