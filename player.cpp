@@ -82,7 +82,7 @@ void Player::update(Uint32 ticks) {
   std::list<Enemy*>::iterator itr = observers.begin();
   while( itr != observers.end() )
   {
-    (*itr)->setPlayerPos( getSpriteInfo()->getPosition() + Vector2f(getScaledWidth()/2, getScaledHeight()/2) );
+    (*itr)->setPlayerPos( getSpriteInfo()->getPosition() );
     itr++;
   } 
 }

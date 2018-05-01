@@ -185,16 +185,16 @@
 
 <Pinkie>
   <file>assets/enemy.png</file>
-  <startLoc x="1000" y="1000"/>
+  <startLoc x="30" y="30"/>
   <frames>1</frames>
-  <imageWidth>256</imageWidth>
-  <imageHeight>256</imageHeight>
+  <imageWidth>5</imageWidth>
+  <imageHeight>5</imageHeight>
   <collidableWidth>5</collidableWidth>
   <collidableHeight>5</collidableHeight>
   <frameInterval>2000</frameInterval>
   <speedY>0</speedY>
   <speedX>0</speedX>
-  <maxSpeed>10</maxSpeed>
+  <maxSpeed>5</maxSpeed>
   <incSpeed>1</incSpeed>
   <transparency>false</transparency>
   <xFovStart>0</xFovStart>
@@ -208,7 +208,7 @@
     <incSpeed>5</incSpeed>
     <changeVel>.8</changeVel>
   </Bounce>
-  <attackDistance>50</attackDistance>
+  <attackDistance>8</attackDistance>
   <bullet>Fireball</bullet>
 </Pinkie>
 

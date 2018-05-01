@@ -46,12 +46,12 @@ void Enemy::update(Uint32 ticks) {
 
   // Use player's position/angle to determine which way to rotate the enemy.
   // Tie this to tick rate in future.
-  float deltaX = playerPos[0] - getSpriteInfo()->getX() - getXFov();
-  float deltaY = playerPos[1] - getSpriteInfo()->getY() - getYFov();
+  float deltaX = playerPos[0] - getX() - getXFov();
+  float deltaY = playerPos[1] - getY() - getYFov();
   float angleBetweenVectors = atan2(deltaY, deltaX) * 57.2958 + 180;
   
-  deltaX = getPreviousX() - getSpriteInfo()->getX() - getXFov();
-  deltaY = getPreviousY() - getSpriteInfo()->getY() - getYFov();
+  deltaX = getPreviousX() - getX() - getXFov();
+  deltaY = getPreviousY() - getY() - getYFov();
   float tempTheta = atan2(deltaY, deltaX) * 57.2958 + 180;
   
   float leftRotCheck = angleBetweenVectors - tempTheta;
@@ -71,13 +71,13 @@ void Enemy::update(Uint32 ticks) {
 
   // Shoot projectile at player if they are within range.
   if(current_state == NORMAL 
-     && hypot(playerPos[0]-getSpriteInfo()->getX(), playerPos[1] - getSpriteInfo()->getY()) < Gamedata::getInstance().getXmlInt(getName()+"/attackDistance"))
+     && hypot(playerPos[0]- getX(), playerPos[1] - getY()) < Gamedata::getInstance().getXmlInt(getName()+"/attackDistance"))
   {
     current_state = ATTACK;
     setIncrementalVel(0);
   }
   // Continue shooting at player until they exit range.
-  else if(current_state == ATTACK && hypot(playerPos[0]-getSpriteInfo()->getX(), playerPos[1] - getSpriteInfo()->getY()) < Gamedata::getInstance().getXmlInt(getName()+"/attackDistance")) {
+  else if(current_state == ATTACK && hypot(playerPos[0]- getX(), playerPos[1] - getY()) < Gamedata::getInstance().getXmlInt(getName()+"/attackDistance")) {
     shoot();  
   }
   // Player has left the range of the enemy, begin walking towards the player
@@ -88,8 +88,8 @@ void Enemy::update(Uint32 ticks) {
   }
   WallCollidable::up();  
 
-  setPreviousY(getSpriteInfo()->getY());
-  setPreviousX(getSpriteInfo()->getX());
+  setPreviousY(getY());
+  setPreviousX(getX());
   getSpriteInfo()->update(ticks);
 
   stop();
