@@ -32,6 +32,10 @@ Engine::~Engine() {
   delete floor;
   delete [] depthBuffer;
 
+  // Delete textures.
+  delete [] pixels_to_draw;
+  SDL_DestroyTexture(texture_buffer);
+
   std::cout << "Terminating program" << std::endl;
 }
 
@@ -54,8 +58,16 @@ Engine::Engine() :
   floor(new Sprite("Ceiling")),
   floorPixels(static_cast<Uint32 *>(floor->getSurface()->pixels)),
   floorSurface(floor->getSurface()),
-  depthBuffer(new int[Gamedata::getInstance().getXmlInt("view/width")])
+  depthBuffer(new int[Gamedata::getInstance().getXmlInt("view/width")]),
+  texture_buffer(nullptr),
+  pixels_to_draw(new Uint32[Gamedata::getInstance().getXmlInt("view/width") * Gamedata::getInstance().getXmlInt("view/height")])
 {
+  // Using an array of ints as a container for the pixels will save cycles 
+  // through less method calls for per pixel calculations.
+  texture_buffer = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_BGRA8888, SDL_TEXTUREACCESS_STREAMING, 
+				     Gamedata::getInstance().getXmlInt("view/width"), 
+				     Gamedata::getInstance().getXmlInt("view/height"));
+
   // Objects that can collide with walls.
   collidables.reserve(10);
   
@@ -103,19 +115,21 @@ Engine::Engine() :
 }
 
 void Engine::draw() const {
+  int viewWidth = Gamedata::getInstance().getXmlInt("view/width");
+  int viewHeight = Gamedata::getInstance().getXmlInt("view/height");
+  
   // Draw background.
   world.draw(); 
 
+  // Copy the pixels from texture to window.
+  SDL_UpdateTexture(texture_buffer, NULL, pixels_to_draw, viewWidth * sizeof(Uint32));
+  
   // Loop through all the vertical stripes of the player's view (x's) based on 
   // the screen width/height. This will calculate the rays using a grid system.
-  // Camera/plane variables for projection/rendering cycles.
-  float planeX = player->getPlaneX(); 
+  // Camera/plane variables for projection/rendering cycles. 
+  float planeX = player->getPlaneX();   
   float planeY = player->getPlaneY();
-
-  // These variables are used for scaling the screen for multiple resolutions.
-  int viewWidth = Gamedata::getInstance().getXmlInt("view/width");
-  int viewHeight = Gamedata::getInstance().getXmlInt("view/height");
-  int raycastHeight = Gamedata::getInstance().getXmlInt("raycastResolution/height");
+  
   int side = 0;
   int drawTop = 0;
   int drawBottom = 0;
@@ -130,12 +144,7 @@ void Engine::draw() const {
   std::vector<SmartSprite*>::const_iterator spriteCollided;
   const SDL_Surface* textSurface; 
   Uint32* textPixels; 
-  SDL_PixelFormat* textFormat;
   
-  // Pixel data for drawing textures.
-  Uint8 red, green, blue, alpha;
-  unsigned pixel;
-
   // Depth buffer will be used here when drawing the sprites.
   // Gives us the ability to scale enemy sprites based on the distance to the
   // player.
@@ -275,7 +284,6 @@ void Engine::draw() const {
       if(newSpriteCollided == true){
         textSurface = (*spriteCollided)->getSurface();
         textPixels = static_cast<Uint32 *>(textSurface->pixels);
-	textFormat = textSurface->format;
       }
       
       // Begin rendering the rows of each column to the screen. By using the
@@ -284,18 +292,10 @@ void Engine::draw() const {
       for( int vertPixelY = drawTop; vertPixelY < drawBottom; vertPixelY++ )
       {
         // Scale the screen based on the original raycast resolution.	
-        if( (vertPixelY % (viewHeight / raycastHeight)) == 0)
-        {
           int d = vertPixelY * 256 - viewHeight * 128 + vertLineLength * 128;
           int textureY = d*(*spriteCollided)->getScaledHeight() / vertLineLength / 256;
-        
-          pixel = textPixels[(textureY * (*spriteCollided)->getScaledWidth()) + textureX];
-          SDL_GetRGBA(pixel, textFormat, 
-                    &red, &green, &blue, &alpha);
-
-          SDL_SetRenderDrawColor(renderer, red, green, blue, alpha);
-          SDL_RenderDrawPoint(renderer, vertPixelX, vertPixelY);
-        }
+	  // Store the new pixel into the array until all pixels have been saved.
+          pixels_to_draw[vertPixelX + vertPixelY * viewWidth] = textPixels[(textureY * (*spriteCollided)->getScaledWidth()) + textureX];;
       }
 
       // Record the distance into the depth buffer for further use.
@@ -341,13 +341,7 @@ void Engine::draw() const {
 
         // Render pixel from the coordinate of the texture to the screen
         // coordinate. Can repeat for ceilings if wanted.
-        pixel = floorPixels[(floorTextureY * floor->getScaledWidth()) + floorTextureX];
-        
-        SDL_GetRGBA(pixel, floorSurface->format, 
-                    &red, &green, &blue, &alpha);
-
-        SDL_SetRenderDrawColor(renderer, red, green, blue, alpha);
-        SDL_RenderDrawPoint(renderer, vertPixelX, floorRow);
+        pixels_to_draw[vertPixelX + floorRow * viewWidth] = floorPixels[(floorTextureY * floor->getScaledWidth()) + floorTextureX];
       }
   }
 
@@ -431,23 +425,21 @@ void Engine::draw() const {
           int textureY = ((d * ptr->getScaledHeight()) / (float)spriteScreenHeight) / 256;
 	  Uint32 pixelAccess = textureY * (float)ptr->getScaledWidth() + textureX;
         
-          pixel = textPixels[pixelAccess];
-          SDL_GetRGBA(pixel, spriteSurface->format, 
-                    &red, &green, &blue, &alpha);
-
-          SDL_SetRenderDrawColor(renderer, red, green, blue, alpha);
-          SDL_RenderDrawPoint(renderer, vertSprite, horizSprite);
+          pixels_to_draw[vertSprite + horizSprite * viewWidth] = textPixels[pixelAccess];
         }
       }
     }
   }
 
+  //for(auto& it : collidables)
+  //it->draw();
+
+  
+  SDL_RenderClear(renderer);
+  SDL_RenderCopy(renderer, texture_buffer, NULL, NULL);
+
   for(auto& it : sprites)
     it->draw();
-
-  //for(auto& it : collidables)
-    //it->draw();
-
 
   if(hud.getActive() == true)
     hud.draw();

@@ -52,6 +52,9 @@ private:
   const SDL_Surface* floorSurface;
   // Enemy sprites.
   int* depthBuffer;
+  // Pixels to be drawn, save to buffer (faster than per pixel methods)
+  SDL_Texture* texture_buffer;
+  Uint32* pixels_to_draw;
   void draw() const;
   void update(Uint32);
 
