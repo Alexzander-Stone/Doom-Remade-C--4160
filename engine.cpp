@@ -73,8 +73,8 @@ Engine::Engine() :
   // Wall sprites.
   int wallCount = Gamedata::getInstance().getXmlInt("Wall/numberOfWalls");
   sprites.reserve( wallCount*2 );
-  int w = player->getSpriteInfo()->getScaledWidth();
-  int h = player->getSpriteInfo()->getScaledHeight();
+  int w = player->getSpriteInfo()->getScaledWidth()/2;
+  int h = player->getSpriteInfo()->getScaledHeight()/2;
 
   // Boxed Arena Walls
   for(int i = 0; i < Gamedata::getInstance().getXmlInt("arena/size"); i++) {
@@ -120,8 +120,8 @@ void Engine::draw() const {
   int side = 0;
   int drawTop = 0;
   int drawBottom = 0;
-  float posX = player->getX() + player->getSpriteInfo()->getScaledWidth()/2 ;
-  float posY = player->getY() + player->getSpriteInfo()->getScaledHeight()/2;
+  float posX = player->getX() + player->getScaledWidth()/2;
+  float posY = player->getY() + player->getScaledHeight()/2;
 
   // Boolean to optimize performance for rays hitting the same sprite. Saves
   // cycles by only updating surface if new sprite has been hit.
@@ -378,13 +378,13 @@ void Engine::draw() const {
     itr++;
   }
   // Begin sorting the sprites based on their distance to the player.
-  float playerX = player->getX();
-  float playerY = player->getY();
+  float playerX = player->getX() + player->getScaledWidth()/2;
+  float playerY = player->getY() + player->getScaledHeight()/2;
   depth_sprite_render.sort(
       [playerX, playerY]( const Drawable* lhs, const Drawable* rhs ) -> bool{ 
-        return hypot(lhs->getX() - playerX, lhs->getY() - playerY) 
+        return hypot(lhs->getX() + lhs->getScaledWidth()/2 - playerX, lhs->getY() + lhs->getScaledHeight()/2 - playerY) 
                <=
-               hypot(rhs->getX() - playerX, rhs->getY() - playerY);
+               hypot(rhs->getX() + rhs->getScaledWidth()/2 - playerX, rhs->getY() + rhs->getScaledHeight()/2 - playerY);
       }
   );
 
@@ -393,8 +393,8 @@ void Engine::draw() const {
   // info check out lodev.org/cgtutor/raycasting3.html (helpful formulas).
   for( auto& ptr : depth_sprite_render ) {
     // Find the sprite's coordinates in relation to the camera.
-    float currSpriteX = ptr->getX() - posX;
-    float currSpriteY = ptr->getY() - posY;
+    float currSpriteX = ptr->getX() + ptr->getScaledWidth()/2 - posX;
+    float currSpriteY = ptr->getY() + ptr->getScaledHeight()/2 - posY;
 
     float inverseCameraMatrix = 1.0f / (planeX * player->getYFov() - player->getXFov() * planeY);
 
@@ -424,10 +424,10 @@ void Engine::draw() const {
 
     // Only draw the sprite if it's within the camera plane.
     for( int vertSprite = drawLeftX; vertSprite < drawRightX; vertSprite++ ) {
-      int textureX = (256 * (vertSprite - (-spriteScreenWidth / 2 + spriteScreenX)) * ptr->getScaledWidth() / spriteScreenWidth) / 256;
-      
       if( cameraSpriteY > 0 && vertSprite > 0 && vertSprite < viewWidth && cameraSpriteY < depthBuffer[vertSprite] ){
+        int textureX = (256 * (vertSprite - (-spriteScreenWidth / 2 + spriteScreenX)) * ptr->getScaledWidth() / spriteScreenWidth) / 256;
         const SDL_Surface* spriteSurface = ptr->getSurface();
+        textPixels = static_cast<Uint32 *>(spriteSurface->pixels);
         for( int horizSprite = drawTopY; horizSprite < drawBottomY; horizSprite++ ) {
           int d = cameraSpriteY * 256 - viewHeight * 128 + spriteScreenHeight * 128;
           int textureY = ((d * ptr->getScaledHeight()) / spriteScreenHeight) / 256;
@@ -465,7 +465,6 @@ void Engine::checkForCollisions(){
 	    // Search through all the sprites to determine if collision has occurred.
       bool collisionDetected = true;
       while( collisionDetected == true ) {
-
         // Check against the Walls in the level.
 	      auto spriteIt = sprites.begin();
 	      collisionDetected = false;

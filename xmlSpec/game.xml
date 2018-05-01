@@ -12,8 +12,8 @@
 <username>alexzas</username>
 
 <view>
-  <width>1366</width>
-  <height>768</height>
+  <width>683</width>
+  <height>384</height>
 </view>
 
 <raycastResolution>
@@ -185,7 +185,7 @@
 
 <Pinkie>
   <file>assets/enemy.png</file>
-  <startLoc x="35" y="35"/>
+  <startLoc x="1000" y="1000"/>
   <frames>1</frames>
   <imageWidth>256</imageWidth>
   <imageHeight>256</imageHeight>

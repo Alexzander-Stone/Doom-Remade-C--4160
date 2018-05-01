@@ -6,13 +6,17 @@ WallCollidable::WallCollidable( const std::string& name) :
   current_state(NORMAL),
   amtToIncreaseVelocity(Gamedata::getInstance().getXmlInt(name+ "/incSpeed")),
   bounce_timer(0),
+  bounce_speed(Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + "/bounceSpeedRequirement")),
+  change_velocity(Gamedata::getInstance().getXmlFloat(collidableSprite.getName() + "/Bounce/changeVel")),
   previous_x(0),
   previous_y(0),
   x_fov(Gamedata::getInstance().getXmlFloat(name + "/xFovStart")),
   y_fov(Gamedata::getInstance().getXmlFloat(name + "/yFovStart")),
   theta(Gamedata::getInstance().getXmlInt(name + "/directionStart")),
+  theta_increment(Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + "/thetaIncrement")),
   rotation_radius(Gamedata::getInstance().getXmlInt(name + "/rotationRadius")),
   bulletName( Gamedata::getInstance().getXmlStr(name+"/bullet") ),
+  max_bullets(static_cast<unsigned int>(Gamedata::getInstance().getXmlInt(bulletName+"/ammo"))),
   bullets(),
   freeAmmo(),
   bulletInterval( Gamedata::getInstance().getXmlInt(bulletName+"/interval") ),
@@ -73,12 +77,16 @@ void WallCollidable::collisionDetected(){
     // to the collision. Essentially, the projection matrix. 
     if( (*it)->getName() == "Wall/Horizontal") {
       bool toBounce;
-      if(getSpriteInfo()->getVelocityY() >= Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + "/bounceSpeedRequirement") || getSpriteInfo()->getVelocityY() <= -Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + "/bounceSpeedRequirement"))
+      if(getSpriteInfo()->getVelocityY() >= bounce_speed || getSpriteInfo()->getVelocityY() <= -bounce_speed )
 	      toBounce = true; 
       else
         toBounce = false;
-      while ( currentY + currentIncrement <= collision_obj_y + (*it)->getScaledHeight() + 1.001 &&
-		          currentY + currentIncrement + getScaledHeight() >= collision_obj_y - 1.001 ) {
+      while ( currentY + currentIncrement 
+              <= collision_obj_y + (*it)->getScaledHeight() + 1.001 
+          &&
+		          currentY + getScaledHeight() + currentIncrement 
+              >= collision_obj_y - 1.001 ) 
+      {
         if(toBounce == true)
 	        currentIncrement += -momentumY;
         else{
@@ -91,12 +99,16 @@ void WallCollidable::collisionDetected(){
     }
     else if( (*it)->getName() == "Wall/Vertical" ) {
       bool toBounce;
-      if(getSpriteInfo()->getVelocityX() >= Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + "/bounceSpeedRequirement") || getSpriteInfo()->getVelocityX() <= -Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + "/bounceSpeedRequirement"))
+      if(getSpriteInfo()->getVelocityX() >= bounce_speed || getSpriteInfo()->getVelocityX() <= -bounce_speed)
 	      toBounce = true; 
       else
         toBounce = false;
-      while ( currentX + currentIncrement <= collision_obj_x + (*it)->getScaledWidth() + 1.001 && 
-	            currentX + getScaledWidth() + currentIncrement >= collision_obj_x - 1.001 ) {
+      while ( currentX + currentIncrement 
+              <= collision_obj_x + (*it)->getScaledWidth() + 1.001 
+          && 
+	            currentX + getScaledWidth() + currentIncrement 
+              >= collision_obj_x - 1.001 ) 
+      {
         if(toBounce == true)
 	        currentIncrement += -momentumX ;
         else{
@@ -108,7 +120,7 @@ void WallCollidable::collisionDetected(){
       collidableSprite.setX( currentX );
     }
     if( currentX <= collision_obj_x + (*it)->getScaledWidth() + 1.00001 && 
-	      currentX + getScaledWidth() >= collision_obj_x - 1.00001 )
+	      currentX + getScaledWidth() >= collision_obj_x  - 1.00001 )
       xFinished = false;
     else
       xFinished = true;
@@ -123,8 +135,8 @@ void WallCollidable::collisionDetected(){
   if ( current_state == NORMAL ){
     current_state = BOUNCE;
     bounce_timer = 0;  
-    float bounceVelX = collidableSprite.getVelocityX() * Gamedata::getInstance().getXmlFloat(collidableSprite.getName() + "/Bounce/changeVel");
-    float bounceVelY = collidableSprite.getVelocityY() * Gamedata::getInstance().getXmlFloat(collidableSprite.getName() + "/Bounce/changeVel");
+    float bounceVelX = collidableSprite.getVelocityX() * change_velocity;
+    float bounceVelY = collidableSprite.getVelocityY() * change_velocity;
 			
     // WallCollidable has hit a horizontal wall. Otherwise, vertical wall.
     if( xFinished == false) {	    
@@ -138,8 +150,8 @@ void WallCollidable::collisionDetected(){
   }   
   // Still decrement speed whenever running into wall.
   else{
-    float slowVelX = collidableSprite.getVelocityX() * Gamedata::getInstance().getXmlFloat(collidableSprite.getName() + "/Bounce/changeVel");
-    float slowVelY = collidableSprite.getVelocityY() * Gamedata::getInstance().getXmlFloat(collidableSprite.getName() + "/Bounce/changeVel");
+    float slowVelX = collidableSprite.getVelocityX() * change_velocity;
+    float slowVelY = collidableSprite.getVelocityY() * change_velocity;
 			
     collidableSprite.setVelocityX( slowVelX );   
     collidableSprite.setVelocityY( slowVelY );
@@ -189,51 +201,43 @@ void WallCollidable::down()  {
 // When determining the vector, make sure to normalize it.
 void WallCollidable::rotateRight() {
     // Wrap the theta around when reaching -1.
-    theta -= Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + 
-             "/thetaIncrement");
+    theta -= theta_increment; 
     if(theta < 0) {
       theta += 360;
     }
     
     // Check to see if the values are negative, need to preserve the negative if so.
     float tempFovX = x_fov;
-    x_fov = x_fov * cos(Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f)
-	      - y_fov * sin(Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f); 
-    y_fov = tempFovX * sin(Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f)
-	      + y_fov * cos(Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f);  
+    x_fov = x_fov * cos(theta_increment/10.0f) - y_fov * sin(theta_increment/10.0f); 
+    y_fov = tempFovX * sin(theta_increment/10.0f) + y_fov * cos(theta_increment/10.0f);  
 }
 void WallCollidable::rotateLeft() {
     // Wrap the theta around when reaching 360.
-    theta += Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + 
-             "/thetaIncrement");
+    theta += theta_increment;
     if(theta > 359) {
     	theta -= 360;
     }
     
     float tempFovX = x_fov;
-    x_fov = x_fov * cos(-Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f)
-            - y_fov * sin(-Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f);
-    y_fov = tempFovX * sin(-Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f)
-            + y_fov * cos(-Gamedata::getInstance().getXmlFloat(getSpriteInfo()->getName() + "/thetaIncrement")/10.0f);
+    x_fov = x_fov * cos(-theta_increment/10.0f)
+            - y_fov * sin(-theta_increment/10.0f);
+    y_fov = tempFovX * sin(-theta_increment/10.0f)
+            + y_fov * cos(-theta_increment/10.0f);
 }
 
 void WallCollidable::shoot(){
   if( timeSinceLastFrame  < bulletInterval ) return;
   // Create new bullet if freeAmmo is empty.
-  if(freeAmmo.empty() && bullets.size() < static_cast<unsigned int>(Gamedata::getInstance().getXmlInt(bulletName+"/ammo")) ){
+  if(freeAmmo.empty() && bullets.size() < max_bullets ){
     Bullet* newBullet = new Bullet(bulletName);
-    newBullet->setPosition( getSpriteInfo()->getPosition() + 
-                      Vector2f(getSpriteInfo()->getScaledWidth()/2, 
-                      getSpriteInfo()->getScaledHeight()/2) );
+    newBullet->setPosition( getSpriteInfo()->getPosition() );
     newBullet->setVelocity( Vector2f(x_fov * bulletSpeed, y_fov * bulletSpeed)  );
     bullets.push_back( newBullet );
   }
   // Use a bullet available from the freeAmmo vector.
-  else if (bullets.size() < static_cast<unsigned int>(Gamedata::getInstance().getXmlInt(bulletName+"/ammo")) ) {
+  else if (bullets.size() < max_bullets ) {
     auto itr = freeAmmo.end()-1;
-    (*itr)->setPosition( getSpriteInfo()->getPosition() + 
-                      Vector2f(getSpriteInfo()->getScaledWidth()/2, 
-                      getSpriteInfo()->getScaledHeight()/2) );
+    (*itr)->setPosition( getSpriteInfo()->getPosition() );
     (*itr)->setVelocity( Vector2f(x_fov * bulletSpeed, y_fov * bulletSpeed)  );
     bullets.push_back( *itr );
     freeAmmo.erase(itr);

@@ -23,6 +23,8 @@ public:
   const Image* getImage() const { return collidableSprite.getImage(); }
   int getScaledWidth()  const { return collidableSprite.getScaledWidth(); } 
   int getScaledHeight()  const { return collidableSprite.getScaledHeight(); } 
+  float getCollidableWidth()  const { return collidableSprite.getCollidableWidth(); } 
+  float getCollidableHeight()  const { return collidableSprite.getCollidableHeight(); }
   const SDL_Surface* getSurface() const { return collidableSprite.getSurface(); }
 
   SubjectSprite* getSpriteInfo() { return &collidableSprite; }
@@ -50,7 +52,7 @@ public:
   void setRotation(int t) { theta = t; }
 
   void checkBulletCollision(Drawable*);
-  unsigned int getFreeBulletCount() const { return Gamedata::getInstance().getXmlInt(bulletName + "/ammo") - bullets.size(); }
+  unsigned int getFreeBulletCount() const { return max_bullets - bullets.size(); }
   unsigned int getBulletCount() const { return bullets.size(); }
 
   const Bullet* getBulletSprite(const int i) const{ return bullets[i]; }
@@ -96,14 +98,19 @@ private:
   int amtToIncreaseVelocity; 
   // Bounce Timer.
   Uint32 bounce_timer;
+  int bounce_speed;
+  float change_velocity;
   // Previous coordinates.
   float previous_x; 
   float previous_y;
   // Direction vector.
   float x_fov, y_fov;
-  int theta, rotation_radius;
+  int theta;
+  float theta_increment;
+  int rotation_radius;
   // Shooting
   std::string bulletName;
+  unsigned int max_bullets;
   std::vector<Bullet*> bullets;
   std::vector<Bullet*> freeAmmo;
   int bulletInterval;

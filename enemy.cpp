@@ -70,7 +70,8 @@ void Enemy::update(Uint32 ticks) {
   }
 
   // Shoot projectile at player if they are within range.
-  if(current_state == NORMAL && hypot(playerPos[0]-getSpriteInfo()->getX(), playerPos[1] - getSpriteInfo()->getY()) < Gamedata::getInstance().getXmlInt(getName()+"/attackDistance"))
+  if(current_state == NORMAL 
+     && hypot(playerPos[0]-getSpriteInfo()->getX(), playerPos[1] - getSpriteInfo()->getY()) < Gamedata::getInstance().getXmlInt(getName()+"/attackDistance"))
   {
     current_state = ATTACK;
     setIncrementalVel(0);
