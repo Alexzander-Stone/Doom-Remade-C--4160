@@ -230,7 +230,7 @@ void WallCollidable::shoot(){
   // Create new bullet if freeAmmo is empty.
   if(freeAmmo.empty() && bullets.size() < max_bullets ){
     Bullet* newBullet = new Bullet(bulletName);
-    newBullet->setPosition( getSpriteInfo()->getPosition() + Vector2f(getSpriteInfo()->getScaledWidth()/2, getSpriteInfo()->getScaledHeight()/2) );
+    newBullet->setPosition( getSpriteInfo()->getPosition() + Vector2f(getSpriteInfo()->getScaledWidth()/2, getSpriteInfo()->getScaledHeight()/2)  );
     newBullet->setVelocity( Vector2f(x_fov * bulletSpeed, y_fov * bulletSpeed)  );
     bullets.push_back( newBullet );
   }

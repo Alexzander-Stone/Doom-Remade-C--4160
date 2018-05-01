@@ -177,7 +177,7 @@
   <transparency>false</transparency>
   <interval>100</interval>
   <distance>100</distance>
-  <speed>75</speed>
+  <speed>5</speed>
   <speedX>0</speedX>
   <speedY>0</speedY>
   <ammo>5</ammo>
@@ -208,7 +208,7 @@
     <incSpeed>5</incSpeed>
     <changeVel>.8</changeVel>
   </Bounce>
-  <attackDistance>20</attackDistance>
+  <attackDistance>8</attackDistance>
   <bullet>Fireball</bullet>
 </Pinkie>
 

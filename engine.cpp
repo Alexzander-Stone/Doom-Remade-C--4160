@@ -79,8 +79,8 @@ Engine::Engine() :
 
   // Enemies, attach to observor in collidables[0].
   Vector2f placeholderPlayerPos(20, 20);
-  collidables.push_back( new Enemy("Pinkie", placeholderPlayerPos) );
-  player->attach( static_cast<Enemy*>( *(collidables.end() - 1) ) );
+  //collidables.push_back( new Enemy("Pinkie", placeholderPlayerPos) );
+  //player->attach( static_cast<Enemy*>( *(collidables.end() - 1) ) );
 
   // Wall sprites.
   int wallCount = Gamedata::getInstance().getXmlInt("Wall/numberOfWalls");
@@ -391,8 +391,8 @@ void Engine::draw() const {
   for( auto& ptr : depth_sprite_render ) {
     // Find the sprite's coordinates in relation to the camera.
     // Needed to find the enemies 3D coordinates
-    float currSpriteX = ptr->getX() - posX;
-    float currSpriteY = ptr->getY() - posY;
+    float currSpriteX = ptr->getX() + ptr->getScaledWidth()/2 - posX;
+    float currSpriteY = ptr->getY() + ptr->getScaledHeight()/2 - posY;
 
     float inverseCameraMatrix = 1.0f / (planeX * directionY - directionX * planeY);
 
@@ -432,7 +432,7 @@ void Engine::draw() const {
         for( int horizSprite = drawTop; horizSprite < drawBottom; horizSprite++ ) {
           int d = horizSprite * 256 - viewHeight * 128 + spriteScreenHeight * 128;
           int textureY = ((d * ptr->getScaledHeight()) / (float)spriteScreenHeight) / 256;
-	  Uint32 pixelAccess = textureY * (float)ptr->getScaledWidth() + textureX;
+	        Uint32 pixelAccess = textureY * (float)ptr->getScaledWidth() + textureX;
         
           pixels_to_draw[vertSprite + horizSprite * viewWidth] = textPixels[pixelAccess];
         }
@@ -440,12 +440,15 @@ void Engine::draw() const {
     }
   }
 
-  //for(auto& it : collidables)
-  //it->draw();
-
+  
   
   SDL_RenderClear(renderer);
   SDL_RenderCopy(renderer, texture_buffer, NULL, NULL);
+
+  for(auto& it : collidables)
+  {
+    it->draw();
+  }
 
   for(auto& it : sprites)
     it->draw();
@@ -489,8 +492,8 @@ void Engine::checkForCollisions(){
     // enemies/players and walls.
     std::vector<WallCollidable*>::iterator currGun = collidables.begin();
     while( currGun != collidables.end() ){
-      auto currTarget = collidables.begin();
       // Enemy/Player.
+      auto currTarget = collidables.begin();
       while( currTarget != collidables.end() ) {
         if(currGun != currTarget)
           (*currGun)->checkBulletCollision((*currTarget)->getSpriteInfo());

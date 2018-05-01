@@ -13,15 +13,15 @@ bool RectangularCollisionStrategy::execute(
   float left1 = sprite1.getX() - 1;
   float left2 = sprite2.getX();
 
-  float right1 = sprite1.getX() + sprite1.getScaledWidth() + 1;
-  float right2 = sprite2.getX() + sprite2.getScaledWidth();
+  float right1 = left1 + sprite1.getScaledWidth() + 2;
+  float right2 = left2 + sprite2.getScaledWidth();
   if ( right1 < left2 ) return false;
   if ( left1 > right2 ) return false;
   float top1 = sprite1.getY() - 1;
   float top2 = sprite2.getY();
 
-  float bottom1 = sprite1.getY() + sprite1.getScaledHeight() + 1;
-  float bottom2 = sprite2.getY() + sprite2.getScaledHeight();
+  float bottom1 = top1 + sprite1.getScaledHeight() + 2;
+  float bottom2 = top2 + sprite2.getScaledHeight();
   if ( bottom1 < top2 ) return false;
   if ( bottom2 < top1 ) return false;
   
