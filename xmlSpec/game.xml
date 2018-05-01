@@ -12,8 +12,8 @@
 <username>alexzas</username>
 
 <view>
-  <width>683</width>
-  <height>384</height>
+  <width>1366</width>
+  <height>768</height>
 </view>
 
 <raycastResolution>
@@ -93,7 +93,7 @@
     <transparency>false</transparency>
   </DoomFace>
   <Shell>
-    <file>assets/fireball.png</file>
+    <file>assets/shell.png</file>
     <startLoc x="-100" y="-100"/>
     <frames>1</frames>
     <imageWidth>10</imageWidth>
@@ -169,8 +169,8 @@
   <file>assets/fireball.png</file>
   <startLoc x="-100" y="-100"/>
   <frames>1</frames>
-  <imageWidth>256</imageWidth>
-  <imageHeight>256</imageHeight>
+  <imageWidth>2</imageWidth>
+  <imageHeight>2</imageHeight>
   <collidableWidth>2</collidableWidth>
   <collidableHeight>2</collidableHeight>
   <frameInterval>2000</frameInterval>
@@ -216,8 +216,8 @@
   <file>assets/fireball.png</file>
   <startLoc x="-100" y="-100"/>
   <frames>1</frames>
-  <imageWidth>256</imageWidth>
-  <imageHeight>256</imageHeight>
+  <imageWidth>2</imageWidth>
+  <imageHeight>2</imageHeight>
   <collidableWidth>2</collidableWidth>
   <collidableHeight>2</collidableHeight>
   <frameInterval>2000</frameInterval>

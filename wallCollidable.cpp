@@ -230,14 +230,15 @@ void WallCollidable::shoot(){
   // Create new bullet if freeAmmo is empty.
   if(freeAmmo.empty() && bullets.size() < max_bullets ){
     Bullet* newBullet = new Bullet(bulletName);
-    newBullet->setPosition( getSpriteInfo()->getPosition() );
+    newBullet->setPosition( getSpriteInfo()->getPosition() + Vector2f(getSpriteInfo()->getScaledWidth()/2, getSpriteInfo()->getScaledHeight()/2) );
     newBullet->setVelocity( Vector2f(x_fov * bulletSpeed, y_fov * bulletSpeed)  );
     bullets.push_back( newBullet );
   }
   // Use a bullet available from the freeAmmo vector.
   else if (bullets.size() < max_bullets ) {
+    std::cout << "creation" << std::endl;
     auto itr = freeAmmo.end()-1;
-    (*itr)->setPosition( getSpriteInfo()->getPosition() );
+    (*itr)->setPosition( getSpriteInfo()->getPosition() + Vector2f(getSpriteInfo()->getScaledWidth()/2, getSpriteInfo()->getScaledHeight()/2));
     (*itr)->setVelocity( Vector2f(x_fov * bulletSpeed, y_fov * bulletSpeed)  );
     bullets.push_back( *itr );
     freeAmmo.erase(itr);
