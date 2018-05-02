@@ -79,8 +79,8 @@ Engine::Engine() :
 
   // Enemies, attach to observor in collidables[0].
   Vector2f placeholderPlayerPos(20, 20);
-  collidables.push_back( new Enemy("Pinkie", placeholderPlayerPos) );
-  player->attach( static_cast<Enemy*>( *(collidables.end() - 1) ) );
+  //collidables.push_back( new Enemy("Pinkie", placeholderPlayerPos) );
+  //player->attach( static_cast<Enemy*>( *(collidables.end() - 1) ) );
 
   // Wall sprites.
   int wallCount = Gamedata::getInstance().getXmlInt("Wall/numberOfWalls");
@@ -379,9 +379,23 @@ void Engine::draw() const {
   float playerY = player->getY() + player->getScaledHeight()/2;
   depth_sprite_render.sort(
       [playerX, playerY]( const Drawable* lhs, const Drawable* rhs ) -> bool{ 
-        return hypot(lhs->getX() + lhs->getScaledWidth()/2 - playerX, lhs->getY() + lhs->getScaledHeight()/2 - playerY) 
-               <=
-               hypot(rhs->getX() + rhs->getScaledWidth()/2 - playerX, rhs->getY() + rhs->getScaledHeight()/2 - playerY);
+        int leftX = lhs->getX();
+        int leftY = lhs->getY();
+        int rightX = rhs->getX();
+        int rightY = rhs->getY();
+
+        if(lhs->getName() != "Pinkie"){
+          leftX += lhs->getScaledWidth()/2;
+          leftY += lhs->getScaledHeight()/2;
+        }
+        if(rhs->getName() != "Pinkie"){
+          rightX += rhs->getScaledWidth()/2;
+          rightY += rhs->getScaledHeight()/2;
+        }
+
+        return hypot(leftX - playerX, leftY - playerY) 
+               >=
+               hypot(rightX - playerX, rightY - playerY);
       }
   );
 
@@ -450,8 +464,8 @@ void Engine::draw() const {
   SDL_RenderClear(renderer);
   SDL_RenderCopy(renderer, texture_buffer, NULL, NULL);
 
-  //for(auto& it : collidables)
-    //it->draw();
+  for(auto& it : collidables)
+    it->draw();
 
   for(auto& it : sprites)
     it->draw();
@@ -505,7 +519,7 @@ void Engine::checkForCollisions(){
       // Walls.
       auto currWall = sprites.begin();
       while( currWall != sprites.end() ) {
-        (*currGun)->checkBulletCollision(*currWall);
+        (*currGun)->checkBulletCollision((*currWall));
         currWall++;
       }
       currGun++;

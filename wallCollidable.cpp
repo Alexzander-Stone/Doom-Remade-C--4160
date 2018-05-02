@@ -250,6 +250,7 @@ void WallCollidable::checkBulletCollision(Drawable* col){
   auto b = bullets.begin();
   while( b != bullets.end() ){
     if((*b)->checkCollision(col)){
+      // Apply damage to the 
       freeAmmo.push_back(*b);
       b = bullets.erase(b);
     }
