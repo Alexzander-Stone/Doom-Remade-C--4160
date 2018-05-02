@@ -79,8 +79,8 @@ Engine::Engine() :
 
   // Enemies, attach to observor in collidables[0].
   Vector2f placeholderPlayerPos(20, 20);
-  //collidables.push_back( new Enemy("Pinkie", placeholderPlayerPos) );
-  //player->attach( static_cast<Enemy*>( *(collidables.end() - 1) ) );
+  collidables.push_back( new Enemy("Pinkie", placeholderPlayerPos) );
+  player->attach( static_cast<Enemy*>( *(collidables.end() - 1) ) );
 
   // Wall sprites.
   int wallCount = Gamedata::getInstance().getXmlInt("Wall/numberOfWalls");
@@ -464,8 +464,8 @@ void Engine::draw() const {
   SDL_RenderClear(renderer);
   SDL_RenderCopy(renderer, texture_buffer, NULL, NULL);
 
-  for(auto& it : collidables)
-    it->draw();
+  //for(auto& it : collidables)
+    //it->draw();
 
   for(auto& it : sprites)
     it->draw();

@@ -200,8 +200,8 @@
   <frames>1</frames>
   <imageWidth>512</imageWidth>
   <imageHeight>512</imageHeight>
-  <collidableWidth>5</collidableWidth>
-  <collidableHeight>5</collidableHeight>
+  <collidableWidth>.5</collidableWidth>
+  <collidableHeight>.5</collidableHeight>
   <frameInterval>2000</frameInterval>
   <speedY>0</speedY>
   <speedX>0</speedX>

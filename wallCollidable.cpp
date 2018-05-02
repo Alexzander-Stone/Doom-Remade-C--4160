@@ -82,10 +82,10 @@ void WallCollidable::collisionDetected(){
       else
         toBounce = false;
       while ( currentY + currentIncrement 
-              <= collision_obj_y + (*it)->getScaledHeight() + 1.001 
+              <= collision_obj_y + (*it)->getScaledHeight() 
           &&
 		          currentY + getScaledHeight() + currentIncrement 
-              >= collision_obj_y - 1.001 ) 
+              >= collision_obj_y  ) 
       {
         if(toBounce == true)
 	        currentIncrement += -momentumY;
@@ -104,10 +104,10 @@ void WallCollidable::collisionDetected(){
       else
         toBounce = false;
       while ( currentX + currentIncrement 
-              <= collision_obj_x + (*it)->getScaledWidth() + 1.001 
+              <= collision_obj_x + (*it)->getScaledWidth()  
           && 
 	            currentX + getScaledWidth() + currentIncrement 
-              >= collision_obj_x - 1.001 ) 
+              >= collision_obj_x  ) 
       {
         if(toBounce == true)
 	        currentIncrement += -momentumX ;
@@ -119,8 +119,8 @@ void WallCollidable::collisionDetected(){
       currentX += currentIncrement;
       collidableSprite.setX( currentX );
     }
-    if( currentX <= collision_obj_x + (*it)->getScaledWidth() + 1.00001 && 
-	      currentX + getScaledWidth() >= collision_obj_x  - 1.00001 )
+    if( currentX <= collision_obj_x + (*it)->getScaledWidth()  && 
+	      currentX + getScaledWidth() >= collision_obj_x  )
       xFinished = false;
     else
       xFinished = true;

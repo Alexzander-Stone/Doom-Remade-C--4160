@@ -10,17 +10,17 @@ bool RectangularCollisionStrategy::execute(
       const Drawable& sprite1, const Drawable& sprite2) const {
 	// Give an offset of 1 pixel that way collision activates as 
   // each item hit each other's bounding box.
-  float left1 = sprite1.getX() - 1;
+  float left1 = sprite1.getX();
   float left2 = sprite2.getX();
 
-  float right1 = left1 + sprite1.getScaledWidth() + 2;
+  float right1 = left1 + sprite1.getScaledWidth();
   float right2 = left2 + sprite2.getScaledWidth();
   if ( right1 < left2 ) return false;
   if ( left1 > right2 ) return false;
-  float top1 = sprite1.getY() - 1;
+  float top1 = sprite1.getY();
   float top2 = sprite2.getY();
 
-  float bottom1 = top1 + sprite1.getScaledHeight() + 2;
+  float bottom1 = top1 + sprite1.getScaledHeight();
   float bottom2 = top2 + sprite2.getScaledHeight();
   if ( bottom1 < top2 ) return false;
   if ( bottom2 < top1 ) return false;
