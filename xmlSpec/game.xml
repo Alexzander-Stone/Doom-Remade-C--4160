@@ -67,6 +67,17 @@
   <transparency>false</transparency>
 </Ray>
 
+<BulletCollision>
+  <file>assets/bulletCollision.png</file>
+  <collidableHeight>1</collidableHeight>
+  <collidableWidth>1</collidableWidth>
+  <factor>300</factor>
+  <speedX>0</speedX>
+  <speedY>0</speedY>
+  <startLoc x="0" y="0" />
+  <transparency>false</transparency>
+</BulletCollision>
+
 <Hud>
   <file>assets/newHudWithoutText.png</file>
   <collidableHeight>1</collidableHeight>
@@ -96,8 +107,8 @@
     <file>assets/shell.png</file>
     <startLoc x="-100" y="-100"/>
     <frames>1</frames>
-    <imageWidth>10</imageWidth>
-    <imageHeight>10</imageHeight>
+    <imageWidth>128</imageWidth>
+    <imageHeight>128</imageHeight>
     <collidableHeight>1</collidableHeight>
     <collidableWidth>1</collidableWidth>
     <frameInterval>2000</frameInterval>
@@ -166,11 +177,11 @@
 </DoomGuy>
 
 <Plasma>
-  <file>assets/fireball.png</file>
+  <file>assets/plasma.png</file>
   <startLoc x="-100" y="-100"/>
   <frames>1</frames>
-  <imageWidth>2</imageWidth>
-  <imageHeight>2</imageHeight>
+  <imageWidth>128</imageWidth>
+  <imageHeight>128</imageHeight>
   <collidableWidth>2</collidableWidth>
   <collidableHeight>2</collidableHeight>
   <frameInterval>2000</frameInterval>
@@ -216,8 +227,8 @@
   <file>assets/fireball.png</file>
   <startLoc x="-100" y="-100"/>
   <frames>1</frames>
-  <imageWidth>2</imageWidth>
-  <imageHeight>2</imageHeight>
+  <imageWidth>128</imageWidth>
+  <imageHeight>128</imageHeight>
   <collidableWidth>2</collidableWidth>
   <collidableHeight>2</collidableHeight>
   <frameInterval>2000</frameInterval>

@@ -232,6 +232,7 @@ void WallCollidable::shoot(){
     Bullet* newBullet = new Bullet(bulletName);
     newBullet->setPosition( getSpriteInfo()->getPosition() + Vector2f(getSpriteInfo()->getScaledWidth()/2 - newBullet->getScaledWidth()/2 + x_fov, getSpriteInfo()->getScaledHeight()/2 - newBullet->getScaledHeight()/2 + y_fov)  );
     newBullet->setVelocity( Vector2f(x_fov * bulletSpeed, y_fov * bulletSpeed)  );
+    std::cout << newBullet->getVelocity() << std::endl;
     bullets.push_back( newBullet );
   }
   // Use a bullet available from the freeAmmo vector.
@@ -239,6 +240,7 @@ void WallCollidable::shoot(){
     auto itr = freeAmmo.end()-1;
     (*itr)->setPosition( getSpriteInfo()->getPosition() + Vector2f(getSpriteInfo()->getScaledWidth()/2 - (*itr)->getScaledWidth()/2 + x_fov, getSpriteInfo()->getScaledHeight()/2 - (*itr)->getScaledHeight()/2 + y_fov));
     (*itr)->setVelocity( Vector2f(x_fov * bulletSpeed, y_fov * bulletSpeed)  );
+    std::cout << (*itr)->getVelocity() << std::endl;
     bullets.push_back( *itr );
     freeAmmo.erase(itr);
   }

@@ -15,5 +15,7 @@ void Bullet::update(Uint32 ticks) {
 }
 
 bool Bullet::checkCollision( const Drawable* sprite) const{
-  return strategy->execute(*sprite, *this); 
+  Sprite checker("BulletCollision");
+  checker.setPosition(getPosition() + Vector2f(getScaledWidth()/2, getScaledHeight()/2));
+  return strategy->execute(*sprite, checker); 
 }

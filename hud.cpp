@@ -33,8 +33,9 @@ player(p)
   shells.reserve(Gamedata::getInstance().getXmlInt( Gamedata::getInstance().getXmlStr(player->getName()+"/bullet") + "/ammo"));
   for( int i = 0; i < Gamedata::getInstance().getXmlInt( Gamedata::getInstance().getXmlStr(player->getName()+"/bullet") + "/ammo"); i++ ) {
     Sprite* newShell =  new Sprite("Hud/Shell");
-    newShell->setScale(5);
-    newShell->setPosition( Vector2f(210 + 50 * i, Gamedata::getInstance().getXmlInt("view/height") - 50) );
+    newShell->setScale(1);
+    newShell->setPosition( Vector2f(210 - newShell->getScaledWidth()/2 + 50 * i, Gamedata::getInstance().getXmlInt("view/height") - 50 - newShell->getScaledHeight()/2) );
+    std::cout << newShell->getX() << " and " << newShell->getY() << std::endl;
     shells.push_back(newShell);
   }
 }
@@ -69,8 +70,9 @@ void Hud::setPlayer(Player* p){
   shells.reserve(Gamedata::getInstance().getXmlInt( Gamedata::getInstance().getXmlStr(player->getName()+"/bullet") + "/ammo"));
   for( int i = 0; i < Gamedata::getInstance().getXmlInt( Gamedata::getInstance().getXmlStr(player->getName()+"/bullet") + "/ammo"); i++ ) {
     Sprite* newShell =  new Sprite("Hud/Shell");
-    newShell->setScale(5);
-    newShell->setPosition( Vector2f(210 + 50 * i, Gamedata::getInstance().getXmlInt("view/height") - 50) );
+    newShell->setScale(.5);
+    newShell->setPosition( Vector2f(210 - newShell->getScaledWidth()/2 + 50 * i, Gamedata::getInstance().getXmlInt("view/height") - 50 - newShell->getScaledHeight()) );
+    std::cout << newShell->getX() << " and " << newShell->getY() << std::endl;
     shells.push_back(newShell);
   }
 }
@@ -91,7 +93,7 @@ void Hud::draw() const {
   IoMod::getInstance().
       writeText("Alexzander Stone", 
 		Gamedata::getInstance().getXmlInt("font/size") * 9, 
-		Gamedata::getInstance().getXmlInt("view/height") - Gamedata::getInstance().getXmlInt("font/size")/2 - background.getScaledHeight()/2);
+		Gamedata::getInstance().getXmlInt("view/height") - background.getScaledHeight()/2);
 
   // Draw instructions.
   IoMod::getInstance().

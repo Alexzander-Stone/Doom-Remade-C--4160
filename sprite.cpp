@@ -62,18 +62,4 @@ void Sprite::draw() const {
 void Sprite::update(Uint32 ticks) { 
   Vector2f incr = getVelocity() * static_cast<float>(ticks) * 0.001;
   setPosition(getPosition() + incr);
-
-  if ( getY() < 0) {
-    setVelocityY( std::abs( getVelocityY() ) );
-  }
-  if ( getY() > worldHeight-getScaledHeight()) {
-    setVelocityY( -std::abs( getVelocityY() ) );
-  }
-
-  if ( getX() < 0) {
-    setVelocityX( std::abs( getVelocityX() ) );
-  }
-  if ( getX() > worldWidth-getScaledWidth()) {
-    setVelocityX( -std::abs( getVelocityX() ) );
-  }  
 }

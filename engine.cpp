@@ -433,8 +433,8 @@ void Engine::draw() const {
           int d = horizSprite * 256 - viewHeight * 128 + spriteScreenHeight * 128;
           int textureY = ((d * ptr->getScaledHeight()) / (float)spriteScreenHeight) / 256;
 	        Uint32 pixelAccess = textureY * (float)ptr->getScaledWidth() + textureX;
-        
-          pixels_to_draw[vertSprite + horizSprite * viewWidth] = textPixels[pixelAccess];
+          if(textPixels[pixelAccess] != 4294902015) // magenta color 
+            pixels_to_draw[vertSprite + horizSprite * viewWidth] = textPixels[pixelAccess];
         }
       }
     }
