@@ -546,7 +546,7 @@ void Engine::update(Uint32 ticks) {
   }
 }
 
-void Engine::play() {
+bool Engine::play() {
   SDL_Event event;
   const Uint8* keystate;
   bool done = false;
@@ -569,6 +569,9 @@ void Engine::play() {
         if ( keystate[SDL_SCANCODE_P] ) {
           if ( clock.isPaused() ) clock.unpause();
           else clock.pause();
+        }
+        if ( keystate[SDL_SCANCODE_R] ) {
+          return true;
         }
 	      if (keystate[SDL_SCANCODE_F1]) {
           std::cout << "Initiating hud" << std::endl;
@@ -616,4 +619,5 @@ void Engine::play() {
       }
     }
   }
+  return false;
 }

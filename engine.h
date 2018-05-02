@@ -17,7 +17,7 @@ class Engine {
 public:
   Engine ();
   ~Engine ();
-  void play();
+  bool play();
 
 private:
   const RenderContext* rc;
