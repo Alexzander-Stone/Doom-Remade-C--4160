@@ -11,6 +11,7 @@ RenderContext::RenderContext() :
  	}
   window = initWindow();
   renderer = initRenderer();
+  SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 }
 
 RenderContext::~RenderContext() {

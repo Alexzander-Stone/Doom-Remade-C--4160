@@ -129,20 +129,36 @@ void Hud::draw() const {
     }
   }
   else { // Ending is true;
+    // Menu for text to sit on.
     SDL_Rect menu;
-    menu.x = Gamedata::getInstance().getXmlFloat("view/width") * .3333;
-    menu.y = Gamedata::getInstance().getXmlFloat("view/height") * .3333;
-    menu.w = Gamedata::getInstance().getXmlFloat("view/width") * .3333;
-    menu.h = Gamedata::getInstance().getXmlFloat("view/height") * .3333;
+    menu.x = Gamedata::getInstance().getXmlFloat("view/width") * .1;
+    menu.y = Gamedata::getInstance().getXmlFloat("view/height") * .1;
+    menu.w = Gamedata::getInstance().getXmlFloat("view/width") * .8;
+    menu.h = Gamedata::getInstance().getXmlFloat("view/height") * .65;
 
-    SDL_SetRenderDrawColor( renderer, 208, 255, 0, 255 );
+    SDL_SetRenderDrawColor( renderer, 200, 200, 200, 255 );
     SDL_RenderDrawRect(renderer, &menu);
 
-    SDL_SetRenderDrawColor( renderer, 0, 255, 255, 50 );
+    SDL_SetRenderDrawColor( renderer, 200, 200, 200, 200 );
     SDL_RenderFillRect(renderer, &menu);
 
-    
-
+    SDL_SetRenderDrawColor( renderer, 0, 255, 0, 50 );
+    if(ending == 1) { // Player has won.
+      IoMod::getInstance().
+          writeText(" You defeated the monster! ", 
+            Gamedata::getInstance().getXmlFloat("view/width") * .5 - Gamedata::getInstance().getXmlFloat("font/size")*6 - 10, 
+            Gamedata::getInstance().getXmlFloat("view/height") * .2, 
+            SDL_Color({255, 255, 255, 255})
+          );
+    }
+    else {  // Enemy has won
+      IoMod::getInstance().
+          writeText(" Death awaits you... ", 
+            Gamedata::getInstance().getXmlFloat("view/width") * .5 - Gamedata::getInstance().getXmlFloat("font/size")*2 - 10, 
+            Gamedata::getInstance().getXmlFloat("view/height") * .2, 
+            SDL_Color({255, 255, 255, 255})
+          );
+    }
   }
 }
 
