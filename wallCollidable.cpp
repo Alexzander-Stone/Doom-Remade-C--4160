@@ -46,6 +46,7 @@ void WallCollidable::draw() const{
 }
 
 void WallCollidable::update(Uint32 ticks){
+  Living::update();
   timeSinceLastFrame += ticks;
   for( Bullet* bullet : bullets )
     bullet->update(ticks);

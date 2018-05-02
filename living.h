@@ -5,10 +5,15 @@ class Living{
 
   public:
     Living();
-    void dealDamage(int n);
     virtual ~Living(){};
+    
+    bool getAlive();
 
+    void update();
+    void dealDamage(int n);
+  
   private:
     int health;
+    bool alive;
 
 };

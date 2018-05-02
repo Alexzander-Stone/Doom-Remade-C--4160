@@ -20,12 +20,18 @@ class Hud {
 
     void toggleActive() { active = !active; }
     bool getActive() const { return active; }
+    void toggleEnding() { ending = !ending; }
+    bool getEnding() const { return ending; }
   
   private:
+    // Required for drawing.
+    SDL_Renderer * const renderer;
+
     Sprite background;
     MultiSprite doom_head;
     std::vector<Sprite*> shells;
     float screen_ratio;
     bool active;
+    bool ending;
     Player* player;
 };

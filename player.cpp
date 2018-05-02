@@ -1,6 +1,6 @@
 #include "player.h"
 #include "gamedata.h"
-
+#include "clock.h"
 
 Player::Player( const std::string& name) :
   WallCollidable(name), // Pass parent constructor the name.
@@ -59,7 +59,7 @@ void Player::detach( Enemy* e ){
 }
 
 void Player::update(Uint32 ticks) {
-  WallCollidable::update(ticks);
+  WallCollidable::update(ticks); 
 
   // Bouncing timer when colliding with wall.
   if( getState() == 1 && getBounceTimer() >= static_cast<Uint32>( 10 * Gamedata::getInstance().getXmlInt("period") ) 

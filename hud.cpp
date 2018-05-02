@@ -6,13 +6,15 @@
 #include <sstream>
 
 Hud::Hud() : 
-background("Hud"),
-doom_head("Hud/DoomFace"),
-shells(),
-screen_ratio((((Gamedata::getInstance().getXmlFloat("view/width") + (Gamedata::getInstance().getXmlFloat("view/height") )) / 
-	    ( Gamedata::getInstance().getXmlFloat(background.getName() + "/xRes") + Gamedata::getInstance().getXmlFloat(background.getName() + "/yRes"))))),
-active(true),
-player(nullptr)
+  renderer(RenderContext::getInstance()->getRenderer()),
+  background("Hud"),
+  doom_head("Hud/DoomFace"),
+  shells(),
+  screen_ratio((((Gamedata::getInstance().getXmlFloat("view/width") + (Gamedata::getInstance().getXmlFloat("view/height") )) / 
+        ( Gamedata::getInstance().getXmlFloat(background.getName() + "/xRes") + Gamedata::getInstance().getXmlFloat(background.getName() + "/yRes"))))),
+  active(true),
+  ending(false),
+  player(nullptr)
 {
   background.setScale(screen_ratio);
   doom_head.setScale(screen_ratio);
@@ -20,13 +22,15 @@ player(nullptr)
 }
 
 Hud::Hud(Player* p) : 
-background("Hud"),
-doom_head("Hud/DoomFace"),
-shells(),
-screen_ratio((((Gamedata::getInstance().getXmlFloat("view/width") + (Gamedata::getInstance().getXmlFloat("view/height") )) / 
-	    ( Gamedata::getInstance().getXmlFloat(background.getName() + "/xRes") + Gamedata::getInstance().getXmlFloat(background.getName() + "/yRes"))))),
-active(true),
-player(p)
+  renderer(RenderContext::getInstance()->getRenderer()),
+  background("Hud"),
+  doom_head("Hud/DoomFace"),
+  shells(),
+  screen_ratio((((Gamedata::getInstance().getXmlFloat("view/width") + (Gamedata::getInstance().getXmlFloat("view/height") )) / 
+        ( Gamedata::getInstance().getXmlFloat(background.getName() + "/xRes") + Gamedata::getInstance().getXmlFloat(background.getName() + "/yRes"))))),
+  active(true),
+  ending(false),
+  player(p)
 {
   background.setScale(screen_ratio);
   doom_head.setScale(screen_ratio);
@@ -41,13 +45,15 @@ player(p)
 }
 
 Hud::Hud(const Hud& h) : 
-background("Hud"),
-doom_head("Hud/DoomFace"),
-shells(),
-screen_ratio((((Gamedata::getInstance().getXmlFloat("view/width") + (Gamedata::getInstance().getXmlFloat("view/height") )) / 
-	    ( Gamedata::getInstance().getXmlFloat(background.getName() + "/xRes") + Gamedata::getInstance().getXmlFloat(background.getName() + "/yRes"))))),
-active(true),
-player(h.player)
+  renderer(RenderContext::getInstance()->getRenderer()),
+  background("Hud"),
+  doom_head("Hud/DoomFace"),
+  shells(),
+  screen_ratio((((Gamedata::getInstance().getXmlFloat("view/width") + (Gamedata::getInstance().getXmlFloat("view/height") )) / 
+        ( Gamedata::getInstance().getXmlFloat(background.getName() + "/xRes") + Gamedata::getInstance().getXmlFloat(background.getName() + "/yRes"))))),
+  active(true),
+  ending(false),
+  player(h.player)
 {
   background.setScale(screen_ratio);
   doom_head.setScale(screen_ratio);
@@ -80,45 +86,63 @@ void Hud::setPlayer(Player* p){
 void Hud::draw() const {
   background.draw();
   doom_head.draw();
-  
-  // Draw FPS.
-  SDL_SetRenderDrawColor( RenderContext::getInstance()->getRenderer(), 208, 9, 0, 255 );
 
-  std::stringstream fpsStream;
-  fpsStream << Clock::getInstance().getFps();
-  string fpsCounter = "FPS: " + fpsStream.str();
-  IoMod::getInstance().
-      writeText(fpsCounter, Gamedata::getInstance().getXmlInt("view/width") - 100, 0);
-  // Draw name.
-  IoMod::getInstance().
-      writeText("Alexzander Stone", 
-		Gamedata::getInstance().getXmlInt("font/size") * 9, 
-		Gamedata::getInstance().getXmlInt("view/height") - background.getScaledHeight()/2);
+  if(ending == false) {
+    // Draw FPS.
+    SDL_SetRenderDrawColor( renderer, 208, 9, 0, 255 );
 
-  // Draw instructions.
-  IoMod::getInstance().
-      writeText("Use WASD to move.", 
-		Gamedata::getInstance().getXmlInt("view/width") - Gamedata::getInstance().getXmlInt("font/size") * 13, 
-		Gamedata::getInstance().getXmlInt("view/height") - Gamedata::getInstance().getXmlInt("font/size") * 4 - 20);
-  
-  IoMod::getInstance().
-      writeText("Use left/right arrow to rotate.", 
-		Gamedata::getInstance().getXmlInt("view/width") - Gamedata::getInstance().getXmlInt("font/size") * 13, 
-		Gamedata::getInstance().getXmlInt("view/height") - Gamedata::getInstance().getXmlInt("font/size") * 3 - 15);
+    std::stringstream fpsStream;
+    fpsStream << Clock::getInstance().getFps();
+    string fpsCounter = "FPS: " + fpsStream.str();
+    IoMod::getInstance().
+        writeText(fpsCounter, Gamedata::getInstance().getXmlInt("view/width") - 100, 0);
+    // Draw name.
+    IoMod::getInstance().
+        writeText("Alexzander Stone", 
+      Gamedata::getInstance().getXmlInt("font/size") * 9, 
+      Gamedata::getInstance().getXmlInt("view/height") - background.getScaledHeight()/2);
 
-  IoMod::getInstance().
-      writeText("Press left shift to shoot.", 
-		Gamedata::getInstance().getXmlInt("view/width") - Gamedata::getInstance().getXmlInt("font/size") * 13, 
-		Gamedata::getInstance().getXmlInt("view/height") - Gamedata::getInstance().getXmlInt("font/size") * 2 - 10);
+    // Draw instructions.
+    IoMod::getInstance().
+        writeText("Use WASD to move.", 
+      Gamedata::getInstance().getXmlInt("view/width") - Gamedata::getInstance().getXmlInt("font/size") * 13, 
+      Gamedata::getInstance().getXmlInt("view/height") - Gamedata::getInstance().getXmlInt("font/size") * 4 - 20);
+    
+    IoMod::getInstance().
+        writeText("Use left/right arrow to rotate.", 
+      Gamedata::getInstance().getXmlInt("view/width") - Gamedata::getInstance().getXmlInt("font/size") * 13, 
+      Gamedata::getInstance().getXmlInt("view/height") - Gamedata::getInstance().getXmlInt("font/size") * 3 - 15);
 
-  IoMod::getInstance().
-      writeText("F1 to remove hud.", 
-		Gamedata::getInstance().getXmlInt("view/width") - Gamedata::getInstance().getXmlInt("font/size") * 13, 
-		Gamedata::getInstance().getXmlInt("view/height") - Gamedata::getInstance().getXmlInt("font/size") * 1 - 5);
+    IoMod::getInstance().
+        writeText("Press left shift to shoot.", 
+      Gamedata::getInstance().getXmlInt("view/width") - Gamedata::getInstance().getXmlInt("font/size") * 13, 
+      Gamedata::getInstance().getXmlInt("view/height") - Gamedata::getInstance().getXmlInt("font/size") * 2 - 10);
 
-  // Draw the number of projectiles available to the player.
-  for( unsigned int i = 0; i < player->getFreeBulletCount(); i++ ) {
-    shells[i]->draw();
+    IoMod::getInstance().
+        writeText("F1 to remove hud.", 
+      Gamedata::getInstance().getXmlInt("view/width") - Gamedata::getInstance().getXmlInt("font/size") * 13, 
+      Gamedata::getInstance().getXmlInt("view/height") - Gamedata::getInstance().getXmlInt("font/size") * 1 - 5);
+
+    // Draw the number of projectiles available to the player.
+    for( unsigned int i = 0; i < player->getFreeBulletCount(); i++ ) {
+      shells[i]->draw();
+    }
+  }
+  else { // Ending is true;
+    SDL_Rect menu;
+    menu.x = Gamedata::getInstance().getXmlFloat("view/width") * .3333;
+    menu.y = Gamedata::getInstance().getXmlFloat("view/height") * .3333;
+    menu.w = Gamedata::getInstance().getXmlFloat("view/width") * .3333;
+    menu.h = Gamedata::getInstance().getXmlFloat("view/height") * .3333;
+
+    SDL_SetRenderDrawColor( renderer, 208, 255, 0, 255 );
+    SDL_RenderDrawRect(renderer, &menu);
+
+    SDL_SetRenderDrawColor( renderer, 0, 255, 255, 50 );
+    SDL_RenderFillRect(renderer, &menu);
+
+    
+
   }
 }
 

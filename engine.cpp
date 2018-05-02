@@ -464,9 +464,6 @@ void Engine::draw() const {
   SDL_RenderClear(renderer);
   SDL_RenderCopy(renderer, texture_buffer, NULL, NULL);
 
-  //for(auto& it : collidables)
-    //it->draw();
-
   for(auto& it : sprites)
     it->draw();
 
@@ -528,14 +525,25 @@ void Engine::checkForCollisions(){
 }
 
 void Engine::update(Uint32 ticks) {
-  for(auto& it : collidables)
-  {
-    it->update(ticks);
+  if( hud.getEnding() == false ){
+    if(player->getAlive() == false ) { // Player death.
+      hud.toggleEnding();
+    }
+    else if( (*(collidables.begin()+1))->getAlive() == false ) {   // Enemy death.
+      std::cout << "You win!" << std::endl;
+      hud.toggleEnding();
+    }
+    else {
+      for(auto& it : collidables)
+      {
+        it->update(ticks);
+      }
+      checkForCollisions();
+      world.update();
+      viewport.update(); // always update viewport last
+      hud.update(ticks);
+    }
   }
-  checkForCollisions();
-  world.update();
-  viewport.update(); // always update viewport last
-  hud.update(ticks);
 }
 
 void Engine::play() {
