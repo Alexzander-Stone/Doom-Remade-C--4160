@@ -79,8 +79,8 @@ Engine::Engine() :
 
   // Enemies, attach to observor in collidables[0].
   Vector2f placeholderPlayerPos(20, 20);
-  //collidables.push_back( new Enemy("Pinkie", placeholderPlayerPos) );
-  //player->attach( static_cast<Enemy*>( *(collidables.end() - 1) ) );
+  collidables.push_back( new Enemy("Pinkie", placeholderPlayerPos) );
+  player->attach( static_cast<Enemy*>( *(collidables.end() - 1) ) );
 
   // Wall sprites.
   int wallCount = Gamedata::getInstance().getXmlInt("Wall/numberOfWalls");
@@ -300,10 +300,10 @@ void Engine::draw() const {
       // coordinate on the texture using the wall location.
       for( int vertPixelY = drawTop; vertPixelY < drawBottom; vertPixelY++ )
       {
-        // Scale the screen based on the original raycast resolution.	
+          // Scale the screen based on the original raycast resolution.	
           int d = vertPixelY * 256 - viewHeight * 128 + vertLineLength * 128;
           int textureY = d*(*spriteCollided)->getScaledHeight() / vertLineLength / 256;
-	  // Store the new pixel into the array until all pixels have been saved.
+	        // Store the new pixel into the array until all pixels have been saved.
           pixels_to_draw[vertPixelX + vertPixelY * viewWidth] = textPixels[(textureY * (*spriteCollided)->getScaledWidth()) + textureX];;
       }
 
@@ -391,8 +391,13 @@ void Engine::draw() const {
   for( auto& ptr : depth_sprite_render ) {
     // Find the sprite's coordinates in relation to the camera.
     // Needed to find the enemies 3D coordinates
-    float currSpriteX = ptr->getX() + ptr->getScaledWidth()/2 - posX;
-    float currSpriteY = ptr->getY() + ptr->getScaledHeight()/2 - posY;
+    float currSpriteX = ptr->getX() - posX;
+    float currSpriteY = ptr->getY() - posY;
+    if( ptr->getName() != "Pinkie" ){
+      currSpriteX += ptr->getScaledWidth()/2;
+      currSpriteY += ptr->getScaledHeight()/2;
+    }
+      
 
     float inverseCameraMatrix = 1.0f / (planeX * directionY - directionX * planeY);
 
@@ -433,7 +438,7 @@ void Engine::draw() const {
           int d = horizSprite * 256 - viewHeight * 128 + spriteScreenHeight * 128;
           int textureY = ((d * ptr->getScaledHeight()) / (float)spriteScreenHeight) / 256;
 	        Uint32 pixelAccess = textureY * (float)ptr->getScaledWidth() + textureX;
-          if(textPixels[pixelAccess] != 4294902015) // magenta color 
+          if(textPixels[pixelAccess] != 4294902015) // magenta color, transparency 
             pixels_to_draw[vertSprite + horizSprite * viewWidth] = textPixels[pixelAccess];
         }
       }
@@ -445,10 +450,8 @@ void Engine::draw() const {
   SDL_RenderClear(renderer);
   SDL_RenderCopy(renderer, texture_buffer, NULL, NULL);
 
-  for(auto& it : collidables)
-  {
-    it->draw();
-  }
+  //for(auto& it : collidables)
+    //it->draw();
 
   for(auto& it : sprites)
     it->draw();

@@ -15,7 +15,16 @@ void Bullet::update(Uint32 ticks) {
 }
 
 bool Bullet::checkCollision( const Drawable* sprite) const{
-  Sprite checker("BulletCollision");
-  checker.setPosition(getPosition() + Vector2f(getScaledWidth()/2, getScaledHeight()/2));
-  return strategy->execute(*sprite, checker); 
+  Sprite bulletCollision("BulletCollision");
+  bulletCollision.setPosition(getPosition() + Vector2f(getScaledWidth()/2, getScaledHeight()/2));
+
+  // Enemy collision, large sprite.
+  if(sprite->getName() == "Pinkie"){
+    Sprite objectToHit("BulletCollision");
+    objectToHit.setScale(2);
+    return strategy->execute(objectToHit, bulletCollision); 
+  }
+  else // Walls and player.
+    return strategy->execute(*sprite, bulletCollision); 
+
 }
