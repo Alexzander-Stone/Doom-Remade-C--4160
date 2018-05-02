@@ -91,6 +91,9 @@ void Hud::setPlayer(Player* p){
 }
 
 void Hud::draw()  {
+  Sprite gun("DoomGun");
+  gun.setScale(.5);
+  gun.draw();
   background.draw();
   doom_head.draw();
 
@@ -135,6 +138,13 @@ void Hud::draw()  {
       Gamedata::getInstance().getXmlInt("view/width") - Gamedata::getInstance().getXmlInt("font/size") * 13, 
       Gamedata::getInstance().getXmlInt("view/height") - Gamedata::getInstance().getXmlInt("font/size") * 1 - 5);
 
+    IoMod::getInstance().
+        writeText("G for godmode (IDDQD)!", 
+      Gamedata::getInstance().getXmlInt("font/size") * 1, 
+      Gamedata::getInstance().getXmlInt("view/height") - Gamedata::getInstance().getXmlInt("font/size") * 1 - 5);
+
+
+
     // Draw the number of projectiles available to the player.
     for( unsigned int i = 0; i < player->getFreeBulletCount(); i++ ) {
       shells[i]->draw();
@@ -176,12 +186,26 @@ void Hud::draw()  {
             Gamedata::getInstance().getXmlFloat("view/height") * .3, 
             SDL_Color({255, 255, 255, 255})
           );
+      
+      IoMod::getInstance().
+          writeText(" Press R to retry. ", 
+            Gamedata::getInstance().getXmlFloat("view/width") * .5 - Gamedata::getInstance().getXmlFloat("font/size")*4 - 10, 
+            Gamedata::getInstance().getXmlFloat("view/height") * .6, 
+            SDL_Color({255, 255, 255, 255})
+          );
     }
-    else {  // Enemy has won
+    else if (ending == 2){  // Enemy has won
       IoMod::getInstance().
           writeText(" Death awaits you... ", 
-            Gamedata::getInstance().getXmlFloat("view/width") * .5 - Gamedata::getInstance().getXmlFloat("font/size")*2 - 10, 
+            Gamedata::getInstance().getXmlFloat("view/width") * .5 - Gamedata::getInstance().getXmlFloat("font/size")*4 - 10, 
             Gamedata::getInstance().getXmlFloat("view/height") * .2, 
+            SDL_Color({255, 255, 255, 255})
+          );
+      
+      IoMod::getInstance().
+          writeText(" Press R to retry. ", 
+            Gamedata::getInstance().getXmlFloat("view/width") * .5 - Gamedata::getInstance().getXmlFloat("font/size")*4 - 10, 
+            Gamedata::getInstance().getXmlFloat("view/height") * .6, 
             SDL_Color({255, 255, 255, 255})
           );
     }

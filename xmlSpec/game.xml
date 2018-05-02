@@ -177,6 +177,31 @@
   <bullet_damage>5</bullet_damage>
 </DoomGuy>
 
+<DoomGun>
+  <startLoc x = "512" y = "300" />
+  <file>assets/doomGun.png</file>
+  <width>600</width>
+  <height>25</height>
+  <collidableHeight>100</collidableHeight>
+  <collidableWidth>100</collidableWidth>
+  <increment>0</increment>
+  <speedX>0</speedX>
+  <speedY>0</speedY>
+  <backColor>
+    <r>255</r>
+    <g>255</g>
+    <b>255</b>
+    <a>128</a>
+  </backColor>
+  <barColor>
+    <r>255</r>
+    <g>0</g>
+    <b>0</b>
+    <a>255</a>
+  </barColor>
+  <transparency>false</transparency>
+</DoomGun>
+
 <Plasma>
   <file>assets/plasma.png</file>
   <startLoc x="-100" y="-100"/>
@@ -242,5 +267,53 @@
   <speedY>0</speedY>
   <ammo>3</ammo>
 </Fireball>
+
+<EnemyHealthBar>
+  <startLoc x = "212" y = "30" />
+  <width>600</width>
+  <height>50</height>
+  <collidableHeight>100</collidableHeight>
+  <collidableWidth>100</collidableWidth>
+  <interval>1000</interval>
+  <increment>0</increment>
+  <speedX>0</speedX>
+  <speedY>0</speedY>
+  <backColor>
+    <r>255</r>
+    <g>255</g>
+    <b>255</b>
+    <a>128</a>
+  </backColor>
+  <barColor>
+    <r>255</r>
+    <g>0</g>
+    <b>255</b>
+    <a>255</a>
+  </barColor>
+</EnemyHealthBar>
+
+<PlayerHealthBar>
+  <startLoc x = "212" y = "425" />
+  <width>600</width>
+  <height>25</height>
+  <collidableHeight>100</collidableHeight>
+  <collidableWidth>100</collidableWidth>
+  <increment>0</increment>
+  <speedX>0</speedX>
+  <speedY>0</speedY>
+  <backColor>
+    <r>255</r>
+    <g>255</g>
+    <b>255</b>
+    <a>128</a>
+  </backColor>
+  <barColor>
+    <r>255</r>
+    <g>0</g>
+    <b>0</b>
+    <a>255</a>
+  </barColor>
+</PlayerHealthBar>
+
 
 </GameData>

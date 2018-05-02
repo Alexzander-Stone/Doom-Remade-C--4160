@@ -8,6 +8,8 @@ class Living{
     virtual ~Living(){};
     
     bool getAlive();
+    void setHealth(int n) { health = n; }
+    int getHealth() { return health; }
 
     void update();
     void dealDamage(int n);

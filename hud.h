@@ -21,7 +21,7 @@ class Hud {
 
     void toggleActive() { active = !active; }
     bool getActive() const { return active; }
-    void toggleEnding() { ending = !ending; }
+    void toggleEnding(int n) { ending = n; } // 1 is player win, 2 is enemy win
     bool getEnding() const { return ending; }
   
   private:
@@ -36,6 +36,6 @@ class Hud {
     std::vector<Sprite*> shells;
     float screen_ratio;
     bool active;
-    bool ending;
+    int ending;
     Player* player;
 };

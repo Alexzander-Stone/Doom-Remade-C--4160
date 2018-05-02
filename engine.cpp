@@ -35,6 +35,10 @@ Engine::~Engine() {
   // Delete textures.
   delete [] pixels_to_draw;
   SDL_DestroyTexture(texture_buffer);
+  
+  // Delete healthbars.
+  delete enemyHealth;
+  delete playerHealth;
 
   std::cout << "Terminating program" << std::endl;
 }
@@ -55,6 +59,9 @@ Engine::Engine() :
   makeVideo( false ),
   currentSprite(1),
   hud(),
+  sound(),
+  enemyHealth(new HealthBar("EnemyHealthBar")),
+  playerHealth(new HealthBar("PlayerHealthBar")),
   floor(new Sprite("Ceiling")),
   floorPixels(static_cast<Uint32 *>(floor->getSurface()->pixels)),
   floorSurface(floor->getSurface()),
@@ -467,8 +474,11 @@ void Engine::draw() {
   for(auto& it : sprites)
     it->draw();
 
-  if(hud.getActive() == true)
+  if(hud.getActive() == true){
     hud.draw();
+    enemyHealth->draw();
+    playerHealth->draw();
+  }
   viewport.draw();
 
   SDL_RenderPresent(renderer);
@@ -525,13 +535,18 @@ void Engine::checkForCollisions(){
 }
 
 void Engine::update(Uint32 ticks) {
+  // Health bars.
+  enemyHealth->update(static_cast<Uint32>((*(collidables.begin()+1))->getHealth()));
+  playerHealth->update(static_cast<Uint32>(player->getHealth()));
+
   if( hud.getEnding() == false ){
     if(player->getAlive() == false ) { // Player death.
-      hud.toggleEnding();
+      playerHealth->update(0);
+      hud.toggleEnding(2);
     }
     else if( (*(collidables.begin()+1))->getAlive() == false ) {   // Enemy death.
-      std::cout << "You win!" << std::endl;
-      hud.toggleEnding();
+      enemyHealth->update(0);
+      hud.toggleEnding(1);
     }
     else {
       for(auto& it : collidables)
@@ -565,6 +580,7 @@ bool Engine::play() {
         }
         if (keystate[SDL_SCANCODE_LSHIFT]) {
           player->shoot();
+          sound[0];
         }
         if ( keystate[SDL_SCANCODE_P] ) {
           if ( clock.isPaused() ) clock.unpause();
@@ -572,6 +588,9 @@ bool Engine::play() {
         }
         if ( keystate[SDL_SCANCODE_R] ) {
           return true;
+        }
+        if ( keystate[SDL_SCANCODE_G] ) {
+          player->toggleGodMode();
         }
 	      if (keystate[SDL_SCANCODE_F1]) {
           std::cout << "Initiating hud" << std::endl;

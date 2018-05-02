@@ -7,6 +7,8 @@
 #include "viewport.h"
 #include "enemy.h"
 #include "hud.h"
+#include "sound.h"
+#include "healthBar.h"
 
 class Player;
 class CollisionStrategy;
@@ -39,12 +41,15 @@ private:
   // Collisions
   int currentStrategy;
   bool collision;
-
   bool makeVideo;
- 
   int currentSprite;
-
   Hud hud;
+
+  // Sound.
+  SDLSound sound;
+  // Health
+  HealthBar* enemyHealth;
+  HealthBar* playerHealth;
 
   // Floor sprite.
   Sprite* floor;

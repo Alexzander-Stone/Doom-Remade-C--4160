@@ -9,7 +9,8 @@ Player::Player( const std::string& name) :
   worldHeight(Gamedata::getInstance().getXmlInt("world/height")),
   observers(),
   plane_x(0),
-  plane_y(-.66)
+  plane_y(-.66),
+  godMode(false)
 { }
 
 void Player::stop() {
@@ -60,6 +61,11 @@ void Player::detach( Enemy* e ){
 
 void Player::update(Uint32 ticks) {
   WallCollidable::update(ticks); 
+
+  if( godMode == true )
+  {
+    setHealth(1000000);
+  }
 
   // Bouncing timer when colliding with wall.
   if( getState() == 1 && getBounceTimer() >= static_cast<Uint32>( 10 * Gamedata::getInstance().getXmlInt("period") ) 

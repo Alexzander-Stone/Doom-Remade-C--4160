@@ -35,6 +35,7 @@ public:
   void attach( Enemy* e ){ observers.push_back(e); }
   void detach( Enemy* e );
 
+  void toggleGodMode() { godMode = !godMode; }
   
 
 private: 
@@ -45,5 +46,6 @@ private:
   std::list<Enemy*> observers;
   // Camera plane.
   float plane_x, plane_y;
+  bool godMode;
 };
 #endif
