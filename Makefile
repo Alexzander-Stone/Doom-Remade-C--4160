@@ -30,6 +30,7 @@ OBJS = \
 	hud.o \
 	enemyProjectile.o \
 	bullet.o \
+	living.o \
 	main.o
 EXEC = run
 

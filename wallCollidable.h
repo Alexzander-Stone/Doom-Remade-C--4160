@@ -8,9 +8,10 @@
 #include "subjectSprite.h"
 #include "smartSprite.h"
 #include "bullet.h"
+#include "living.h"
 
 
-class WallCollidable {
+class WallCollidable : public Living{
 public:
   WallCollidable(const std::string&);
   WallCollidable(const WallCollidable&);
@@ -52,6 +53,7 @@ public:
   void setRotation(int t) { theta = t; }
 
   void checkBulletCollision(Drawable*);
+  void checkBulletCollision(WallCollidable*);
   unsigned int getFreeBulletCount() const { return max_bullets - bullets.size(); }
   unsigned int getBulletCount() const { return bullets.size(); }
 
@@ -110,6 +112,7 @@ private:
   int rotation_radius;
   // Shooting
   std::string bulletName;
+  int bullet_damage;
   unsigned int max_bullets;
   std::vector<Bullet*> bullets;
   std::vector<Bullet*> freeAmmo;

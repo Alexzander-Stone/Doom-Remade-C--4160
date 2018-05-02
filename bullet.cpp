@@ -22,7 +22,6 @@ bool Bullet::checkCollision( const Drawable* sprite) const{
 
     Sprite objectToHit("Ray");
     objectToHit.setPosition(sprite->getPosition());
-    std::cout << objectToHit.getPosition() << " and bullet location is " << bulletCollision.getPosition() << std::endl;
     return strategy->execute(objectToHit, bulletCollision); 
   }
   else {  // Walls and player.

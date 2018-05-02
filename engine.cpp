@@ -512,8 +512,9 @@ void Engine::checkForCollisions(){
       // Enemy/Player.
       auto currTarget = collidables.begin();
       while( currTarget != collidables.end() ) {
-        if(currGun != currTarget)
-          (*currGun)->checkBulletCollision((*currTarget)->getSpriteInfo());
+        if(currGun != currTarget){
+          (*currGun)->checkBulletCollision((*currTarget));
+        }
         currTarget++;
       }
       // Walls.

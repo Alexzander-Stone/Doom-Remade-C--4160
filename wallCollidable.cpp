@@ -16,6 +16,7 @@ WallCollidable::WallCollidable( const std::string& name) :
   theta_increment(Gamedata::getInstance().getXmlInt(getSpriteInfo()->getName() + "/thetaIncrement")),
   rotation_radius(Gamedata::getInstance().getXmlInt(name + "/rotationRadius")),
   bulletName( Gamedata::getInstance().getXmlStr(name+"/bullet") ),
+  bullet_damage( Gamedata::getInstance().getXmlInt(name+"/bullet_damage") ),
   max_bullets(static_cast<unsigned int>(Gamedata::getInstance().getXmlInt(bulletName+"/ammo"))),
   bullets(),
   freeAmmo(),
@@ -250,9 +251,22 @@ void WallCollidable::checkBulletCollision(Drawable* col){
   auto b = bullets.begin();
   while( b != bullets.end() ){
     if((*b)->checkCollision(col)){
-      // Apply damage to the 
       freeAmmo.push_back(*b);
       b = bullets.erase(b);
+    }
+    else
+      b++;
+  }
+}
+
+void WallCollidable::checkBulletCollision(WallCollidable* col){
+  auto b = bullets.begin();
+  while( b != bullets.end() ){
+    if((*b)->checkCollision(col->getSpriteInfo())){
+      freeAmmo.push_back(*b);
+      b = bullets.erase(b);
+      // Deal damage to col object.
+      col->dealDamage(10);
     }
     else
       b++;
