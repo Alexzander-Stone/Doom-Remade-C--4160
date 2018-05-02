@@ -114,7 +114,7 @@ Engine::Engine() :
   std::cout << "Loading complete" << std::endl;
 }
 
-void Engine::draw() const {
+void Engine::draw() {
   int viewWidth = Gamedata::getInstance().getXmlInt("view/width");
   int viewHeight = Gamedata::getInstance().getXmlInt("view/height");
   

@@ -55,7 +55,7 @@ private:
   // Pixels to be drawn, save to buffer (faster than per pixel methods)
   SDL_Texture* texture_buffer;
   Uint32* pixels_to_draw;
-  void draw() const;
+  void draw();
   void update(Uint32);
 
   Engine(const Engine&);

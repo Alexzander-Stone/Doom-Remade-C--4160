@@ -4,9 +4,12 @@
 #include "ioMod.h"
 #include "clock.h"
 #include <sstream>
+#include <iomanip>
 
 Hud::Hud() : 
   renderer(RenderContext::getInstance()->getRenderer()),
+  time(std::chrono::high_resolution_clock::now()),
+  endTime(0),
   background("Hud"),
   doom_head("Hud/DoomFace"),
   shells(),
@@ -23,6 +26,8 @@ Hud::Hud() :
 
 Hud::Hud(Player* p) : 
   renderer(RenderContext::getInstance()->getRenderer()),
+  time(std::chrono::high_resolution_clock::now()),
+  endTime(0),
   background("Hud"),
   doom_head("Hud/DoomFace"),
   shells(),
@@ -46,6 +51,8 @@ Hud::Hud(Player* p) :
 
 Hud::Hud(const Hud& h) : 
   renderer(RenderContext::getInstance()->getRenderer()),
+  time(std::chrono::high_resolution_clock::now()),
+  endTime(0),
   background("Hud"),
   doom_head("Hud/DoomFace"),
   shells(),
@@ -83,19 +90,24 @@ void Hud::setPlayer(Player* p){
   }
 }
 
-void Hud::draw() const {
+void Hud::draw()  {
   background.draw();
   doom_head.draw();
 
   if(ending == false) {
-    // Draw FPS.
+    // Draw current time.
     SDL_SetRenderDrawColor( renderer, 208, 9, 0, 255 );
 
-    std::stringstream fpsStream;
-    fpsStream << Clock::getInstance().getFps();
-    string fpsCounter = "FPS: " + fpsStream.str();
+    std::chrono::duration<double> currentTime = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now() - time);
+    
+
+    std::stringstream timeStream;
+    timeStream << std::setprecision(1) << std::fixed << currentTime.count();
+    endTime = currentTime.count();
+    string timeCounter = "Time is " + timeStream.str() + " seconds!";
     IoMod::getInstance().
-        writeText(fpsCounter, Gamedata::getInstance().getXmlInt("view/width") - 100, 0);
+        writeText(timeCounter, Gamedata::getInstance().getXmlInt("view/width") * .6, 0);
+
     // Draw name.
     IoMod::getInstance().
         writeText("Alexzander Stone", 
@@ -144,10 +156,24 @@ void Hud::draw() const {
 
     SDL_SetRenderDrawColor( renderer, 0, 255, 0, 50 );
     if(ending == 1) { // Player has won.
+
       IoMod::getInstance().
           writeText(" You defeated the monster! ", 
             Gamedata::getInstance().getXmlFloat("view/width") * .5 - Gamedata::getInstance().getXmlFloat("font/size")*6 - 10, 
             Gamedata::getInstance().getXmlFloat("view/height") * .2, 
+            SDL_Color({255, 255, 255, 255})
+          );
+
+
+      // Show time it took to defeat the evil monster.
+      std::stringstream timeStream;
+      timeStream << std::setprecision(1) << std::fixed << endTime;
+      string timeCounter = "Your time was " + timeStream.str() + " seconds!";
+
+      IoMod::getInstance().
+          writeText(timeCounter, 
+            Gamedata::getInstance().getXmlFloat("view/width") * .5 - Gamedata::getInstance().getXmlFloat("font/size")*6 - 10, 
+            Gamedata::getInstance().getXmlFloat("view/height") * .3, 
             SDL_Color({255, 255, 255, 255})
           );
     }

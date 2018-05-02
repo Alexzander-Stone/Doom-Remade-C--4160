@@ -1,4 +1,5 @@
 #include <string>
+#include <chrono>
 #include "gamedata.h"
 #include "sprite.h"
 #include "multisprite.h"
@@ -13,7 +14,7 @@ class Hud {
 
     Hud& operator=(const Hud&);
     
-    void draw() const;
+    void draw() ;
     void update(Uint32 ticks);
     void setPlayer(Player* p);
     std::vector<Sprite*>& getShells() { return shells; }
@@ -26,6 +27,9 @@ class Hud {
   private:
     // Required for drawing.
     SDL_Renderer * const renderer;
+    // Time management.
+    std::chrono::high_resolution_clock::time_point time;
+    double endTime;
 
     Sprite background;
     MultiSprite doom_head;
