@@ -17,10 +17,10 @@ void Bullet::update(Uint32 ticks) {
 bool Bullet::checkCollision( const Drawable* sprite) const{
     // Enemy collision, large sprite.
   if(sprite->getName() == "Pinkie"){
-    Sprite bulletCollision("Ray");
+    Sprite bulletCollision("BulletCollision");
     bulletCollision.setPosition(getPosition() + Vector2f(getScaledWidth()/2 - bulletCollision.getScaledWidth()/2, getScaledHeight()/2 - bulletCollision.getScaledHeight()/2));
 
-    Sprite objectToHit("Ray");
+    Sprite objectToHit("BulletCollision");
     objectToHit.setPosition(sprite->getPosition());
     return strategy->execute(objectToHit, bulletCollision); 
   }

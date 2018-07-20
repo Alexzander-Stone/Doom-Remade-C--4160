@@ -65,7 +65,7 @@ Hud::Hud(const Hud& h) :
   background.setScale(screen_ratio);
   doom_head.setScale(screen_ratio);
   auto itr = shells.begin();
-  while (itr != shells.end());
+  while (itr != shells.end())
   {
     delete *itr;
     itr = shells.erase(itr);
