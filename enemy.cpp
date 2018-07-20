@@ -10,7 +10,18 @@ Enemy::Enemy( const std::string& name, const Vector2f& pos) :
   playerPos(pos)
 { }
 
+// Move constructor. Looks for an rvalue as the paramenter being passed.
+Enemy::Enemy( Enemy&& other ) :
+	WallCollidable(other.getName()),
+	current_state(other.current_state),
+	maxVelocity(other.maxVelocity),
+	worldWidth(other.worldWidth),
+	worldHeight(other.worldHeight),
+	playerPos(other.playerPos)
+{ }
+
 void Enemy::draw() const{
+	// Call the parent method for draw in WallCollidable.
   WallCollidable::draw();
   getSpriteInfo()->draw();
 }

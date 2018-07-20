@@ -13,6 +13,7 @@
 class Enemy : public WallCollidable {
 public:
   Enemy(const std::string&, const Vector2f& pos);
+	Enemy(Enemy&& other);
   Enemy(const Enemy&);
   virtual ~Enemy(){}
 
