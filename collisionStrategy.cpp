@@ -8,8 +8,6 @@
 
 bool RectangularCollisionStrategy::execute(
       const Drawable& sprite1, const Drawable& sprite2) const {
-	// Give an offset of 1 pixel that way collision activates as 
-  // each item hit each other's bounding box.
   float left1 = sprite1.getX();
   float left2 = sprite2.getX();
 
@@ -48,8 +46,6 @@ bool MidPointCollisionStrategy::execute(
   float y1 = sprite1.getY() + height1/2.0f;
   float x2 = sprite2.getX() + width2/2.0f;
   float y2 = sprite2.getY() + height2/2.0f;
-  std::cout << sprite1.getName() << " x is " << x1 << " y is " << y1 << std::endl;
-  std::cout << sprite2.getName() << " x is " << x2 << " y is " << y2 << std::endl;
 
   return distance(x1, y1, x2, y2) < COLLISION_DISTANCE;
 }
