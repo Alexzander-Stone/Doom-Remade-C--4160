@@ -128,9 +128,6 @@ void Engine::draw() {
   // Draw background.
   world.draw(); 
 
-  // Copy the pixels from texture to window.
-  SDL_UpdateTexture(texture_buffer, NULL, pixels_to_draw, viewWidth * sizeof(Uint32));
-
   // Fill out the top half the the pixels with the sky.
   for(int backgroundY = 0; backgroundY < viewHeight/2; backgroundY++)
   {
@@ -466,7 +463,8 @@ void Engine::draw() {
     }
   }
 
-  
+    // Copy the pixels from texture to window.
+  SDL_UpdateTexture(texture_buffer, NULL, pixels_to_draw, viewWidth * sizeof(Uint32));
   
   SDL_RenderClear(renderer);
   SDL_RenderCopy(renderer, texture_buffer, NULL, NULL);
